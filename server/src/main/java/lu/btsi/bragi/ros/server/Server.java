@@ -44,7 +44,6 @@ public class Server extends WebSocketServer {
             Result<TableRecord> fetch = create.fetch(Table.TABLE);
 
             List<lu.btsi.bragi.ros.models.Table> into = fetch.into(lu.btsi.bragi.ros.models.Table.class);
-
             conn.send(new Gson().toJson(into));
         } else if(message.equals("ping")) {
             conn.send("pong");
