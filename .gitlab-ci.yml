@@ -1,4 +1,4 @@
-image: rburgst/java-openjfx
+image: java8-openjfx-docker
 
 before_script:
   - chmod +x gradlew
