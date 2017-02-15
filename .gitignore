@@ -22,7 +22,7 @@ $RECYCLE.BIN/
 *.msp
 *.lnk
 .gradle
-/build/
+build/
 gradle-app.setting
 !gradle-wrapper.jar
 .gradletasknamecache
