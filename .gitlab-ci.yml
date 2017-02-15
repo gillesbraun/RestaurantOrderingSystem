@@ -1,0 +1,15 @@
+image: java:8
+
+before_script:
+  - chmod +x gradlew
+
+build:
+  stage: build
+  script:
+    - ./gradlew clean installDist
+  artifacts:
+    name: "RestaurantOrderingSystem"
+    paths:
+    - build/server/install/*
+    - build/client/install/*
+  allow_failure: false
