@@ -29,4 +29,9 @@ public enum MessageType {
     public static MessageType get(Object key) {
         return lookup.get(key);
     }
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

@@ -19,6 +19,6 @@ public class Answer extends Message {
 
     @Override
     public String toString() {
-        return getAction() + SEPARATOR + getClazz().getCanonicalName() + SEPARATOR + getObjectAsJSON();
+        return getAction().getName() + SEPARATOR + getClazz().getCanonicalName() + SEPARATOR + getObjectAsJSON();
     }
 }

@@ -2,6 +2,9 @@ package lu.btsi.bragi.ros.models.message;
 
 import com.google.gson.Gson;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+
 /**
  * Created by gillesbraun on 15/02/2017.
  */
@@ -33,13 +36,22 @@ public class Message {
 
         MessageType messageType = MessageType.get(split[0]);
         if(messageType == null) {
-            throw new MessageMalformedException("Message Type '"+messageType+"' does not exist.");
+            throw new MessageMalformedException("Message Type '"+split[0]+"' does not exist.");
         }
         Class clazz = Class.forName(split[1]);
         if(split.length == 2) {
             return new Message(messageType, clazz);
         } else {
-            return new Message(messageType, clazz.cast(new Gson().fromJson(split[2], clazz)));
+            if(split[2].charAt(0) == '[') {
+                Class<?> arrayClass = Array.newInstance(clazz, 0).getClass();
+                Object cast = arrayClass.cast(new Gson().fromJson(split[2], arrayClass));
+                return new Message(messageType, Arrays.asList(cast));
+            } else if(split[2].charAt(0) == '{') {
+                Object cast = clazz.cast(new Gson().fromJson(split[2], clazz));
+                return new Message(messageType, cast);
+            } else {
+                throw new MessageMalformedException("Payload needs to start either with [ or {");
+            }
         }
     }
 

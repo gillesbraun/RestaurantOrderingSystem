@@ -16,6 +16,9 @@
              Defaults to org.jooq.util.JavaGenerator -->
         <name>org.jooq.util.JavaGenerator</name>
 
+<generate>
+    <pojos>true</pojos>
+</generate>
         <database>
             <!-- The database type. The format here is:
                  org.util.[database].[database]Database -->
@@ -41,7 +44,7 @@
             <packageName>lu.btsi.bragi.ros.server.database</packageName>
 
             <!-- The destination directory of your generated classes. Using Maven directory layout here -->
-            <directory>/Users/gillesbraun/Projects/RestaurantOrderingSystem/server/src/main/java/lu/btsi/bragi/ros/server/database</directory>
+            <directory>/Users/gillesbraun/Projects/RestaurantOrderingSystem/server/src/main/java/</directory>
         </target>
     </generator>
 </configuration>

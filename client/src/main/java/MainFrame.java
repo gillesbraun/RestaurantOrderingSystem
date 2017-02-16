@@ -11,7 +11,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import lu.btsi.bragi.ros.models.Table;
+import lu.btsi.bragi.ros.models.pojo.Table;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
@@ -77,6 +77,12 @@ public class MainFrame extends Application implements Callback {
 
     @Override
     public void handleCallback(String message) {
+        try {
+            Message decoded = Message.fromString(message);
+            System.out.println(decoded);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         textArea.appendText(message + "\n");
     }
 
