@@ -7,14 +7,16 @@ package lu.btsi.bragi.ros.server.database;
 import javax.annotation.Generated;
 
 import lu.btsi.bragi.ros.server.database.tables.Allergen;
-import lu.btsi.bragi.ros.server.database.tables.Allergenlocalized;
+import lu.btsi.bragi.ros.server.database.tables.AllergenLocalized;
 import lu.btsi.bragi.ros.server.database.tables.Invoice;
 import lu.btsi.bragi.ros.server.database.tables.Language;
 import lu.btsi.bragi.ros.server.database.tables.Order;
 import lu.btsi.bragi.ros.server.database.tables.Product;
-import lu.btsi.bragi.ros.server.database.tables.Productallergen;
-import lu.btsi.bragi.ros.server.database.tables.Productlocalized;
-import lu.btsi.bragi.ros.server.database.tables.Productpricefororder;
+import lu.btsi.bragi.ros.server.database.tables.ProductAllergen;
+import lu.btsi.bragi.ros.server.database.tables.ProductCategory;
+import lu.btsi.bragi.ros.server.database.tables.ProductCategoryLocalized;
+import lu.btsi.bragi.ros.server.database.tables.ProductLocalized;
+import lu.btsi.bragi.ros.server.database.tables.ProductPriceForOrder;
 import lu.btsi.bragi.ros.server.database.tables.Table;
 import lu.btsi.bragi.ros.server.database.tables.Waiter;
 
@@ -38,9 +40,9 @@ public class Tables {
     public static final Allergen ALLERGEN = lu.btsi.bragi.ros.server.database.tables.Allergen.ALLERGEN;
 
     /**
-     * The table <code>ros.AllergenLocalized</code>.
+     * The table <code>ros.Allergen_Localized</code>.
      */
-    public static final Allergenlocalized ALLERGENLOCALIZED = lu.btsi.bragi.ros.server.database.tables.Allergenlocalized.ALLERGENLOCALIZED;
+    public static final AllergenLocalized ALLERGEN_LOCALIZED = lu.btsi.bragi.ros.server.database.tables.AllergenLocalized.ALLERGEN_LOCALIZED;
 
     /**
      * The table <code>ros.Invoice</code>.
@@ -63,19 +65,29 @@ public class Tables {
     public static final Product PRODUCT = lu.btsi.bragi.ros.server.database.tables.Product.PRODUCT;
 
     /**
-     * The table <code>ros.ProductAllergen</code>.
+     * The table <code>ros.Product_Allergen</code>.
      */
-    public static final Productallergen PRODUCTALLERGEN = lu.btsi.bragi.ros.server.database.tables.Productallergen.PRODUCTALLERGEN;
+    public static final ProductAllergen PRODUCT_ALLERGEN = lu.btsi.bragi.ros.server.database.tables.ProductAllergen.PRODUCT_ALLERGEN;
 
     /**
-     * The table <code>ros.ProductLocalized</code>.
+     * The table <code>ros.Product_Category</code>.
      */
-    public static final Productlocalized PRODUCTLOCALIZED = lu.btsi.bragi.ros.server.database.tables.Productlocalized.PRODUCTLOCALIZED;
+    public static final ProductCategory PRODUCT_CATEGORY = lu.btsi.bragi.ros.server.database.tables.ProductCategory.PRODUCT_CATEGORY;
 
     /**
-     * The table <code>ros.ProductPriceForOrder</code>.
+     * The table <code>ros.Product_Category_Localized</code>.
      */
-    public static final Productpricefororder PRODUCTPRICEFORORDER = lu.btsi.bragi.ros.server.database.tables.Productpricefororder.PRODUCTPRICEFORORDER;
+    public static final ProductCategoryLocalized PRODUCT_CATEGORY_LOCALIZED = lu.btsi.bragi.ros.server.database.tables.ProductCategoryLocalized.PRODUCT_CATEGORY_LOCALIZED;
+
+    /**
+     * The table <code>ros.Product_Localized</code>.
+     */
+    public static final ProductLocalized PRODUCT_LOCALIZED = lu.btsi.bragi.ros.server.database.tables.ProductLocalized.PRODUCT_LOCALIZED;
+
+    /**
+     * The table <code>ros.Product_Price_For_Order</code>.
+     */
+    public static final ProductPriceForOrder PRODUCT_PRICE_FOR_ORDER = lu.btsi.bragi.ros.server.database.tables.ProductPriceForOrder.PRODUCT_PRICE_FOR_ORDER;
 
     /**
      * The table <code>ros.Table</code>.

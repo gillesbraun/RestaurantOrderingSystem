@@ -4,6 +4,7 @@
 package lu.btsi.bragi.ros.server.database.tables;
 
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
@@ -15,6 +16,7 @@ import lu.btsi.bragi.ros.server.database.Ros;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductRecord;
 
 import org.jooq.Field;
+import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.Schema;
 import org.jooq.Table;
@@ -37,7 +39,7 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Product extends TableImpl<ProductRecord> {
 
-    private static final long serialVersionUID = -466727314;
+    private static final long serialVersionUID = -578785048;
 
     /**
      * The reference instance of <code>ros.Product</code>
@@ -60,7 +62,12 @@ public class Product extends TableImpl<ProductRecord> {
     /**
      * The column <code>ros.Product.price</code>.
      */
-    public final TableField<ProductRecord, Double> PRICE = createField("price", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
+    public final TableField<ProductRecord, BigDecimal> PRICE = createField("price", org.jooq.impl.SQLDataType.DECIMAL.precision(10, 2).nullable(false), this, "");
+
+    /**
+     * The column <code>ros.Product.product_category_id</code>.
+     */
+    public final TableField<ProductRecord, UInteger> PRODUCT_CATEGORY_ID = createField("product_category_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
     /**
      * The column <code>ros.Product.created_at</code>.
@@ -124,6 +131,14 @@ public class Product extends TableImpl<ProductRecord> {
     @Override
     public List<UniqueKey<ProductRecord>> getKeys() {
         return Arrays.<UniqueKey<ProductRecord>>asList(Keys.KEY_PRODUCT_PRIMARY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ForeignKey<ProductRecord, ?>> getReferences() {
+        return Arrays.<ForeignKey<ProductRecord, ?>>asList(Keys.FK_PRODUCT_PRODUCTCATEGORY);
     }
 
     /**

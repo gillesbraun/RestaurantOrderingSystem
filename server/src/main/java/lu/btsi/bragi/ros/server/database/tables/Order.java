@@ -38,7 +38,7 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Order extends TableImpl<OrderRecord> {
 
-    private static final long serialVersionUID = -2092365954;
+    private static final long serialVersionUID = -220850985;
 
     /**
      * The reference instance of <code>ros.Order</code>
@@ -57,6 +57,11 @@ public class Order extends TableImpl<OrderRecord> {
      * The column <code>ros.Order.id</code>.
      */
     public final TableField<OrderRecord, UInteger> ID = createField("id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+
+    /**
+     * The column <code>ros.Order.delivered</code>.
+     */
+    public final TableField<OrderRecord, Byte> DELIVERED = createField("delivered", org.jooq.impl.SQLDataType.TINYINT.nullable(false).defaultValue(org.jooq.impl.DSL.inline("0", org.jooq.impl.SQLDataType.TINYINT)), this, "");
 
     /**
      * The column <code>ros.Order.table_id</code>.

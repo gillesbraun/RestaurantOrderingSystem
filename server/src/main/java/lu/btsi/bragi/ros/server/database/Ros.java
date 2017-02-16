@@ -11,14 +11,16 @@ import java.util.List;
 import javax.annotation.Generated;
 
 import lu.btsi.bragi.ros.server.database.tables.Allergen;
-import lu.btsi.bragi.ros.server.database.tables.Allergenlocalized;
+import lu.btsi.bragi.ros.server.database.tables.AllergenLocalized;
 import lu.btsi.bragi.ros.server.database.tables.Invoice;
 import lu.btsi.bragi.ros.server.database.tables.Language;
 import lu.btsi.bragi.ros.server.database.tables.Order;
 import lu.btsi.bragi.ros.server.database.tables.Product;
-import lu.btsi.bragi.ros.server.database.tables.Productallergen;
-import lu.btsi.bragi.ros.server.database.tables.Productlocalized;
-import lu.btsi.bragi.ros.server.database.tables.Productpricefororder;
+import lu.btsi.bragi.ros.server.database.tables.ProductAllergen;
+import lu.btsi.bragi.ros.server.database.tables.ProductCategory;
+import lu.btsi.bragi.ros.server.database.tables.ProductCategoryLocalized;
+import lu.btsi.bragi.ros.server.database.tables.ProductLocalized;
+import lu.btsi.bragi.ros.server.database.tables.ProductPriceForOrder;
 import lu.btsi.bragi.ros.server.database.tables.Table;
 import lu.btsi.bragi.ros.server.database.tables.Waiter;
 
@@ -39,7 +41,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Ros extends SchemaImpl {
 
-    private static final long serialVersionUID = 148735419;
+    private static final long serialVersionUID = -1734618423;
 
     /**
      * The reference instance of <code>ros</code>
@@ -52,9 +54,9 @@ public class Ros extends SchemaImpl {
     public final Allergen ALLERGEN = lu.btsi.bragi.ros.server.database.tables.Allergen.ALLERGEN;
 
     /**
-     * The table <code>ros.AllergenLocalized</code>.
+     * The table <code>ros.Allergen_Localized</code>.
      */
-    public final Allergenlocalized ALLERGENLOCALIZED = lu.btsi.bragi.ros.server.database.tables.Allergenlocalized.ALLERGENLOCALIZED;
+    public final AllergenLocalized ALLERGEN_LOCALIZED = lu.btsi.bragi.ros.server.database.tables.AllergenLocalized.ALLERGEN_LOCALIZED;
 
     /**
      * The table <code>ros.Invoice</code>.
@@ -77,19 +79,29 @@ public class Ros extends SchemaImpl {
     public final Product PRODUCT = lu.btsi.bragi.ros.server.database.tables.Product.PRODUCT;
 
     /**
-     * The table <code>ros.ProductAllergen</code>.
+     * The table <code>ros.Product_Allergen</code>.
      */
-    public final Productallergen PRODUCTALLERGEN = lu.btsi.bragi.ros.server.database.tables.Productallergen.PRODUCTALLERGEN;
+    public final ProductAllergen PRODUCT_ALLERGEN = lu.btsi.bragi.ros.server.database.tables.ProductAllergen.PRODUCT_ALLERGEN;
 
     /**
-     * The table <code>ros.ProductLocalized</code>.
+     * The table <code>ros.Product_Category</code>.
      */
-    public final Productlocalized PRODUCTLOCALIZED = lu.btsi.bragi.ros.server.database.tables.Productlocalized.PRODUCTLOCALIZED;
+    public final ProductCategory PRODUCT_CATEGORY = lu.btsi.bragi.ros.server.database.tables.ProductCategory.PRODUCT_CATEGORY;
 
     /**
-     * The table <code>ros.ProductPriceForOrder</code>.
+     * The table <code>ros.Product_Category_Localized</code>.
      */
-    public final Productpricefororder PRODUCTPRICEFORORDER = lu.btsi.bragi.ros.server.database.tables.Productpricefororder.PRODUCTPRICEFORORDER;
+    public final ProductCategoryLocalized PRODUCT_CATEGORY_LOCALIZED = lu.btsi.bragi.ros.server.database.tables.ProductCategoryLocalized.PRODUCT_CATEGORY_LOCALIZED;
+
+    /**
+     * The table <code>ros.Product_Localized</code>.
+     */
+    public final ProductLocalized PRODUCT_LOCALIZED = lu.btsi.bragi.ros.server.database.tables.ProductLocalized.PRODUCT_LOCALIZED;
+
+    /**
+     * The table <code>ros.Product_Price_For_Order</code>.
+     */
+    public final ProductPriceForOrder PRODUCT_PRICE_FOR_ORDER = lu.btsi.bragi.ros.server.database.tables.ProductPriceForOrder.PRODUCT_PRICE_FOR_ORDER;
 
     /**
      * The table <code>ros.Table</code>.
@@ -127,14 +139,16 @@ public class Ros extends SchemaImpl {
     private final List<org.jooq.Table<?>> getTables0() {
         return Arrays.<org.jooq.Table<?>>asList(
             Allergen.ALLERGEN,
-            Allergenlocalized.ALLERGENLOCALIZED,
+            AllergenLocalized.ALLERGEN_LOCALIZED,
             Invoice.INVOICE,
             Language.LANGUAGE,
             Order.ORDER,
             Product.PRODUCT,
-            Productallergen.PRODUCTALLERGEN,
-            Productlocalized.PRODUCTLOCALIZED,
-            Productpricefororder.PRODUCTPRICEFORORDER,
+            ProductAllergen.PRODUCT_ALLERGEN,
+            ProductCategory.PRODUCT_CATEGORY,
+            ProductCategoryLocalized.PRODUCT_CATEGORY_LOCALIZED,
+            ProductLocalized.PRODUCT_LOCALIZED,
+            ProductPriceForOrder.PRODUCT_PRICE_FOR_ORDER,
             Table.TABLE,
             Waiter.WAITER);
     }

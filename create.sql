@@ -21,6 +21,7 @@ CREATE Table IF NOT EXISTS Invoice(
 
 CREATE Table IF NOT EXISTS `Order`(
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  delivered TINYINT NOT NULL DEFAULT 0,
   table_id INT UNSIGNED NOT NULL,
   waiter_id INT UNSIGNED NOT NULL,
   invoice_id INT UNSIGNED,
@@ -53,14 +54,45 @@ CREATE Table IF NOT EXISTS Language(
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE Table IF NOT EXISTS Product(
-  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-  price DOUBLE NOT NULL,
-  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS Product_Category (
+  id INT UNSIGNED PRIMARY KEY,
+  image_url VARCHAR(500)
 );
 
-CREATE Table IF NOT EXISTS ProductLocalized(
+CREATE TABLE IF NOT EXISTS Product_Category_Localized (
+  product_category_id INT UNSIGNED,
+  language_code CHAR(2),
+  label VARCHAR(255) NOT NULL,
+  PRIMARY KEY (product_category_id, language_code),
+
+  CONSTRAINT fk_ProductCategoryLocalized_Language
+  FOREIGN KEY (language_code)
+  REFERENCES Language (code)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE,
+
+  CONSTRAINT fk_ProductCategoryLocalized_ProductCategory
+  FOREIGN KEY (product_category_id)
+  REFERENCES Product_Category (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE Table IF NOT EXISTS Product(
+  id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  price DECIMAL(10,2) NOT NULL,
+  product_category_id INT UNSIGNED NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+  CONSTRAINT fk_Product_ProductCategory
+  FOREIGN KEY (product_category_id)
+  REFERENCES Product_Category (id)
+    ON UPDATE CASCADE
+    ON DELETE CASCADE
+);
+
+CREATE Table IF NOT EXISTS Product_Localized (
   product_id INT UNSIGNED,
   language_code CHAR(2),
   label VARCHAR(255) NOT NULL,
@@ -87,7 +119,7 @@ CREATE Table IF NOT EXISTS Allergen(
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE Table IF NOT EXISTS AllergenLocalized(
+CREATE Table IF NOT EXISTS Allergen_Localized (
   allergen_id INT UNSIGNED,
   language_code CHAR(2),
   PRIMARY KEY (allergen_id, language_code),
@@ -105,7 +137,7 @@ CREATE Table IF NOT EXISTS AllergenLocalized(
     ON DELETE CASCADE
 );
 
-CREATE Table IF NOT EXISTS ProductPriceForOrder(
+CREATE Table IF NOT EXISTS Product_Price_For_Order (
   product_id INT UNSIGNED,
   order_id INT UNSIGNED,
   price DOUBLE NOT NULL,
@@ -126,7 +158,7 @@ CREATE Table IF NOT EXISTS ProductPriceForOrder(
     ON DELETE CASCADE
 );
 
-CREATE Table IF NOT EXISTS ProductAllergen(
+CREATE Table IF NOT EXISTS Product_Allergen(
   allergen_id INT UNSIGNED,
   product_id INT UNSIGNED,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
