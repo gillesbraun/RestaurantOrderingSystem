@@ -2,11 +2,10 @@ package lu.btsi.bragi.ros.server;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
-import org.jooq.Configuration;
+import com.google.inject.Singleton;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
-import org.jooq.impl.DefaultConfiguration;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -17,9 +16,9 @@ import java.sql.DriverManager;
 public class DatabaseModule extends AbstractModule {
     @Override
     protected void configure() {
-
     }
 
+    @Singleton
     @Provides
     public DSLContext getConnection() {
         String userName = "root";

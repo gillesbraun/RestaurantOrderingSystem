@@ -2,6 +2,7 @@ package lu.btsi.bragi.ros.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import lu.btsi.bragi.ros.server.controller.TableController;
 
 /**
  * Created by gillesbraun on 14/02/2017.

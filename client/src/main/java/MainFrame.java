@@ -11,6 +11,9 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import lu.btsi.bragi.ros.models.Table;
+import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageType;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 
 import java.net.URI;
@@ -23,7 +26,7 @@ public class MainFrame extends Application implements Callback {
     private Client client;
     private boolean connectionOpen = false;
 
-    private TextField inputText = new TextField();
+    private TextField inputText = new TextField(new Message(MessageType.Get, Table.class).toString());
     private TextArea textArea = new TextArea("");
 
     private EventHandler<ActionEvent> submitPressed = event -> {
