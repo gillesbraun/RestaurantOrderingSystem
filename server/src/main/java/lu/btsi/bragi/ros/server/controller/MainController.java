@@ -2,7 +2,6 @@ package lu.btsi.bragi.ros.server.controller;
 
 import com.google.inject.Inject;
 import lu.btsi.bragi.ros.models.message.Message;
-import org.java_websocket.WebSocket;
 
 import java.util.Optional;
 
@@ -12,6 +11,9 @@ import java.util.Optional;
 public class MainController {
     @Inject
     TableController tableController;
+
+    @Inject
+    WaiterController waiterController;
 
     public Optional<Message> sendToRightController(Message message) {
         return Controller.sendToController(message);

@@ -2,18 +2,15 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageType;
-import lu.btsi.bragi.ros.models.pojos.Table;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 
 import javax.jmdns.JmDNS;
@@ -23,25 +20,18 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.UnknownHostException;
-import java.util.Arrays;
 
 /**
  * Created by gillesbraun on 14/02/2017.
  */
 public class MainFrame extends Application implements Callback {
     private Client client;
-    private boolean connectionOpen = false;
 
-    private TextField inputText = new TextField(new Message(MessageType.Get, Table.class).toString());
-    private TextArea textArea = new TextArea("");
+    @FXML
+    private TextArea statusTextArea;
 
-    private EventHandler<ActionEvent> submitPressed = event -> {
-        String input = inputText.getText();
-        inputText.setText("");
-        inputText.requestFocus();
-        send(input);
-    };
+    @FXML
+    private VBox ordersPane, invoicesPane;
 
     private EventHandler<WindowEvent> onClose = event -> {
         if(client != null) {
@@ -49,6 +39,7 @@ public class MainFrame extends Application implements Callback {
         }
         System.exit(0);
     };
+
     private ServiceListener mdnsListener = new ServiceListener() {
         @Override
         public void serviceAdded(ServiceEvent event) {
@@ -56,12 +47,12 @@ public class MainFrame extends Application implements Callback {
                 client = null;
                 try {
                     client = new Client(new URI("ws://" + event.getDNS().getName() + ":8887"));
-                    client.setCallback(MainFrame.this);
+                    client.setMainCallback(MainFrame.this);
                     client.connect();
                 } catch (URISyntaxException e) {
                 }
             } else {
-                textArea.appendText("Found other webservice ("+event.getInfo().getSubtype()+"), ignoring");
+                statusTextArea.appendText("Found other webservice ("+event.getInfo().getSubtype()+"), ignoring");
             }
         }
 
@@ -80,7 +71,7 @@ public class MainFrame extends Application implements Callback {
         try {
             JmDNS jmDNS = JmDNS.create(InetAddress.getLocalHost());
             jmDNS.addServiceListener("_ws._tcp.local.", mdnsListener);
-            textArea.appendText("Looking for ROS Server...\n");
+            statusTextArea.appendText("Looking for ROS Server...\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -98,23 +89,13 @@ public class MainFrame extends Application implements Callback {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        BorderPane root = new BorderPane();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainFrame.fxml"));
+        loader.setController(this);
+        Parent root = loader.load();
 
-        VBox vbox = new VBox();
-            inputText.setFont(Font.font("Courier New"));
-            Button submitInput = new Button();
-            submitInput.setText("Send message to server");
-            textArea.setFont(Font.font("Courier New"));
-            textArea.setPrefRowCount(10);
-
-        submitInput.setOnAction(submitPressed);
-        inputText.setOnAction(submitPressed);
-
-        vbox.getChildren().addAll(inputText, submitInput, textArea);
-        root.setCenter(vbox);
         primaryStage.setOnCloseRequest(onClose);
         primaryStage.setTitle("ROS Client");
-        primaryStage.setScene(new Scene(root, 500, 300));
+        primaryStage.setScene(new Scene(root, 800, 500));
         primaryStage.show();
 
         newClient();
@@ -128,14 +109,14 @@ public class MainFrame extends Application implements Callback {
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        textArea.appendText(message + "\n");
+        statusTextArea.appendText(message + "\n");
     }
 
     @Override
     public void connectionClosed(String message) {
 
         Platform.runLater(() -> {
-            textArea.appendText(message+" Retrying in 2 seconds...\n");
+            statusTextArea.appendText(message+" Retrying in 2 seconds...\n");
             new Thread(new javafx.concurrent.Task<Void>() {
                 @Override
                 protected Void call() throws Exception {
@@ -160,7 +141,23 @@ public class MainFrame extends Application implements Callback {
     @Override
     public void connectionOpened(String message) {
         Platform.runLater(() -> {
-            textArea.appendText(message + "\n");
+            statusTextArea.appendText(message + "\n");
         });
+    }
+
+    public void menuItemQuitPressed(ActionEvent actionEvent) {
+        if(client != null) {
+            client.close();
+        }
+        System.exit(0);
+    }
+
+    public void menuItemWaitersPressed(ActionEvent actionEvent) {
+        try {
+            WaitersFrame wf = new WaitersFrame(client);
+            wf.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

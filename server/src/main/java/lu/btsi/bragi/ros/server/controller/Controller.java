@@ -1,15 +1,21 @@
 package lu.btsi.bragi.ros.server.controller;
 
+import com.google.inject.Inject;
 import lu.btsi.bragi.ros.models.message.Message;
+import org.jooq.DSLContext;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by gillesbraun on 15/02/2017.
  */
 public abstract class Controller<T> {
+
+    @Inject
+    protected DSLContext context;
 
     private static Map<Class, Controller> registeredControllers = new HashMap<>();
 
@@ -23,7 +29,8 @@ public abstract class Controller<T> {
         if(controller != null) {
             return controller.handle(message);
         }
-        throw new ControllerNotFoundException("No Controller found for class "+clazz);
+        String controllers = registeredControllers.keySet().stream().map(Class::getName).collect(Collectors.joining(", "));
+        throw new ControllerNotFoundException("No Controller found for class "+clazz +". Available controllers: "+ controllers);
     }
 
     protected abstract Message handleGet();
