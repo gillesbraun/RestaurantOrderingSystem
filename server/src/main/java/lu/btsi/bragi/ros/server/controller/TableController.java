@@ -1,11 +1,9 @@
 package lu.btsi.bragi.ros.server.controller;
 
-import com.google.inject.Inject;
-import lu.btsi.bragi.ros.models.pojos.Table;
 import lu.btsi.bragi.ros.models.message.Answer;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.pojos.Table;
 import lu.btsi.bragi.ros.server.database.tables.records.TableRecord;
-import org.jooq.DSLContext;
 import org.jooq.UpdatableRecord;
 
 import java.util.List;
@@ -15,8 +13,6 @@ import java.util.List;
  * Created by gillesbraun on 15/02/2017.
  */
 public class TableController extends Controller<lu.btsi.bragi.ros.models.pojos.Table> {
-    @Inject
-    DSLContext context;
 
     private static Class mapTo = lu.btsi.bragi.ros.models.pojos.Table.class;
 
