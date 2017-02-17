@@ -29,6 +29,28 @@ public class Message {
     }
 
     public static Message fromString(String str) throws MessageMalformedException, ClassNotFoundException {
+        isMessageValid(str);
+        String[] split = str.split(SEPARATOR);
+        Class clazz = Class.forName(split[1]);
+        MessageType messageType = MessageType.get(split[0]);
+        if(split.length == 2) {
+            return new Message(messageType, clazz);
+        } else {
+            if(split[2].charAt(0) == '[') {
+                Class<?> arrayClass = Array.newInstance(clazz, 0).getClass();
+                Object cast = arrayClass.cast(new Gson().fromJson(split[2], arrayClass));
+                Object[] cast1 = (Object[]) cast;
+                return new Message(messageType, Arrays.asList(cast1));
+            } else if(split[2].charAt(0) == '{') {
+                Object cast = clazz.cast(new Gson().fromJson(split[2], clazz));
+                return new Message(messageType, cast);
+            } else {
+                throw new MessageMalformedException("Payload needs to start either with [ or {");
+            }
+        }
+    }
+
+    private static void isMessageValid(String str) throws MessageMalformedException {
         String[] split = str.split(SEPARATOR);
         if(split.length != 2 && split.length != 3) {
             throw new MessageMalformedException("Message must consist of 2 or 3 parts. Action"+SEPARATOR+"Class["+SEPARATOR+"Json]");
@@ -38,6 +60,12 @@ public class Message {
         if(messageType == null) {
             throw new MessageMalformedException("Message Type '"+split[0]+"' does not exist.");
         }
+    }
+
+    public static <T> Message fromString(String str, T returnType) throws MessageMalformedException, ClassNotFoundException {
+        isMessageValid(str);
+        String[] split = str.split(SEPARATOR);
+        MessageType messageType = MessageType.get(split[0]);
         Class clazz = Class.forName(split[1]);
         if(split.length == 2) {
             return new Message(messageType, clazz);
@@ -45,12 +73,10 @@ public class Message {
             if(split[2].charAt(0) == '[') {
                 Class<?> arrayClass = Array.newInstance(clazz, 0).getClass();
                 Object cast = arrayClass.cast(new Gson().fromJson(split[2], arrayClass));
-                return new Message(messageType, Arrays.asList(cast));
-            } else if(split[2].charAt(0) == '{') {
-                Object cast = clazz.cast(new Gson().fromJson(split[2], clazz));
-                return new Message(messageType, cast);
+                T[] cast1 = (T[]) cast;
+                return new Message(messageType, Arrays.asList(cast1));
             } else {
-                throw new MessageMalformedException("Payload needs to start either with [ or {");
+                throw new MessageMalformedException("");
             }
         }
     }

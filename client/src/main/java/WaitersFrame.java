@@ -1,6 +1,4 @@
-import javafx.application.Application;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,7 +12,6 @@ import lu.btsi.bragi.ros.models.pojos.Waiter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,9 +43,11 @@ public class WaitersFrame extends Stage {
 
     private void loadWaiters() {
         client.sendWithAction(new Message(MessageType.Get, Waiter.class), m -> {
-            //List<Waiter> waiters = new ArrayList<Waiter>((List<Waiter>)m.getObject());
-            //List<String> waiterNames = waiters.stream().map(Waiter::getName).collect(Collectors.toList());
-            //listWaiters.setItems(FXCollections.observableList(waiterNames));
+            System.out.println("class: " + m.getClazz());
+            ArrayList<Waiter> waiters = new ArrayList<>((List<Waiter>) m.getObject());
+
+            List<String> waiterNames = waiters.stream().map(Waiter::getName).collect(Collectors.toList());
+            listWaiters.setItems(FXCollections.observableList(waiterNames));
         });
     }
 
