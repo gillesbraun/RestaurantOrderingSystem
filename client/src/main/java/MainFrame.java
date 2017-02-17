@@ -11,13 +11,20 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import lu.btsi.bragi.ros.models.pojo.Table;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageType;
+import lu.btsi.bragi.ros.models.pojos.Table;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 
+import javax.jmdns.JmDNS;
+import javax.jmdns.ServiceEvent;
+import javax.jmdns.ServiceListener;
+import java.io.IOException;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 
 /**
  * Created by gillesbraun on 14/02/2017.
@@ -42,10 +49,48 @@ public class MainFrame extends Application implements Callback {
         }
         System.exit(0);
     };
+    private ServiceListener mdnsListener = new ServiceListener() {
+        @Override
+        public void serviceAdded(ServiceEvent event) {
+            if(event.getInfo().getSubtype().equals("roswebsocket")){
+                client = null;
+                try {
+                    client = new Client(new URI("ws://" + event.getDNS().getName() + ":8887"));
+                    client.setCallback(MainFrame.this);
+                    client.connect();
+                } catch (URISyntaxException e) {
+                }
+            } else {
+                textArea.appendText("Found other webservice ("+event.getInfo().getSubtype()+"), ignoring");
+            }
+        }
+
+        @Override
+        public void serviceRemoved(ServiceEvent event) {
+            System.out.println("Service removed: " + event.getInfo());
+        }
+
+        @Override
+        public void serviceResolved(ServiceEvent event) {
+            System.out.println("Resolved: "+ event.getInfo() );
+        }
+    };
+
+    private void newClient() {
+        try {
+            JmDNS jmDNS = JmDNS.create(InetAddress.getLocalHost());
+            jmDNS.addServiceListener("_ws._tcp.local.", mdnsListener);
+            textArea.appendText("Looking for ROS Server...\n");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     private void send(String input) {
         try {
-            client.send(input);
+            if(client != null) {
+                client.send(input);
+            }
         } catch (WebsocketNotConnectedException ex) {
             connectionClosed("Server ded");
         }
@@ -117,16 +162,5 @@ public class MainFrame extends Application implements Callback {
         Platform.runLater(() -> {
             textArea.appendText(message + "\n");
         });
-    }
-
-    private void newClient() {
-        this.client = null;
-        Client client = null;
-        try {
-            client = new Client(new URI("ws://ws222-2.local:8887"));
-            client.setCallback(this);
-            client.connect();
-            this.client = client;
-        } catch (URISyntaxException e) { }
     }
 }

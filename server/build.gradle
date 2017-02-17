@@ -19,5 +19,6 @@ dependencies {
     compile group: 'mysql', name: 'mysql-connector-java', version: '6.0.5'
     compile group: 'com.google.inject', name: 'guice', version: '4.1.0'
     compile 'com.google.code.gson:gson:2.8.0'
+    compile group: 'javax.jmdns', name: 'jmdns', version: '3.4.1'
     compile project(':models')
 }
