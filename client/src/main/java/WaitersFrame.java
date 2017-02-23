@@ -7,13 +7,11 @@ import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageType;
+import lu.btsi.bragi.ros.models.message.MessageGet;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by gillesbraun on 17/02/2017.
@@ -42,11 +40,10 @@ public class WaitersFrame extends Stage {
     }
 
     private void loadWaiters() {
-        client.sendWithAction(new Message<>(MessageType.Get, Waiter.class), (String m) -> {
+        client.sendWithAction(new MessageGet<>(Waiter.class), (String m) -> {
             Message<Waiter> mess = new Message<>(m, Waiter.class);
             List<Waiter> waiters = mess.getPayload();
 
-            //List<String> waiterNames = waiters.stream().map(Waiter::getName).collect(Collectors.toList());
             listWaiters.setItems(
                     FXCollections.observableList(waiters)
             );
