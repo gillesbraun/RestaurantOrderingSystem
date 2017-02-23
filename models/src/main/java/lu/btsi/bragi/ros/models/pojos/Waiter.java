@@ -87,14 +87,6 @@ public class Waiter implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Waiter (");
-
-        sb.append(id);
-        sb.append(", ").append(name);
-        sb.append(", ").append(createdAt);
-        sb.append(", ").append(updatedAt);
-
-        sb.append(")");
-        return sb.toString();
+        return getId() + ": " + getName();
     }
 }
