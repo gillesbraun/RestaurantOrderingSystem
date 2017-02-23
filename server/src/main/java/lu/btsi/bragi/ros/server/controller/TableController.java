@@ -1,7 +1,7 @@
 package lu.btsi.bragi.ros.server.controller;
 
-import lu.btsi.bragi.ros.models.message.Answer;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Table;
 import lu.btsi.bragi.ros.server.database.tables.records.TableRecord;
 import org.jooq.UpdatableRecord;
@@ -24,8 +24,8 @@ public class TableController extends Controller<lu.btsi.bragi.ros.models.pojos.T
 
     @Override
     protected Message handleGet() {
-        List list = context.fetch(dbTable).into(mapTo);
-        return new Answer(list, mapTo);
+        List<Table> list = context.fetch(dbTable).into(mapTo);
+        return new Message(MessageType.Answer, list, mapTo);
     }
 
     @Override

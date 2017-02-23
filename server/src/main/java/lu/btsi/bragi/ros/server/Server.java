@@ -11,6 +11,7 @@ import org.jooq.DSLContext;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -41,16 +42,14 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        System.out.println(message);
+        System.out.println("incoming: "+message);
         try {
-            Message in = Message.fromString(message);
-            Optional<Message> answer = mainController.sendToRightController(in);
+            Optional<Message> answer = mainController.sendToRightController(message);
             if(answer.isPresent()) {
                 conn.send(answer.get().toString());
             }
-        } catch (Exception e) {
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            conn.send("Message could not be decoded: "+ e.getClass().getSimpleName() +" " + e.getMessage());
         }
     }
 

@@ -42,9 +42,9 @@ public class WaitersFrame extends Stage {
     }
 
     private void loadWaiters() {
-        client.sendWithAction(new Message(MessageType.Get, Waiter.class), m -> {
-            System.out.println("class: " + m.getClazz());
-            ArrayList<Waiter> waiters = new ArrayList<>((List<Waiter>) m.getObject());
+        client.sendWithAction(new Message<>(MessageType.Get, Waiter.class), (String m) -> {
+            Message<Waiter> mess = new Message<>(m, Waiter.class);
+            List<Waiter> waiters = mess.getPayload();
 
             List<String> waiterNames = waiters.stream().map(Waiter::getName).collect(Collectors.toList());
             listWaiters.setItems(FXCollections.observableList(waiterNames));

@@ -2,6 +2,9 @@ package lu.btsi.bragi.ros.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageType;
+import lu.btsi.bragi.ros.models.pojos.Table;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;

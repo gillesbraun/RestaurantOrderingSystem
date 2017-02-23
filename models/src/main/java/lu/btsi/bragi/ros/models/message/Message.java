@@ -1,53 +1,54 @@
 package lu.btsi.bragi.ros.models.message;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
-import java.lang.reflect.Array;
-import java.util.Arrays;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gillesbraun on 15/02/2017.
  */
-public class Message {
+public class Message<T> {
     private final MessageType action;
-    private final Object object;
     private final Class clazz;
+    private final List<T> payload;
 
     public static final String SEPARATOR = ";;";
 
-
-    public Message(MessageType action, Object object) {
-        this.action = action;
-        this.object = object;
-        this.clazz = object.getClass();
-    }
-
-    public Message(MessageType action, Class clazz) {
-        this.action = action;
+    public Message(String encodedMessage, Class clazz) {
+        System.out.println(encodedMessage);
+        isMessageValid(encodedMessage);
+        String[] split = encodedMessage.split(SEPARATOR);
+        this.action = MessageType.get(split[0]);
         this.clazz = clazz;
-        this.object = null;
+        if(split.length == 3) {
+            Gson gson = new Gson();
+            Type listWithType = ParameterizedTypeImpl.make(List.class, new Type[]{clazz}, null);
+            this.payload = gson.fromJson(split[2], listWithType);
+        } else {
+            this.payload = null;
+        }
     }
 
-    public static Message fromString(String str) throws MessageMalformedException, ClassNotFoundException {
-        isMessageValid(str);
-        String[] split = str.split(SEPARATOR);
-        Class clazz = Class.forName(split[1]);
-        MessageType messageType = MessageType.get(split[0]);
-        if(split.length == 2) {
-            return new Message(messageType, clazz);
-        } else {
-            if(split[2].charAt(0) == '[') {
-                Class<?> arrayClass = Array.newInstance(clazz, 0).getClass();
-                Object cast = arrayClass.cast(new Gson().fromJson(split[2], arrayClass));
-                Object[] cast1 = (Object[]) cast;
-                return new Message(messageType, Arrays.asList(cast1));
-            } else if(split[2].charAt(0) == '{') {
-                Object cast = clazz.cast(new Gson().fromJson(split[2], clazz));
-                return new Message(messageType, cast);
-            } else {
-                throw new MessageMalformedException("Payload needs to start either with [ or {");
-            }
-        }
+    public Message(MessageType action, List<T> content, Class<T> clazz) {
+        this.action = action;
+        this.payload = content;
+        this.clazz = clazz;
+    }
+
+    public Message(MessageType action, Class<T> clazz) {
+        this.action = action;
+        this.payload = null;
+        this.clazz = clazz;
+    }
+
+    public static Class messageClass(String encoded) throws ClassNotFoundException {
+        isMessageValid(encoded);
+        String[] split = encoded.split(SEPARATOR);
+        return Class.forName(split[1]);
     }
 
     private static void isMessageValid(String str) throws MessageMalformedException {
@@ -62,30 +63,11 @@ public class Message {
         }
     }
 
-    public static <T> Message fromString(String str, T returnType) throws MessageMalformedException, ClassNotFoundException {
-        isMessageValid(str);
-        String[] split = str.split(SEPARATOR);
-        MessageType messageType = MessageType.get(split[0]);
-        Class clazz = Class.forName(split[1]);
-        if(split.length == 2) {
-            return new Message(messageType, clazz);
-        } else {
-            if(split[2].charAt(0) == '[') {
-                Class<?> arrayClass = Array.newInstance(clazz, 0).getClass();
-                Object cast = arrayClass.cast(new Gson().fromJson(split[2], arrayClass));
-                T[] cast1 = (T[]) cast;
-                return new Message(messageType, Arrays.asList(cast1));
-            } else {
-                throw new MessageMalformedException("");
-            }
-        }
-    }
-
     @Override
     public String toString() {
-        if(object != null) {
-            String json = new Gson().toJson(object);
-            return action.getName() + SEPARATOR + object.getClass().getCanonicalName() + SEPARATOR + json;
+        if(payload != null) {
+            String json = new Gson().toJson(payload);
+            return action.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + json;
         } else {
             return action.getName() + SEPARATOR + clazz.getCanonicalName();
         }
@@ -95,8 +77,8 @@ public class Message {
         return action;
     }
 
-    public Object getObject() {
-        return object;
+    public List<T> getPayload() {
+        return payload;
     }
 
     public Class getClazz() {

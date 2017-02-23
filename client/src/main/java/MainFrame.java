@@ -103,12 +103,13 @@ public class MainFrame extends Application implements Callback {
 
     @Override
     public void handleCallback(String message) {
-        try {
+        System.out.println(message);
+        /*try {
             Message decoded = Message.fromString(message);
             System.out.println(decoded);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        }
+        }*/
         statusTextArea.appendText(message + "\n");
     }
 

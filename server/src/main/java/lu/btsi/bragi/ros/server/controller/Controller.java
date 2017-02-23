@@ -2,9 +2,11 @@ package lu.btsi.bragi.ros.server.controller;
 
 import com.google.inject.Inject;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageType;
 import org.jooq.DSLContext;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,11 +25,12 @@ public abstract class Controller<T> {
         registeredControllers.put(type, this);
     }
 
-    protected static Optional<Message> sendToController(Message message) throws ControllerNotFoundException {
-        Class clazz = message.getClazz();
+    protected static Optional<Message> sendToController(String message) throws ControllerNotFoundException, ClassNotFoundException {
+        System.out.println("choosing controller");
+        Class clazz = Message.messageClass(message);
         Controller controller = registeredControllers.get(clazz);
         if(controller != null) {
-            return controller.handle(message);
+            return controller.handle(message, clazz);
         }
         String controllers = registeredControllers.keySet().stream().map(Class::getName).collect(Collectors.joining(", "));
         throw new ControllerNotFoundException("No Controller found for class "+clazz +". Available controllers: "+ controllers);
@@ -41,11 +44,16 @@ public abstract class Controller<T> {
 
     protected abstract void handleDelete(T obj);
 
-    public Optional<Message> handle(Message message) {
-        T obj = (T)message.getObject();
+    public Optional<Message> handle(String text, Class clazz) {
+        Message<T> message = new Message<T>(text, clazz);
+        List<T> payload = message.getPayload();
+        if(message.getAction().equals(MessageType.Get)) {
+            return Optional.of(handleGet());
+        }
+        T obj = payload.get(0);
         switch (message.getAction()) {
             case Get:
-                return Optional.of(handleGet());
+                break;
             case Update:
                 handleUpdate(obj);
                 break;

@@ -1,4 +1,6 @@
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageType;
+import lu.btsi.bragi.ros.models.pojos.Table;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -35,13 +37,9 @@ public class Client extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         System.out.println("incoming message: "+message);
-
         if(latestCallback != null) {
-            try {
-                    Message decoded = Message.fromString(message);
-                    latestCallback.handleAnswer(decoded);
-                    latestCallback = null;
-            } catch (ClassNotFoundException e) {}
+            latestCallback.handleAnswer(message);
+            latestCallback = null;
         } else if(mainCallback != null){
             mainCallback.handleCallback(message);
         }

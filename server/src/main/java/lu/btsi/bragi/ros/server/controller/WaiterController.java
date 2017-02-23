@@ -1,10 +1,8 @@
 package lu.btsi.bragi.ros.server.controller;
 
-import com.google.inject.Inject;
-import lu.btsi.bragi.ros.models.message.Answer;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
-import org.jooq.DSLContext;
 
 import java.util.List;
 
@@ -24,8 +22,8 @@ public class WaiterController extends Controller<Waiter> {
 
     @Override
     protected Message handleGet() {
-        List into = context.fetch(dbTable).into(mapTo);
-        return new Answer(into, mapTo);
+        List<Waiter> into = context.fetch(dbTable).into(mapTo);
+        return new Message<Waiter>(MessageType.Answer, into, mapTo);
     }
 
     @Override
