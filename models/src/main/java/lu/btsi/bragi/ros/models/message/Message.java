@@ -1,11 +1,7 @@
 package lu.btsi.bragi.ros.models.message;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,8 +12,9 @@ public class Message<T> {
     private final Class clazz;
     private final List<T> payload;
 
-    public static final String SEPARATOR = ";;";
+    private static final String SEPARATOR = ";;";
 
+    @SuppressWarnings("unchecked")
     public Message(String encodedMessage, Class clazz) {
         System.out.println(encodedMessage);
         isMessageValid(encodedMessage);
@@ -26,7 +23,7 @@ public class Message<T> {
         this.clazz = clazz;
         if(split.length == 3) {
             Gson gson = new Gson();
-            Type listWithType = ParameterizedTypeImpl.make(List.class, new Type[]{clazz}, null);
+            ListOfType listWithType = new ListOfType<>(clazz);
             this.payload = gson.fromJson(split[2], listWithType);
         } else {
             this.payload = null;
@@ -79,9 +76,5 @@ public class Message<T> {
 
     public List<T> getPayload() {
         return payload;
-    }
-
-    public Class getClazz() {
-        return clazz;
     }
 }

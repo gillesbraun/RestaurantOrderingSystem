@@ -22,7 +22,7 @@ public class WaitersFrame extends Stage {
     private Client client;
 
     @FXML
-    private ListView listWaiters;
+    private ListView<Waiter> listWaiters;
 
     public WaitersFrame(Client client) throws IOException {
         this.client = client;
@@ -46,8 +46,10 @@ public class WaitersFrame extends Stage {
             Message<Waiter> mess = new Message<>(m, Waiter.class);
             List<Waiter> waiters = mess.getPayload();
 
-            List<String> waiterNames = waiters.stream().map(Waiter::getName).collect(Collectors.toList());
-            listWaiters.setItems(FXCollections.observableList(waiterNames));
+            //List<String> waiterNames = waiters.stream().map(Waiter::getName).collect(Collectors.toList());
+            listWaiters.setItems(
+                    FXCollections.observableList(waiters)
+            );
         });
     }
 
