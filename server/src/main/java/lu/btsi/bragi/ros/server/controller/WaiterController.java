@@ -3,6 +3,7 @@ package lu.btsi.bragi.ros.server.controller;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
+import lu.btsi.bragi.ros.server.database.tables.records.WaiterRecord;
 
 import java.util.List;
 
@@ -28,16 +29,22 @@ public class WaiterController extends Controller<Waiter> {
 
     @Override
     protected void handleUpdate(Waiter obj) {
-
+        WaiterRecord waiterRecord = new WaiterRecord();
+        waiterRecord.from(obj);
+        context.executeUpdate(waiterRecord);
     }
 
     @Override
     protected void handleCreate(Waiter obj) {
-
+        WaiterRecord waiterRecord = new WaiterRecord();
+        waiterRecord.from(obj);
+        context.executeInsert(waiterRecord);
     }
 
     @Override
     protected void handleDelete(Waiter obj) {
-
+        WaiterRecord waiterRecord = new WaiterRecord();
+        waiterRecord.from(obj);
+        context.executeDelete(waiterRecord);
     }
 }
