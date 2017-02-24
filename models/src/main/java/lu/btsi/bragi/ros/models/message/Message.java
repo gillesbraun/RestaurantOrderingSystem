@@ -2,6 +2,8 @@ package lu.btsi.bragi.ros.models.message;
 
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -36,7 +38,13 @@ public class Message<T> {
         this.clazz = clazz;
     }
 
-    public Message(MessageType action, Class<T> clazz) {
+    public Message(MessageType action, T item) {
+        this.action = action;
+        this.payload = new ArrayList<T>(Arrays.asList(item));
+        this.clazz = item.getClass();
+    }
+
+    protected Message(MessageType action, Class<T> clazz) {
         this.action = action;
         this.payload = null;
         this.clazz = clazz;
