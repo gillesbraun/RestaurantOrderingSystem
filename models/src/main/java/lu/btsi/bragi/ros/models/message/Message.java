@@ -60,10 +60,11 @@ public class Message<T> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public String toString() {
         if(payload != null) {
-            String json = new Gson().toJson(payload);
+            String json = new Gson().toJson(payload, new ListOfType<>(clazz));
             return action.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + json;
         } else {
             return action.getName() + SEPARATOR + clazz.getCanonicalName();
