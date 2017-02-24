@@ -31,6 +31,8 @@ public class DatabaseModule extends AbstractModule {
         }
         catch (Exception e) {
             e.printStackTrace();
+            System.err.println("Could not connect to mysql server. Errors should be above.");
+            System.exit(2);
             return null;
         }
     }

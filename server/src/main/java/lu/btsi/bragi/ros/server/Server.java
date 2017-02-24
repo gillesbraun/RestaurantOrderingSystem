@@ -3,7 +3,6 @@ package lu.btsi.bragi.ros.server;
 import com.google.inject.Inject;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.server.controller.MainController;
-import lu.btsi.bragi.ros.server.controller.TableController;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
@@ -11,7 +10,6 @@ import org.jooq.DSLContext;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -55,6 +53,10 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onError(WebSocket conn, Exception ex) {
-        System.err.println(ex);
+        if(ex.getClass().equals(java.net.BindException.class)) {
+            System.err.println("Address already in use.");
+            System.exit(1);
+        }
+        ex.printStackTrace();
     }
 }
