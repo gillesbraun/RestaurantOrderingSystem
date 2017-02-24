@@ -26,7 +26,6 @@ public abstract class Controller<T> {
     }
 
     protected static Optional<Message> sendToController(String message) throws ControllerNotFoundException, ClassNotFoundException {
-        System.out.println("choosing controller");
         Class clazz = Message.messageClass(message);
         Controller controller = registeredControllers.get(clazz);
         if(controller != null) {
@@ -47,25 +46,17 @@ public abstract class Controller<T> {
     public Optional<Message> handle(String text, Class clazz) {
         Message<T> message = new Message<T>(text, clazz);
         List<T> payload = message.getPayload();
-        if(message.getAction().equals(MessageType.Get)) {
+        if (message.getAction() == MessageType.Get) {
             return Optional.of(handleGet());
         }
-        T obj = payload.get(0);
-        switch (message.getAction()) {
-            case Get:
-                break;
-            case Update:
-                handleUpdate(obj);
-                break;
-            case Delete:
-                handleDelete(obj);
-                break;
-            case Create:
-                handleCreate(obj);
-                break;
-            case Answer:
-                // do nothing
-                break;
+        for(T pojo : payload) {
+            if (message.getAction() == MessageType.Update) {
+                handleUpdate(pojo);
+            } else if (message.getAction() == MessageType.Delete) {
+                handleDelete(pojo);
+            } else if (message.getAction() == MessageType.Create) {
+                handleCreate(pojo);
+            }
         }
         return Optional.empty();
     }
