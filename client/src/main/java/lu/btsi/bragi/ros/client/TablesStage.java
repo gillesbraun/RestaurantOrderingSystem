@@ -8,6 +8,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
@@ -15,7 +17,9 @@ import javafx.stage.Stage;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageGet;
+import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Table;
+import org.jooq.types.UShort;
 
 import java.io.IOException;
 
@@ -25,11 +29,13 @@ import java.io.IOException;
 public class TablesStage extends Stage {
     private Client client;
 
-    @FXML
-    private TextField tableID, tablePlaces;
+    @FXML private TextField tablePlaces;
 
-    @FXML
-    private ListView<Table> listTables;
+    @FXML private ListView<Table> listTables;
+
+    @FXML private Button buttonDelete, buttonUpdate, buttonCreate;
+
+    @FXML private Label tableID;
 
     public TablesStage(Client client) throws IOException {
         this.client = client;
@@ -38,9 +44,24 @@ public class TablesStage extends Stage {
         Parent root = loader.load();
         initModality(Modality.APPLICATION_MODAL);
 
-        setTitle("Waiters");
+        setTitle("Tables");
         setScene(new Scene(root, 600, 300));
         show();
+
+        listTables.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if(listTables.getSelectionModel().getSelectedItems().size() == 1) {
+                buttonDelete.setDisable(false);
+                buttonUpdate.setDisable(false);
+                Table table = listTables.getSelectionModel().getSelectedItem();
+                tableID.setText(table.getId()+"");
+                tablePlaces.setText(table.getPlaces()+"");
+            } else {
+                buttonDelete.setDisable(true);
+                buttonUpdate.setDisable(true);
+                tableID.setText("");
+                tablePlaces.setText("");
+            }
+        });
 
         loadData();
     }
@@ -57,15 +78,30 @@ public class TablesStage extends Stage {
     }
 
     public void deleteButtonPressed(ActionEvent actionEvent) {
-
+        Table selectedItem = listTables.getSelectionModel().getSelectedItem();
+        Message<Table> update = new Message<>(MessageType.Delete, selectedItem);
+        client.send(update.toString());
+        loadData();
     }
 
-    public void saveButtonPressed(ActionEvent actionEvent) {
-
+    public void updateButtonPressed(ActionEvent actionEvent) {
+        if(tablePlaces.getText().trim().length() == 0)
+            return;
+        Table selectedItem = listTables.getSelectionModel().getSelectedItem();
+        selectedItem.setPlaces(UShort.valueOf(tablePlaces.getText()));
+        Message<Table> update = new Message<>(MessageType.Update, selectedItem);
+        client.send(update.toString());
+        loadData();
     }
 
     public void createButtonPressed(ActionEvent actionEvent) {
-
+        if(tablePlaces.getText().trim().length() == 0)
+            return;
+        Table table = new Table();
+        table.setPlaces(UShort.valueOf(tablePlaces.getText()));
+        Message<Table> message = new Message(MessageType.Create, table);
+        client.send(message.toString());
+        loadData();
     }
 
 }

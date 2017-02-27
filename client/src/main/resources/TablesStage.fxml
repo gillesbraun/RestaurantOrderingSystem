@@ -12,7 +12,7 @@
                   <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
                </VBox.margin>
             </ListView>
-            <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteButtonPressed" text="Delete Selected">
+            <Button fx:id="buttonDelete" disable="true" mnemonicParsing="false" onAction="#deleteButtonPressed" text="Delete Selected">
                <VBox.margin>
                   <Insets bottom="14.0" left="14.0" right="14.0" />
                </VBox.margin>
@@ -26,7 +26,7 @@
             <HBox alignment="BASELINE_LEFT" spacing="14.0">
                <children>
                   <Label alignment="CENTER" text="ID:" />
-                  <TextField fx:id="tableID" text="" />
+                  <Label fx:id="tableID" text="" />
                </children>
             </HBox>
             <HBox alignment="BASELINE_LEFT" spacing="14.0">
@@ -38,7 +38,7 @@
             <HBox prefWidth="200.0" spacing="10.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#createButtonPressed" text="Create New" fx:id="buttonCreate"/>
-                  <Button mnemonicParsing="false" onAction="#saveButtonPressed" text="Update" fx:id="buttonUpdate" />
+                  <Button mnemonicParsing="false" onAction="#updateButtonPressed" text="Update" fx:id="buttonUpdate" />
                </children>
             </HBox>
          </children>
