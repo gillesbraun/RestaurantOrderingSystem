@@ -44,7 +44,7 @@ public class MainFrame extends Application implements UICallback {
         Parent root = loader.load();
 
         primaryStage.setOnCloseRequest(onClose);
-        primaryStage.setTitle("ROS lu.btsi.bragi.ros.client.Client");
+        primaryStage.setTitle("ROS Client");
         primaryStage.setScene(new Scene(root, 800, 500));
         primaryStage.show();
 
