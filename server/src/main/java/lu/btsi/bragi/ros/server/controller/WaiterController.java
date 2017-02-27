@@ -31,6 +31,7 @@ public class WaiterController extends Controller<Waiter> {
     protected void handleUpdate(Waiter obj) {
         WaiterRecord waiterRecord = new WaiterRecord();
         waiterRecord.from(obj);
+        waiterRecord.reset(dbTable.UPDATED_AT);
         context.executeUpdate(waiterRecord);
     }
 
