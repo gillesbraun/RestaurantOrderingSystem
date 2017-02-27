@@ -22,6 +22,7 @@ import lu.btsi.bragi.ros.models.pojos.Table;
 import org.jooq.types.UShort;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Created by gillesbraun on 27/02/2017.
@@ -35,7 +36,7 @@ public class TablesStage extends Stage {
 
     @FXML private Button buttonDelete, buttonUpdate, buttonCreate;
 
-    @FXML private Label tableID;
+    @FXML private Label tableID, labelUpdated, labelCreated;
 
     public TablesStage(Client client) throws IOException {
         this.client = client;
@@ -55,11 +56,16 @@ public class TablesStage extends Stage {
                 Table table = listTables.getSelectionModel().getSelectedItem();
                 tableID.setText(table.getId()+"");
                 tablePlaces.setText(table.getPlaces()+"");
+                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMM yyyy H:mm");
+                labelCreated.setText("Created: "+table.getCreatedAt().toLocalDateTime().format(dateFormat));
+                labelUpdated.setText("Updated: "+table.getUpdatedAt().toLocalDateTime().format(dateFormat));
             } else {
                 buttonDelete.setDisable(true);
                 buttonUpdate.setDisable(true);
                 tableID.setText("");
                 tablePlaces.setText("");
+                labelCreated.setText("");
+                labelUpdated.setText("");
             }
         });
 
