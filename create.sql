@@ -93,7 +93,7 @@ CREATE Table IF NOT EXISTS Product(
 );
 
 CREATE Table IF NOT EXISTS Product_Localized (
-  product_id INT UNSIGNED,
+  product_id INT UNSIGNED AUTO_INCREMENT,
   language_code CHAR(2),
   label VARCHAR(255) NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
