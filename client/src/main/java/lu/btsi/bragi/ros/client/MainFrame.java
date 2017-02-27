@@ -1,3 +1,5 @@
+package lu.btsi.bragi.ros.client;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -37,12 +39,12 @@ public class MainFrame extends Application implements UICallback {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("MainFrame.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainFrame.fxml"));
         loader.setController(this);
         Parent root = loader.load();
 
         primaryStage.setOnCloseRequest(onClose);
-        primaryStage.setTitle("ROS Client");
+        primaryStage.setTitle("ROS lu.btsi.bragi.ros.client.Client");
         primaryStage.setScene(new Scene(root, 800, 500));
         primaryStage.show();
 

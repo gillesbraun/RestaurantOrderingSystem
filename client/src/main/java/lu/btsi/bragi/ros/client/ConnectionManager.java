@@ -1,3 +1,5 @@
+package lu.btsi.bragi.ros.client;
+
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceListener;

@@ -1,3 +1,5 @@
+package lu.btsi.bragi.ros.client;
+
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,7 +39,7 @@ public class WaitersFrame extends Stage {
 
     public WaitersFrame(Client client) throws IOException {
         this.client = client;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("WaitersFrame.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/WaitersFrame.fxml"));
         loader.setController(this);
         Parent root = loader.load();
         initModality(Modality.APPLICATION_MODAL);

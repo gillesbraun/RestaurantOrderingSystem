@@ -1,3 +1,5 @@
+package lu.btsi.bragi.ros.client;
+
 /**
  * Created by gillesbraun on 14/02/2017.
  */

@@ -5,7 +5,7 @@ buildDir = new File(rootProject.projectDir, "build/" + project.name)
 
 apply plugin: 'java'
 apply plugin: 'application'
-mainClassName = "MainFrame"
+mainClassName = "lu.btsi.bragi.ros.client.MainFrame"
 
 repositories {
     mavenCentral()
