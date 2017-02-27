@@ -84,4 +84,14 @@ public class MainFrame extends Application implements UICallback {
             e.printStackTrace();
         }
     }
+
+    public void menuItemTablesPressed(ActionEvent actionEvent) {
+        try {
+            if(client != null) {
+                new TablesStage(client).show();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="298.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+   <left>
+      <VBox prefHeight="200.0" prefWidth="175.0" BorderPane.alignment="CENTER">
+         <children>
+            <ListView fx:id="listTables" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+               <VBox.margin>
+                  <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+               </VBox.margin>
+            </ListView>
+            <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteButtonPressed" text="Delete Selected">
+               <VBox.margin>
+                  <Insets bottom="14.0" left="14.0" right="14.0" />
+               </VBox.margin>
+            </Button>
+         </children>
+      </VBox>
+   </left>
+   <center>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="14.0" BorderPane.alignment="CENTER">
+         <children>
+            <HBox alignment="BASELINE_LEFT" spacing="14.0">
+               <children>
+                  <Label alignment="CENTER" text="ID:" />
+                  <TextField fx:id="tableID" text="" />
+               </children>
+            </HBox>
+            <HBox alignment="BASELINE_LEFT" spacing="14.0">
+               <children>
+                  <Label alignment="CENTER" text="Places:" />
+                  <TextField fx:id="tablePlaces" />
+               </children>
+            </HBox>
+            <HBox prefWidth="200.0" spacing="10.0">
+               <children>
+                  <Button mnemonicParsing="false" onAction="#createButtonPressed" text="Create New" fx:id="buttonCreate"/>
+                  <Button mnemonicParsing="false" onAction="#saveButtonPressed" text="Update" fx:id="buttonUpdate" />
+               </children>
+            </HBox>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+         </BorderPane.margin>
+      </VBox>
+   </center>
+</BorderPane>
