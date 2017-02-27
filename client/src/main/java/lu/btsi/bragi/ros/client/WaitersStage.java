@@ -23,6 +23,7 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by gillesbraun on 17/02/2017.
@@ -52,6 +53,7 @@ public class WaitersStage extends Stage {
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
         buttonRefresh.setGraphic(fa.create(FontAwesome.Glyph.REFRESH));
         deleteButton.setGraphic(fa.create(FontAwesome.Glyph.TRASH));
+        buttonCreate.setGraphic(fa.create(FontAwesome.Glyph.PLUS_CIRCLE));
 
         setTitle("Waiters");
         setScene(new Scene(root, 600, 300));
@@ -109,14 +111,19 @@ public class WaitersStage extends Stage {
         }
     }
 
-    public void createButtonPressed(ActionEvent actionEvent) {
-        if(waiterName.getText().trim().length() == 0)
-            return;
-        Waiter waiter = new Waiter();
-        waiter.setName(waiterName.getText());
-        Message<Waiter> message = new Message<>(MessageType.Create, waiter);
-        client.send(message.toString());
-        loadWaiters();
+    public void buttonCreatePressed(ActionEvent actionEvent) {
+        TextInputDialog inputDialog = new TextInputDialog("");
+        inputDialog.setTitle("Create a new Waiter");
+        inputDialog.setHeaderText("Create a new Waiter");
+        inputDialog.setContentText("Enter a name for the new Waiter: ");
+        Optional<String> enteredName = inputDialog.showAndWait();
+        if(enteredName.isPresent() && enteredName.get().trim().length() > 0) {
+            Waiter waiter = new Waiter();
+            waiter.setName(enteredName.get());
+            Message<Waiter> message = new Message<>(MessageType.Create, waiter);
+            client.send(message.toString());
+            loadWaiters();
+        }
     }
 
     public void buttonRefreshPressed(ActionEvent event) {

@@ -8,10 +8,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lu.btsi.bragi.ros.client.connection.Client;
@@ -26,6 +23,7 @@ import org.jooq.types.UShort;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 /**
  * Created by gillesbraun on 27/02/2017.
@@ -54,6 +52,7 @@ public class TablesStage extends Stage {
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
         buttonRefresh.setGraphic(fa.create(FontAwesome.Glyph.REFRESH));
         buttonDelete.setGraphic(fa.create(FontAwesome.Glyph.TRASH));
+        buttonCreate.setGraphic(fa.create(FontAwesome.Glyph.PLUS_CIRCLE));
 
         listTables.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(listTables.getSelectionModel().getSelectedItems().size() == 1) {
@@ -106,14 +105,27 @@ public class TablesStage extends Stage {
         loadData();
     }
 
-    public void createButtonPressed(ActionEvent actionEvent) {
-        if(tablePlaces.getText().trim().length() == 0)
-            return;
-        Table table = new Table();
-        table.setPlaces(UShort.valueOf(tablePlaces.getText()));
-        Message<Table> message = new Message(MessageType.Create, table);
-        client.send(message.toString());
-        loadData();
+    public void buttonCreatePressed(ActionEvent actionEvent) {
+        TextInputDialog inputDialog = new TextInputDialog("");
+        inputDialog.setTitle("Create a new Table");
+        inputDialog.setHeaderText("Create a new Table");
+        inputDialog.setContentText("Enter the number of seats at the table: ");
+        Optional<String> enteredName = inputDialog.showAndWait();
+        try {
+            if(enteredName.isPresent()) {
+                Table table = new Table();
+                table.setPlaces(UShort.valueOf(enteredName.get()));
+                Message<Table> message = new Message(MessageType.Create, table);
+                client.send(message.toString());
+                loadData();
+            }
+        } catch (NumberFormatException ex) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("An error has occured");
+            alert.setContentText("Please enter a number.");
+            alert.show();
+        }
     }
 
     public void buttonRefreshPressed(ActionEvent event) {

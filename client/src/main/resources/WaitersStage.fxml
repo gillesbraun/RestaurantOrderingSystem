@@ -3,7 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="298.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="298.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <left>
       <VBox prefHeight="200.0" prefWidth="175.0" BorderPane.alignment="CENTER">
          <children>
@@ -16,6 +16,7 @@
                <children>
                   <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteButtonPressed" />
                   <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#buttonRefreshPressed" />
+                  <Button fx:id="buttonCreate" mnemonicParsing="false" onAction="#buttonCreatePressed" />
                </children>
                <VBox.margin>
                   <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
@@ -39,12 +40,7 @@
                   <TextField fx:id="waiterName" />
                </children>
             </HBox>
-            <HBox prefWidth="200.0" spacing="10.0">
-               <children>
-                  <Button fx:id="buttonCreate" mnemonicParsing="false" onAction="#createButtonPressed" text="Create New" />
-                  <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#saveButtonPressed" text="Update" />
-               </children>
-            </HBox>
+            <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#saveButtonPressed" text="Update" />
             <Label fx:id="labelCreated" text="-" textFill="#666666" />
             <Label fx:id="labelUpdated" text="-" textFill="#666666" />
          </children>
