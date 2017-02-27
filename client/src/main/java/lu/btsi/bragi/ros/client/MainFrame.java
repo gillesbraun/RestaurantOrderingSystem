@@ -77,7 +77,7 @@ public class MainFrame extends Application implements UICallback {
     public void menuItemWaitersPressed(ActionEvent actionEvent) {
         try {
             if(client != null) {
-                WaitersFrame wf = new WaitersFrame(client);
+                WaitersStage wf = new WaitersStage(client);
                 wf.show();
             }
         } catch (IOException e) {

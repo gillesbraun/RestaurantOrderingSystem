@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Created by gillesbraun on 17/02/2017.
  */
-public class WaitersFrame extends Stage {
+public class WaitersStage extends Stage {
     private Client client;
 
     @FXML
@@ -38,7 +38,7 @@ public class WaitersFrame extends Stage {
     @FXML
     private TextField waiterName;
 
-    public WaitersFrame(Client client) throws IOException {
+    public WaitersStage(Client client) throws IOException {
         this.client = client;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/WaitersFrame.fxml"));
         loader.setController(this);
