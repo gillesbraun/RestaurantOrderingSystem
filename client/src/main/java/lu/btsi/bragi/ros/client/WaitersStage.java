@@ -18,6 +18,7 @@ import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
 
 import java.io.IOException;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -33,7 +34,7 @@ public class WaitersStage extends Stage {
     private Button deleteButton, buttonUpdate, buttonCreate;
 
     @FXML
-    private Label waiterID;
+    private Label waiterID, labelCreated, labelUpdated;
 
     @FXML
     private TextField waiterName;
@@ -60,16 +61,18 @@ public class WaitersStage extends Stage {
                 Waiter waiter = listWaiters.getSelectionModel().getSelectedItem();
                 waiterID.setText(waiter.getId() + "");
                 waiterName.setText(waiter.getName());
+                DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMM yyyy H:mm");
+                labelCreated.setText("Created: "+waiter.getCreatedAt().toLocalDateTime().format(dateFormat));
+                labelUpdated.setText("Updated: "+waiter.getUpdatedAt().toLocalDateTime().format(dateFormat));
             } else {
                 buttonUpdate.setDisable(true);
                 waiterID.setText("");
                 waiterName.setText("");
+                labelCreated.setText("");
+                labelUpdated.setText("");
             }
         });
 
-        if(client == null) {
-            close();
-        }
         loadWaiters();
     }
 
@@ -91,7 +94,7 @@ public class WaitersStage extends Stage {
     }
 
     public void saveButtonPressed(ActionEvent actionEvent) {
-        if(listWaiters.getSelectionModel().getSelectedItems().size() == 1) {
+        if(listWaiters.getSelectionModel().getSelectedItems().size() == 1 && waiterName.getText().trim().length() > 0) {
             Waiter waiter = listWaiters.getSelectionModel().getSelectedItem();
             waiter.setName(waiterName.getText());
             Message<Waiter> message = new Message<>(MessageType.Update, waiter);
@@ -101,9 +104,11 @@ public class WaitersStage extends Stage {
     }
 
     public void createButtonPressed(ActionEvent actionEvent) {
+        if(waiterName.getText().trim().length() == 0)
+            return;
         Waiter waiter = new Waiter();
         waiter.setName(waiterName.getText());
-        Message<Waiter> message = new Message<Waiter>(MessageType.Create, waiter);
+        Message<Waiter> message = new Message<>(MessageType.Create, waiter);
         client.send(message.toString());
         loadWaiters();
     }

@@ -41,6 +41,8 @@
                   <Button mnemonicParsing="false" onAction="#saveButtonPressed" text="Update" fx:id="buttonUpdate" />
                </children>
             </HBox>
+            <Label fx:id="labelCreated" text="-" textFill="#666666" />
+            <Label fx:id="labelUpdated" text="-" textFill="#666666" />
          </children>
          <BorderPane.margin>
             <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
