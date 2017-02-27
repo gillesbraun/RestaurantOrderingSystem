@@ -9,14 +9,22 @@
          <children>
             <ListView fx:id="listTables" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                <VBox.margin>
-                  <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+                  <Insets left="14.0" right="14.0" top="14.0" />
                </VBox.margin>
             </ListView>
-            <Button fx:id="buttonDelete" disable="true" mnemonicParsing="false" onAction="#deleteButtonPressed" text="Delete Selected">
+            <HBox spacing="7.0">
+               <children>
+                  <Button fx:id="buttonDelete" disable="true" mnemonicParsing="false" onAction="#deleteButtonPressed" text="Delete">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#buttonRefreshPressed" />
+               </children>
                <VBox.margin>
-                  <Insets bottom="14.0" left="14.0" right="14.0" />
+                  <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
                </VBox.margin>
-            </Button>
+            </HBox>
          </children>
       </VBox>
    </left>

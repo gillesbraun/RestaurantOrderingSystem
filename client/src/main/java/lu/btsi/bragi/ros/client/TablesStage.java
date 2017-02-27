@@ -19,6 +19,9 @@ import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageGet;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Table;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.jooq.types.UShort;
 
 import java.io.IOException;
@@ -34,7 +37,7 @@ public class TablesStage extends Stage {
 
     @FXML private ListView<Table> listTables;
 
-    @FXML private Button buttonDelete, buttonUpdate, buttonCreate;
+    @FXML private Button buttonDelete, buttonUpdate, buttonCreate, buttonRefresh;
 
     @FXML private Label tableID, labelUpdated, labelCreated;
 
@@ -47,6 +50,9 @@ public class TablesStage extends Stage {
 
         setTitle("Tables");
         setScene(new Scene(root, 600, 300));
+
+        GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
+        buttonRefresh.setGraphic(fa.create(FontAwesome.Glyph.REFRESH));
 
         listTables.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(listTables.getSelectionModel().getSelectedItems().size() == 1) {
@@ -109,4 +115,7 @@ public class TablesStage extends Stage {
         loadData();
     }
 
+    public void buttonRefreshPressed(ActionEvent event) {
+        loadData();
+    }
 }
