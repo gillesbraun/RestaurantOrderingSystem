@@ -1,6 +1,4 @@
 import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageType;
-import lu.btsi.bragi.ros.models.pojos.Table;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -10,11 +8,8 @@ import java.net.URI;
  * Created by gillesbraun on 13/02/2017.
  */
 public class Client extends WebSocketClient {
-    private Callback mainCallback;
-
-    public void setMainCallback(Callback mainCallback) {
-        this.mainCallback = mainCallback;
-    }
+    private MessageCallback latestCallback;
+    private ConnectionCallback connectionCallback;
 
     public Client(URI serverURI) {
         super(serverURI);
@@ -25,30 +20,26 @@ public class Client extends WebSocketClient {
         send(messageString);
         this.latestCallback = messageCallback;
     }
-    private MessageCallback latestCallback;
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
-        if(mainCallback != null){
-            mainCallback.connectionOpened("Connection opened with: "+getURI());
+        if(connectionCallback != null){
+            connectionCallback.connectionOpened("Connection opened with: "+getURI());
         }
     }
 
     @Override
     public void onMessage(String message) {
-        System.out.println("incoming message: "+message);
         if(latestCallback != null) {
             latestCallback.handleAnswer(message);
             latestCallback = null;
-        } else if(mainCallback != null){
-            mainCallback.handleCallback(message);
         }
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        if(mainCallback != null){
-            mainCallback.connectionClosed(reason);
+        if(connectionCallback != null){
+            connectionCallback.connectionClosed(reason);
         }
     }
 
@@ -57,5 +48,9 @@ public class Client extends WebSocketClient {
         if(!ex.getLocalizedMessage().contains("Connection refused")) {
             ex.printStackTrace();
         }
+    }
+
+    public void setConnectionCallback(ConnectionCallback connectionCallback) {
+        this.connectionCallback = connectionCallback;
     }
 }
