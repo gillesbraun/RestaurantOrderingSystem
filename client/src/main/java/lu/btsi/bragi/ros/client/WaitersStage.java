@@ -41,7 +41,7 @@ public class WaitersStage extends Stage {
 
     public WaitersStage(Client client) throws IOException {
         this.client = client;
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/WaitersFrame.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/WaitersStage.fxml"));
         loader.setController(this);
         Parent root = loader.load();
         initModality(Modality.APPLICATION_MODAL);
