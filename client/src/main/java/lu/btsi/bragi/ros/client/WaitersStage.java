@@ -16,6 +16,9 @@ import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageGet;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
@@ -31,7 +34,7 @@ public class WaitersStage extends Stage {
     private ListView<Waiter> listWaiters;
 
     @FXML
-    private Button deleteButton, buttonUpdate, buttonCreate;
+    private Button deleteButton, buttonUpdate, buttonCreate, buttonRefresh;
 
     @FXML
     private Label waiterID, labelCreated, labelUpdated;
@@ -45,6 +48,9 @@ public class WaitersStage extends Stage {
         loader.setController(this);
         Parent root = loader.load();
         initModality(Modality.APPLICATION_MODAL);
+
+        GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
+        buttonRefresh.setGraphic(fa.create(FontAwesome.Glyph.REFRESH));
 
         setTitle("Waiters");
         setScene(new Scene(root, 600, 300));
@@ -109,6 +115,10 @@ public class WaitersStage extends Stage {
         waiter.setName(waiterName.getText());
         Message<Waiter> message = new Message<>(MessageType.Create, waiter);
         client.send(message.toString());
+        loadWaiters();
+    }
+
+    public void buttonRefreshPressed(ActionEvent event) {
         loadWaiters();
     }
 }

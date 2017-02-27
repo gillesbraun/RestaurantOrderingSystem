@@ -9,14 +9,18 @@
          <children>
             <ListView fx:id="listWaiters" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                <VBox.margin>
-                  <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+                  <Insets left="14.0" right="14.0" top="14.0" />
                </VBox.margin>
             </ListView>
-            <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteButtonPressed" text="Delete Selected">
+            <HBox spacing="7.0">
+               <children>
+                  <Button fx:id="deleteButton" disable="true" mnemonicParsing="false" onAction="#deleteButtonPressed" text="Delete" />
+                  <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#buttonRefreshPressed" />
+               </children>
                <VBox.margin>
-                  <Insets bottom="14.0" left="14.0" right="14.0" />
+                  <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
                </VBox.margin>
-            </Button>
+            </HBox>
          </children>
       </VBox>
    </left>
@@ -37,8 +41,8 @@
             </HBox>
             <HBox prefWidth="200.0" spacing="10.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#createButtonPressed" text="Create New" fx:id="buttonCreate"/>
-                  <Button mnemonicParsing="false" onAction="#saveButtonPressed" text="Update" fx:id="buttonUpdate" />
+                  <Button fx:id="buttonCreate" mnemonicParsing="false" onAction="#createButtonPressed" text="Create New" />
+                  <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#saveButtonPressed" text="Update" />
                </children>
             </HBox>
             <Label fx:id="labelCreated" text="-" textFill="#666666" />
