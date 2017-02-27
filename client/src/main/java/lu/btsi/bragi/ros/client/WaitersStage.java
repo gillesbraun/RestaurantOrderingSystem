@@ -51,6 +51,7 @@ public class WaitersStage extends Stage {
 
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
         buttonRefresh.setGraphic(fa.create(FontAwesome.Glyph.REFRESH));
+        deleteButton.setGraphic(fa.create(FontAwesome.Glyph.TRASH));
 
         setTitle("Waiters");
         setScene(new Scene(root, 600, 300));

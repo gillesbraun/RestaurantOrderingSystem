@@ -53,6 +53,7 @@ public class TablesStage extends Stage {
 
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
         buttonRefresh.setGraphic(fa.create(FontAwesome.Glyph.REFRESH));
+        buttonDelete.setGraphic(fa.create(FontAwesome.Glyph.TRASH));
 
         listTables.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(listTables.getSelectionModel().getSelectedItems().size() == 1) {

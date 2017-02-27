@@ -14,7 +14,7 @@
             </ListView>
             <HBox spacing="7.0">
                <children>
-                  <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#buttonDeletePressed" text="Delete" />
+                  <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#buttonDeletePressed" />
                   <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#buttonRefreshPressed" />
                   <Button fx:id="buttonAddProduct" mnemonicParsing="false" onAction="#buttonAddProductPressed" />
                </children>

@@ -50,6 +50,7 @@ public class ProductsStage extends Stage {
         buttonEditLanguages.setGraphic(fa.create(FontAwesome.Glyph.PENCIL));
         buttonAddTranslation.setGraphic(fa.create(FontAwesome.Glyph.PLUS_CIRCLE));
         buttonAddProduct.setGraphic(fa.create(FontAwesome.Glyph.PLUS_CIRCLE));
+        buttonDelete.setGraphic(fa.create(FontAwesome.Glyph.TRASH));
     }
 
     private void loadData() {
