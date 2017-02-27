@@ -99,4 +99,16 @@ public class MainFrame extends Application implements UICallback {
             e.printStackTrace();
         }
     }
+
+    public void menuItemProductsPressed(ActionEvent event) {
+        if(client != null) {
+            try {
+                ProductsStage productsStage = new ProductsStage(client);
+                productsStage.initOwner(parent);
+                productsStage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
