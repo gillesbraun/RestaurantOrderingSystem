@@ -122,6 +122,7 @@ CREATE Table IF NOT EXISTS Allergen(
 CREATE Table IF NOT EXISTS Allergen_Localized (
   allergen_id INT UNSIGNED,
   language_code CHAR(2),
+  label VARCHAR(500),
   PRIMARY KEY (allergen_id, language_code),
 
   CONSTRAINT fk_AllergenLocalized_Allergen
