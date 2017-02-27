@@ -1,5 +1,6 @@
-package lu.btsi.bragi.ros.client;
+package lu.btsi.bragi.ros.client.connection;
 
+import lu.btsi.bragi.ros.client.MessageCallback;
 import lu.btsi.bragi.ros.models.message.Message;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;

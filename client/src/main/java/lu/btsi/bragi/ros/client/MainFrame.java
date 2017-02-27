@@ -12,6 +12,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
+import lu.btsi.bragi.ros.client.connection.UICallback;
 
 import java.io.IOException;
 
@@ -73,8 +76,10 @@ public class MainFrame extends Application implements UICallback {
 
     public void menuItemWaitersPressed(ActionEvent actionEvent) {
         try {
-            WaitersFrame wf = new WaitersFrame(client);
-            wf.show();
+            if(client != null) {
+                WaitersFrame wf = new WaitersFrame(client);
+                wf.show();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

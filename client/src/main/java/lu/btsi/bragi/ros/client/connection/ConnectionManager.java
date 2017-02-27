@@ -1,4 +1,4 @@
-package lu.btsi.bragi.ros.client;
+package lu.btsi.bragi.ros.client.connection;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceEvent;
