@@ -4,13 +4,12 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
-import java.io.Serializable;
-import java.sql.Timestamp;
-
-import javax.annotation.Generated;
-
 import org.jooq.types.UInteger;
 import org.jooq.types.UShort;
+
+import javax.annotation.Generated;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 
 /**
@@ -88,14 +87,6 @@ public class Table implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Table (");
-
-        sb.append(id);
-        sb.append(", ").append(places);
-        sb.append(", ").append(createdAt);
-        sb.append(", ").append(updatedAt);
-
-        sb.append(")");
-        return sb.toString();
+        return "ID: " + id + " Places: " + places;
     }
 }
