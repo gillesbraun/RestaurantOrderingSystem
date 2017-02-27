@@ -48,7 +48,6 @@ public class WaitersStage extends Stage {
 
         setTitle("Waiters");
         setScene(new Scene(root, 600, 300));
-        show();
         listWaiters.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
         listWaiters.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(listWaiters.getSelectionModel().getSelectedItems().size() > 0) {

@@ -47,7 +47,6 @@ public class TablesStage extends Stage {
 
         setTitle("Tables");
         setScene(new Scene(root, 600, 300));
-        show();
 
         listTables.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(listTables.getSelectionModel().getSelectedItems().size() == 1) {

@@ -38,6 +38,7 @@ public class MainFrame extends Application implements UICallback {
         }
         System.exit(0);
     };
+    private Stage parent;
 
 
     @Override
@@ -50,6 +51,7 @@ public class MainFrame extends Application implements UICallback {
         primaryStage.setTitle("ROS Client");
         primaryStage.setScene(new Scene(root, 800, 500));
         primaryStage.show();
+        this.parent = primaryStage;
 
         connectionManager.newClient();
     }
@@ -77,8 +79,9 @@ public class MainFrame extends Application implements UICallback {
     public void menuItemWaitersPressed(ActionEvent actionEvent) {
         try {
             if(client != null) {
-                WaitersStage wf = new WaitersStage(client);
-                wf.show();
+                WaitersStage waitersStage = new WaitersStage(client);
+                waitersStage.initOwner(parent);
+                waitersStage.show();
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -88,7 +91,9 @@ public class MainFrame extends Application implements UICallback {
     public void menuItemTablesPressed(ActionEvent actionEvent) {
         try {
             if(client != null) {
-                new TablesStage(client).show();
+                TablesStage tablesStage = new TablesStage(client);
+                tablesStage.initOwner(parent);
+                tablesStage.show();
             }
         } catch (IOException e) {
             e.printStackTrace();
