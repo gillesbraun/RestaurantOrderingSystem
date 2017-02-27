@@ -18,7 +18,6 @@ public class Message<T> {
 
     @SuppressWarnings("unchecked")
     public Message(String encodedMessage, Class clazz) {
-        System.out.println(encodedMessage);
         isMessageValid(encodedMessage);
         String[] split = encodedMessage.split(SEPARATOR);
         this.action = MessageType.get(split[0]);
