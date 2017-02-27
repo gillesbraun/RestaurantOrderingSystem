@@ -40,7 +40,6 @@ public class Server extends WebSocketServer {
 
     @Override
     public void onMessage(WebSocket conn, String message) {
-        System.out.println("incoming: "+message);
         try {
             Optional<Message> answer = mainController.sendToRightController(message);
             if(answer.isPresent()) {
