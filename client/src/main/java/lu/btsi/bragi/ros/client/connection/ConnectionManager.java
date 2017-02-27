@@ -13,18 +13,18 @@ import java.net.URISyntaxException;
  */
 public class ConnectionManager implements ServiceListener, ConnectionCallback {
 
-    private final UICallback UICallback;
+    private final UICallback uiCallback;
     private Client client;
 
-    public ConnectionManager(UICallback UICallback) {
-        this.UICallback = UICallback;
+    public ConnectionManager(UICallback uiCallback) {
+        this.uiCallback = uiCallback;
     }
 
     public void newClient() {
         try {
             JmDNS jmDNS = JmDNS.create(InetAddress.getLocalHost());
             jmDNS.addServiceListener("_ws._tcp.local.", this);
-            UICallback.displayMessage("Looking for ROS Server...");
+            uiCallback.displayMessage("Looking for ROS Server...");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -32,7 +32,7 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback {
 
     @Override
     public void connectionClosed(String reason) {
-        UICallback.displayMessage("Connection closed. Retrying in 2 seconds...");
+        uiCallback.displayMessage("Connection closed. Retrying in 2 seconds...");
         new Thread(new javafx.concurrent.Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -49,7 +49,7 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback {
 
     @Override
     public void connectionOpened(String message) {
-        UICallback.connectionOpened(message, client);
+        uiCallback.connectionOpened(message, client);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback {
             } catch (URISyntaxException e) {
             }
         } else {
-            UICallback.displayMessage("Found other webservice ("+event.getInfo().getSubtype()+"), ignoring");
+            uiCallback.displayMessage("Found other webservice ("+event.getInfo().getSubtype()+"), ignoring");
         }
     }
 
