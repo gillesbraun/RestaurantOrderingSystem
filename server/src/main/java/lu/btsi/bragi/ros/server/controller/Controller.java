@@ -35,7 +35,7 @@ public abstract class Controller<T> {
         throw new ControllerNotFoundException("No Controller found for class "+clazz +". Available controllers: "+ controllers);
     }
 
-    protected abstract Message handleGet();
+    protected abstract List<T> handleGet();
 
     protected abstract void handleUpdate(T obj);
 
@@ -47,7 +47,9 @@ public abstract class Controller<T> {
         Message<T> message = new Message<>(text);
         List<T> payload = message.getPayload();
         if (message.getType() == MessageType.Get) {
-            return Optional.of(handleGet());
+            List<T> newPayload = handleGet();
+            Message<T> answer = message.createAnswer(newPayload);
+            return Optional.of(answer);
         }
         for(T pojo : payload) {
             if (message.getType() == MessageType.Update) {

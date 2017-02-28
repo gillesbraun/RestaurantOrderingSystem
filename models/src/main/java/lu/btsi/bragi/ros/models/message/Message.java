@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Message Class used providing standardised communication between server and client. It provides multiple constructors
@@ -12,11 +13,16 @@ import java.util.List;
  * Created by gillesbraun on 15/02/2017.
  */
 public class Message<T> {
-    private final MessageType type;
-    private final Class clazz;
-    private final List<T> payload;
+    protected final MessageType type;
+    protected final Class<T> clazz;
+    protected final UUID messageID;
+    protected final List<T> payload;
 
     private static final String SEPARATOR = ";;";
+    private static final int POS_MESSAGETYPE = 0;
+    private static final int POS_CLASS = 1;
+    private static final int POS_UUID = 2;
+    private static final int POS_PAYLOAD = 3;
 
     /**
      * Decodes the encodedMessage and assigns the content to the new instance. It is required to define the Type of
@@ -29,12 +35,13 @@ public class Message<T> {
         try {
             isMessageValid(encodedMessage);
             String[] split = encodedMessage.split(SEPARATOR);
-            this.type = MessageType.get(split[0]);
-            clazz = Class.forName(split[1]);
-            if(split.length == 3) {
+            this.type = MessageType.get(split[POS_MESSAGETYPE]);
+            this.clazz = (Class<T>) Class.forName(split[POS_CLASS]);
+            this.messageID = UUID.fromString(split[POS_UUID]);
+            if(split.length == 4) {
                 Gson gson = new Gson();
                 ListOfType listWithType = new ListOfType<>(clazz);
-                this.payload = gson.fromJson(split[2], listWithType);
+                this.payload = gson.fromJson(split[POS_PAYLOAD], listWithType);
             } else {
                 this.payload = null;
             }
@@ -57,6 +64,7 @@ public class Message<T> {
         this.type = type;
         this.payload = content;
         this.clazz = clazz;
+        this.messageID = UUID.randomUUID();
     }
 
     /**
@@ -67,7 +75,8 @@ public class Message<T> {
     public Message(MessageType type, T item) {
         this.type = type;
         this.payload = new ArrayList<T>(Arrays.asList(item));
-        this.clazz = item.getClass();
+        this.clazz = (Class<T>) item.getClass();
+        this.messageID = UUID.randomUUID();
     }
 
     /**
@@ -80,6 +89,18 @@ public class Message<T> {
         this.type = type;
         this.payload = null;
         this.clazz = clazz;
+        this.messageID = UUID.randomUUID();
+    }
+
+    private Message(MessageType type, Class<T> clazz, UUID messageID, List<T> payload) {
+        this.type = type;
+        this.clazz = clazz;
+        this.messageID = messageID;
+        this.payload = payload;
+    }
+
+    public Message<T> createAnswer(List<T> payload) {
+        return new Message<T>(MessageType.Answer, clazz, messageID, payload);
     }
 
     /**
@@ -91,18 +112,29 @@ public class Message<T> {
     public static Class messageClass(String encoded) throws ClassNotFoundException {
         isMessageValid(encoded);
         String[] split = encoded.split(SEPARATOR);
-        return Class.forName(split[1]);
+        return Class.forName(split[POS_CLASS]);
+    }
+
+    /**
+     * Returns the <code>UUID</code> for the provided Message
+     * @param encoded The raw message as it is sent between client and server
+     * @return The identifier for this message
+     */
+    public static UUID messageUUID(String encoded) {
+        isMessageValid(encoded);
+        String[] split = encoded.split(SEPARATOR);
+        return UUID.fromString(split[POS_UUID]);
     }
 
     private static void isMessageValid(String str) throws MessageMalformedException {
         String[] split = str.split(SEPARATOR);
-        if(split.length != 2 && split.length != 3) {
+        if(split.length != 3 && split.length != 4) {
             throw new MessageMalformedException("Message must consist of 2 or 3 parts. Action"+SEPARATOR+"Class["+SEPARATOR+"Json]");
         }
 
-        MessageType messageType = MessageType.get(split[0]);
+        MessageType messageType = MessageType.get(split[POS_MESSAGETYPE]);
         if(messageType == null) {
-            throw new MessageMalformedException("Message Type '"+split[0]+"' does not exist.");
+            throw new MessageMalformedException("Message Type '"+split[POS_MESSAGETYPE]+"' does not exist.");
         }
     }
 
@@ -111,10 +143,14 @@ public class Message<T> {
     public String toString() {
         if(payload != null) {
             String json = new Gson().toJson(payload, new ListOfType<>(clazz));
-            return type.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + json;
+            return type.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + messageID + SEPARATOR + json;
         } else {
-            return type.getName() + SEPARATOR + clazz.getCanonicalName();
+            return type.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + messageID;
         }
+    }
+
+    public UUID getMessageID() {
+        return messageID;
     }
 
     public MessageType getType() {

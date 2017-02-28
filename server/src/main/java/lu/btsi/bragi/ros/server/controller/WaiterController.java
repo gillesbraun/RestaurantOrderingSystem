@@ -1,7 +1,5 @@
 package lu.btsi.bragi.ros.server.controller;
 
-import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
 import lu.btsi.bragi.ros.server.database.tables.records.WaiterRecord;
 
@@ -22,9 +20,9 @@ public class WaiterController extends Controller<Waiter> {
     }
 
     @Override
-    protected Message handleGet() {
-        List<Waiter> into = context.fetch(dbTable).into(mapTo);
-        return new Message<Waiter>(MessageType.Answer, into, mapTo);
+    protected List<Waiter> handleGet() {
+        List<Waiter> list = context.fetch(dbTable).into(mapTo);
+        return list;
     }
 
     @Override

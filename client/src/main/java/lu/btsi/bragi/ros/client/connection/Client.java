@@ -6,12 +6,15 @@ import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * Created by gillesbraun on 13/02/2017.
  */
 public class Client extends WebSocketClient {
-    private MessageCallback latestCallback;
+    private Map<UUID, MessageCallback> callbackMap = new HashMap<>();
     private ConnectionCallback connectionCallback;
 
     public Client(URI serverURI) {
@@ -21,7 +24,8 @@ public class Client extends WebSocketClient {
     public void sendWithAction(Message message, MessageCallback messageCallback) {
         String messageString = message.toString();
         send(messageString);
-        this.latestCallback = messageCallback;
+        UUID messageID = message.getMessageID();
+        callbackMap.put(messageID, messageCallback);
     }
 
     @Override
@@ -33,9 +37,11 @@ public class Client extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
-        if(latestCallback != null) {
-            latestCallback.handleAnswer(message);
-            latestCallback = null;
+        UUID messageUUID = Message.messageUUID(message);
+        MessageCallback messageCallback = callbackMap.get(messageUUID);
+        if(messageCallback != null) {
+            messageCallback.handleAnswer(message);
+            callbackMap.remove(messageUUID);
         }
     }
 
