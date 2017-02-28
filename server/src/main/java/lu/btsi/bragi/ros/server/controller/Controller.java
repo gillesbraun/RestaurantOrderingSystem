@@ -29,7 +29,7 @@ public abstract class Controller<T> {
         Class clazz = Message.messageClass(message);
         Controller controller = registeredControllers.get(clazz);
         if(controller != null) {
-            return controller.handle(message, clazz);
+            return controller.handle(message);
         }
         String controllers = registeredControllers.keySet().stream().map(Class::getName).collect(Collectors.joining(", "));
         throw new ControllerNotFoundException("No Controller found for class "+clazz +". Available controllers: "+ controllers);
@@ -43,8 +43,8 @@ public abstract class Controller<T> {
 
     protected abstract void handleDelete(T obj);
 
-    public Optional<Message> handle(String text, Class clazz) {
-        Message<T> message = new Message<T>(text, clazz);
+    public Optional<Message> handle(String text) {
+        Message<T> message = new Message<>(text);
         List<T> payload = message.getPayload();
         if (message.getAction() == MessageType.Get) {
             return Optional.of(handleGet());

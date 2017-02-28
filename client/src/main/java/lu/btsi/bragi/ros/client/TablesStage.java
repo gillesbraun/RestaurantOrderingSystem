@@ -78,8 +78,8 @@ public class TablesStage extends Stage {
     }
 
     private void loadData() {
-        client.sendWithAction(new MessageGet(Table.class), (text) -> {
-            Message<Table> tables = new Message<>(text, Table.class);
+        client.sendWithAction(new MessageGet<>(Table.class), (text) -> {
+            Message<Table> tables = new Message<>(text);
 
             ObservableList<Table> list = FXCollections.observableList(tables.getPayload());
             Platform.runLater(() -> {
@@ -115,7 +115,7 @@ public class TablesStage extends Stage {
             if(enteredName.isPresent()) {
                 Table table = new Table();
                 table.setPlaces(UShort.valueOf(enteredName.get()));
-                Message<Table> message = new Message(MessageType.Create, table);
+                Message<Table> message = new Message<>(MessageType.Create, table);
                 client.send(message.toString());
                 loadData();
             }

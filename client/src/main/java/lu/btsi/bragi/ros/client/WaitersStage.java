@@ -86,7 +86,7 @@ public class WaitersStage extends Stage {
 
     private void loadWaiters() {
         client.sendWithAction(new MessageGet<>(Waiter.class), (String m) -> {
-            Message<Waiter> mess = new Message<>(m, Waiter.class);
+            Message<Waiter> mess = new Message<>(m);
             List<Waiter> waiters = mess.getPayload();
             Platform.runLater(() -> {
                 listWaiters.setItems(FXCollections.observableList(waiters));

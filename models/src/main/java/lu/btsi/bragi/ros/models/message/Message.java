@@ -16,18 +16,29 @@ public class Message<T> {
 
     private static final String SEPARATOR = ";;";
 
+    /**
+     * Decodes the encodedMessage and assigns the content to the new instance. It is required to define the Type of
+     * the elements that are stored in the message, to be type-safe. Sou if you want to decode a Message that should
+     * have the "Waiter" Type, you would call: <code>Message&lt;Waiter&gt; decoded = new Message&lt;&gt;(rawMessage);</code>
+     * @param encodedMessage
+     */
     @SuppressWarnings("unchecked")
-    public Message(String encodedMessage, Class clazz) {
-        isMessageValid(encodedMessage);
-        String[] split = encodedMessage.split(SEPARATOR);
-        this.action = MessageType.get(split[0]);
-        this.clazz = clazz;
-        if(split.length == 3) {
-            Gson gson = new Gson();
-            ListOfType listWithType = new ListOfType<>(clazz);
-            this.payload = gson.fromJson(split[2], listWithType);
-        } else {
-            this.payload = null;
+    public Message(String encodedMessage) {
+        try {
+            isMessageValid(encodedMessage);
+            String[] split = encodedMessage.split(SEPARATOR);
+            this.action = MessageType.get(split[0]);
+            clazz = Class.forName(split[1]);
+            if(split.length == 3) {
+                Gson gson = new Gson();
+                ListOfType listWithType = new ListOfType<>(clazz);
+                this.payload = gson.fromJson(split[2], listWithType);
+            } else {
+                this.payload = null;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Could not read message.");
         }
     }
 
