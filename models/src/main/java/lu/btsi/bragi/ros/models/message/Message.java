@@ -7,10 +7,12 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
+ * Message Class used providing standardised communication between server and client. It provides multiple constructors
+ * for different use cases.
  * Created by gillesbraun on 15/02/2017.
  */
 public class Message<T> {
-    private final MessageType action;
+    private final MessageType type;
     private final Class clazz;
     private final List<T> payload;
 
@@ -20,14 +22,14 @@ public class Message<T> {
      * Decodes the encodedMessage and assigns the content to the new instance. It is required to define the Type of
      * the elements that are stored in the message, to be type-safe. Sou if you want to decode a Message that should
      * have the "Waiter" Type, you would call: <code>Message&lt;Waiter&gt; decoded = new Message&lt;&gt;(rawMessage);</code>
-     * @param encodedMessage
+     * @param encodedMessage The raw string that is sent between client and server
      */
     @SuppressWarnings("unchecked")
     public Message(String encodedMessage) {
         try {
             isMessageValid(encodedMessage);
             String[] split = encodedMessage.split(SEPARATOR);
-            this.action = MessageType.get(split[0]);
+            this.type = MessageType.get(split[0]);
             clazz = Class.forName(split[1]);
             if(split.length == 3) {
                 Gson gson = new Gson();
@@ -42,24 +44,50 @@ public class Message<T> {
         }
     }
 
-    public Message(MessageType action, List<T> content, Class<T> clazz) {
-        this.action = action;
+    /**
+     * Creates a new Message with a list of elements of the Type
+     * @param type The MessageType (Get, Delete, ...)
+     * @param content A list of elements to encapsulate
+     * @param clazz Class of the element you want to encapsulate
+     */
+    public Message(MessageType type, List<T> content, Class<T> clazz) {
+        if(content == null) {
+            throw new IllegalArgumentException("List must not be null.");
+        }
+        this.type = type;
         this.payload = content;
         this.clazz = clazz;
     }
 
-    public Message(MessageType action, T item) {
-        this.action = action;
+    /**
+     * Creates a Message with a single element as payload
+     * @param type The MessageType (Get, Delete, ...)
+     * @param item The element you want to encapsulate
+     */
+    public Message(MessageType type, T item) {
+        this.type = type;
         this.payload = new ArrayList<T>(Arrays.asList(item));
         this.clazz = item.getClass();
     }
 
-    protected Message(MessageType action, Class<T> clazz) {
-        this.action = action;
+    /**
+     * Creates a Message, which does not contain any data as payload. This is used for the <code>MessageType.Get</code>,
+     * as it does not need to have content to be sent
+     * @param type The <code>MessageType</code>, which probably should be Get
+     * @param clazz The class of the Object you want to retrieve
+     */
+    protected Message(MessageType type, Class<T> clazz) {
+        this.type = type;
         this.payload = null;
         this.clazz = clazz;
     }
 
+    /**
+     * Returns the class of the provided Message
+     * @param encoded The raw message as it is sent between client and server
+     * @return The class of the object encapsulated in the message
+     * @throws ClassNotFoundException
+     */
     public static Class messageClass(String encoded) throws ClassNotFoundException {
         isMessageValid(encoded);
         String[] split = encoded.split(SEPARATOR);
@@ -83,14 +111,14 @@ public class Message<T> {
     public String toString() {
         if(payload != null) {
             String json = new Gson().toJson(payload, new ListOfType<>(clazz));
-            return action.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + json;
+            return type.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + json;
         } else {
-            return action.getName() + SEPARATOR + clazz.getCanonicalName();
+            return type.getName() + SEPARATOR + clazz.getCanonicalName();
         }
     }
 
-    public MessageType getAction() {
-        return action;
+    public MessageType getType() {
+        return type;
     }
 
     public List<T> getPayload() {

@@ -46,15 +46,15 @@ public abstract class Controller<T> {
     public Optional<Message> handle(String text) {
         Message<T> message = new Message<>(text);
         List<T> payload = message.getPayload();
-        if (message.getAction() == MessageType.Get) {
+        if (message.getType() == MessageType.Get) {
             return Optional.of(handleGet());
         }
         for(T pojo : payload) {
-            if (message.getAction() == MessageType.Update) {
+            if (message.getType() == MessageType.Update) {
                 handleUpdate(pojo);
-            } else if (message.getAction() == MessageType.Delete) {
+            } else if (message.getType() == MessageType.Delete) {
                 handleDelete(pojo);
-            } else if (message.getAction() == MessageType.Create) {
+            } else if (message.getType() == MessageType.Create) {
                 handleCreate(pojo);
             }
         }
