@@ -4,11 +4,10 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
-import java.io.Serializable;
+import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
-
-import org.jooq.types.UInteger;
+import java.io.Serializable;
 
 
 /**
@@ -24,24 +23,28 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class AllergenLocalized implements Serializable {
 
-    private static final long serialVersionUID = 2131948069;
+    private static final long serialVersionUID = 149037827;
 
     private UInteger allergenId;
     private String   languageCode;
+    private String   label;
 
     public AllergenLocalized() {}
 
     public AllergenLocalized(AllergenLocalized value) {
         this.allergenId = value.allergenId;
         this.languageCode = value.languageCode;
+        this.label = value.label;
     }
 
     public AllergenLocalized(
         UInteger allergenId,
-        String   languageCode
+        String   languageCode,
+        String   label
     ) {
         this.allergenId = allergenId;
         this.languageCode = languageCode;
+        this.label = label;
     }
 
     public UInteger getAllergenId() {
@@ -60,12 +63,21 @@ public class AllergenLocalized implements Serializable {
         this.languageCode = languageCode;
     }
 
+    public String getLabel() {
+        return this.label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("AllergenLocalized (");
 
         sb.append(allergenId);
         sb.append(", ").append(languageCode);
+        sb.append(", ").append(label);
 
         sb.append(")");
         return sb.toString();

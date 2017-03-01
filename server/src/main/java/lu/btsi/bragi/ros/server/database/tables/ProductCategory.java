@@ -4,22 +4,18 @@
 package lu.btsi.bragi.ros.server.database.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import lu.btsi.bragi.ros.server.database.Keys;
 import lu.btsi.bragi.ros.server.database.Ros;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductCategoryRecord;
-
-import org.jooq.Field;
-import org.jooq.Schema;
+import org.jooq.*;
 import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
 import org.jooq.impl.TableImpl;
 import org.jooq.types.UInteger;
+
+import javax.annotation.Generated;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -35,7 +31,7 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ProductCategory extends TableImpl<ProductCategoryRecord> {
 
-    private static final long serialVersionUID = -1634616588;
+    private static final long serialVersionUID = -809227659;
 
     /**
      * The reference instance of <code>ros.Product_Category</code>
@@ -59,6 +55,16 @@ public class ProductCategory extends TableImpl<ProductCategoryRecord> {
      * The column <code>ros.Product_Category.image_url</code>.
      */
     public final TableField<ProductCategoryRecord, String> IMAGE_URL = createField("image_url", org.jooq.impl.SQLDataType.VARCHAR.length(500), this, "");
+
+    /**
+     * The column <code>ros.Product_Category.created_at</code>.
+     */
+    public final TableField<ProductCategoryRecord, Timestamp> CREATED_AT = createField("created_at", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.inline("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+
+    /**
+     * The column <code>ros.Product_Category.updated_at</code>.
+     */
+    public final TableField<ProductCategoryRecord, Timestamp> UPDATED_AT = createField("updated_at", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.inline("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * Create a <code>ros.Product_Category</code> table reference

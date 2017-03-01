@@ -4,23 +4,17 @@
 package lu.btsi.bragi.ros.server.database.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import lu.btsi.bragi.ros.server.database.Keys;
 import lu.btsi.bragi.ros.server.database.Ros;
 import lu.btsi.bragi.ros.server.database.tables.records.AllergenLocalizedRecord;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Schema;
+import org.jooq.*;
 import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
 import org.jooq.impl.TableImpl;
 import org.jooq.types.UInteger;
+
+import javax.annotation.Generated;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -36,7 +30,7 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class AllergenLocalized extends TableImpl<AllergenLocalizedRecord> {
 
-    private static final long serialVersionUID = -406244028;
+    private static final long serialVersionUID = -1807722691;
 
     /**
      * The reference instance of <code>ros.Allergen_Localized</code>
@@ -60,6 +54,11 @@ public class AllergenLocalized extends TableImpl<AllergenLocalizedRecord> {
      * The column <code>ros.Allergen_Localized.language_code</code>.
      */
     public final TableField<AllergenLocalizedRecord, String> LANGUAGE_CODE = createField("language_code", org.jooq.impl.SQLDataType.CHAR.length(2).nullable(false), this, "");
+
+    /**
+     * The column <code>ros.Allergen_Localized.label</code>.
+     */
+    public final TableField<AllergenLocalizedRecord, String> LABEL = createField("label", org.jooq.impl.SQLDataType.VARCHAR.length(500), this, "");
 
     /**
      * Create a <code>ros.Allergen_Localized</code> table reference

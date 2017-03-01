@@ -4,40 +4,15 @@
 package lu.btsi.bragi.ros.server.database;
 
 
-import javax.annotation.Generated;
-
-import lu.btsi.bragi.ros.server.database.tables.Allergen;
-import lu.btsi.bragi.ros.server.database.tables.AllergenLocalized;
-import lu.btsi.bragi.ros.server.database.tables.Invoice;
-import lu.btsi.bragi.ros.server.database.tables.Language;
-import lu.btsi.bragi.ros.server.database.tables.Order;
-import lu.btsi.bragi.ros.server.database.tables.Product;
-import lu.btsi.bragi.ros.server.database.tables.ProductAllergen;
-import lu.btsi.bragi.ros.server.database.tables.ProductCategory;
-import lu.btsi.bragi.ros.server.database.tables.ProductCategoryLocalized;
-import lu.btsi.bragi.ros.server.database.tables.ProductLocalized;
-import lu.btsi.bragi.ros.server.database.tables.ProductPriceForOrder;
-import lu.btsi.bragi.ros.server.database.tables.Table;
-import lu.btsi.bragi.ros.server.database.tables.Waiter;
-import lu.btsi.bragi.ros.server.database.tables.records.AllergenLocalizedRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.AllergenRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.InvoiceRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.LanguageRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.ProductAllergenRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.ProductCategoryLocalizedRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.ProductCategoryRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.ProductLocalizedRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.ProductPriceForOrderRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.ProductRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.TableRecord;
-import lu.btsi.bragi.ros.server.database.tables.records.WaiterRecord;
-
+import lu.btsi.bragi.ros.server.database.tables.*;
+import lu.btsi.bragi.ros.server.database.tables.records.*;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
 import org.jooq.UniqueKey;
 import org.jooq.impl.AbstractKeys;
 import org.jooq.types.UInteger;
+
+import javax.annotation.Generated;
 
 
 /**
@@ -62,6 +37,7 @@ public class Keys {
     public static final Identity<InvoiceRecord, UInteger> IDENTITY_INVOICE = Identities0.IDENTITY_INVOICE;
     public static final Identity<OrderRecord, UInteger> IDENTITY_ORDER = Identities0.IDENTITY_ORDER;
     public static final Identity<ProductRecord, UInteger> IDENTITY_PRODUCT = Identities0.IDENTITY_PRODUCT;
+    public static final Identity<ProductLocalizedRecord, UInteger> IDENTITY_PRODUCT_LOCALIZED = Identities0.IDENTITY_PRODUCT_LOCALIZED;
     public static final Identity<TableRecord, UInteger> IDENTITY_TABLE = Identities0.IDENTITY_TABLE;
     public static final Identity<WaiterRecord, UInteger> IDENTITY_WAITER = Identities0.IDENTITY_WAITER;
 
@@ -111,6 +87,7 @@ public class Keys {
         public static Identity<InvoiceRecord, UInteger> IDENTITY_INVOICE = createIdentity(Invoice.INVOICE, Invoice.INVOICE.ID);
         public static Identity<OrderRecord, UInteger> IDENTITY_ORDER = createIdentity(Order.ORDER, Order.ORDER.ID);
         public static Identity<ProductRecord, UInteger> IDENTITY_PRODUCT = createIdentity(Product.PRODUCT, Product.PRODUCT.ID);
+        public static Identity<ProductLocalizedRecord, UInteger> IDENTITY_PRODUCT_LOCALIZED = createIdentity(ProductLocalized.PRODUCT_LOCALIZED, ProductLocalized.PRODUCT_LOCALIZED.PRODUCT_ID);
         public static Identity<TableRecord, UInteger> IDENTITY_TABLE = createIdentity(Table.TABLE, Table.TABLE.ID);
         public static Identity<WaiterRecord, UInteger> IDENTITY_WAITER = createIdentity(Waiter.WAITER, Waiter.WAITER.ID);
     }

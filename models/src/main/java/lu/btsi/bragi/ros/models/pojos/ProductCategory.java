@@ -4,11 +4,11 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
-import java.io.Serializable;
+import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
-
-import org.jooq.types.UInteger;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 
 /**
@@ -24,24 +24,32 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ProductCategory implements Serializable {
 
-    private static final long serialVersionUID = -488526348;
+    private static final long serialVersionUID = -296938219;
 
-    private UInteger id;
-    private String   imageUrl;
+    private UInteger  id;
+    private String    imageUrl;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public ProductCategory() {}
 
     public ProductCategory(ProductCategory value) {
         this.id = value.id;
         this.imageUrl = value.imageUrl;
+        this.createdAt = value.createdAt;
+        this.updatedAt = value.updatedAt;
     }
 
     public ProductCategory(
-        UInteger id,
-        String   imageUrl
+        UInteger  id,
+        String    imageUrl,
+        Timestamp createdAt,
+        Timestamp updatedAt
     ) {
         this.id = id;
         this.imageUrl = imageUrl;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public UInteger getId() {
@@ -60,12 +68,30 @@ public class ProductCategory implements Serializable {
         this.imageUrl = imageUrl;
     }
 
+    public Timestamp getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("ProductCategory (");
 
         sb.append(id);
         sb.append(", ").append(imageUrl);
+        sb.append(", ").append(createdAt);
+        sb.append(", ").append(updatedAt);
 
         sb.append(")");
         return sb.toString();

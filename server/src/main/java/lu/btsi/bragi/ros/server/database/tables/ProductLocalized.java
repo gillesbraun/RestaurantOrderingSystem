@@ -4,24 +4,18 @@
 package lu.btsi.bragi.ros.server.database.tables;
 
 
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import lu.btsi.bragi.ros.server.database.Keys;
 import lu.btsi.bragi.ros.server.database.Ros;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductLocalizedRecord;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Schema;
+import org.jooq.*;
 import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
 import org.jooq.impl.TableImpl;
 import org.jooq.types.UInteger;
+
+import javax.annotation.Generated;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -37,7 +31,7 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ProductLocalized extends TableImpl<ProductLocalizedRecord> {
 
-    private static final long serialVersionUID = 699612810;
+    private static final long serialVersionUID = 382407339;
 
     /**
      * The reference instance of <code>ros.Product_Localized</code>
@@ -105,6 +99,14 @@ public class ProductLocalized extends TableImpl<ProductLocalizedRecord> {
     @Override
     public Schema getSchema() {
         return Ros.ROS;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Identity<ProductLocalizedRecord, UInteger> getIdentity() {
+        return Keys.IDENTITY_PRODUCT_LOCALIZED;
     }
 
     /**

@@ -4,11 +4,11 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
-import java.io.Serializable;
+import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
-
-import org.jooq.types.UInteger;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 
 /**
@@ -24,11 +24,13 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ProductCategoryLocalized implements Serializable {
 
-    private static final long serialVersionUID = 572491746;
+    private static final long serialVersionUID = -517901937;
 
-    private UInteger productCategoryId;
-    private String   languageCode;
-    private String   label;
+    private UInteger  productCategoryId;
+    private String    languageCode;
+    private String    label;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public ProductCategoryLocalized() {}
 
@@ -36,16 +38,22 @@ public class ProductCategoryLocalized implements Serializable {
         this.productCategoryId = value.productCategoryId;
         this.languageCode = value.languageCode;
         this.label = value.label;
+        this.createdAt = value.createdAt;
+        this.updatedAt = value.updatedAt;
     }
 
     public ProductCategoryLocalized(
-        UInteger productCategoryId,
-        String   languageCode,
-        String   label
+        UInteger  productCategoryId,
+        String    languageCode,
+        String    label,
+        Timestamp createdAt,
+        Timestamp updatedAt
     ) {
         this.productCategoryId = productCategoryId;
         this.languageCode = languageCode;
         this.label = label;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public UInteger getProductCategoryId() {
@@ -72,6 +80,22 @@ public class ProductCategoryLocalized implements Serializable {
         this.label = label;
     }
 
+    public Timestamp getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("ProductCategoryLocalized (");
@@ -79,6 +103,8 @@ public class ProductCategoryLocalized implements Serializable {
         sb.append(productCategoryId);
         sb.append(", ").append(languageCode);
         sb.append(", ").append(label);
+        sb.append(", ").append(createdAt);
+        sb.append(", ").append(updatedAt);
 
         sb.append(")");
         return sb.toString();

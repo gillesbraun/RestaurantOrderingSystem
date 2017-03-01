@@ -4,23 +4,18 @@
 package lu.btsi.bragi.ros.server.database.tables;
 
 
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import lu.btsi.bragi.ros.server.database.Keys;
 import lu.btsi.bragi.ros.server.database.Ros;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductCategoryLocalizedRecord;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Schema;
+import org.jooq.*;
 import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
 import org.jooq.impl.TableImpl;
 import org.jooq.types.UInteger;
+
+import javax.annotation.Generated;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -36,7 +31,7 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ProductCategoryLocalized extends TableImpl<ProductCategoryLocalizedRecord> {
 
-    private static final long serialVersionUID = 740596429;
+    private static final long serialVersionUID = 1360559590;
 
     /**
      * The reference instance of <code>ros.Product_Category_Localized</code>
@@ -65,6 +60,16 @@ public class ProductCategoryLocalized extends TableImpl<ProductCategoryLocalized
      * The column <code>ros.Product_Category_Localized.label</code>.
      */
     public final TableField<ProductCategoryLocalizedRecord, String> LABEL = createField("label", org.jooq.impl.SQLDataType.VARCHAR.length(255).nullable(false), this, "");
+
+    /**
+     * The column <code>ros.Product_Category_Localized.created_at</code>.
+     */
+    public final TableField<ProductCategoryLocalizedRecord, Timestamp> CREATED_AT = createField("created_at", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.inline("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+
+    /**
+     * The column <code>ros.Product_Category_Localized.updated_at</code>.
+     */
+    public final TableField<ProductCategoryLocalizedRecord, Timestamp> UPDATED_AT = createField("updated_at", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.inline("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * Create a <code>ros.Product_Category_Localized</code> table reference

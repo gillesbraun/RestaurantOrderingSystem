@@ -87,6 +87,6 @@ public class Table implements Serializable {
 
     @Override
     public String toString() {
-        return "ID: " + id + " Places: " + places;
+        return "N° "+id+ " Places: "+places;
     }
 }

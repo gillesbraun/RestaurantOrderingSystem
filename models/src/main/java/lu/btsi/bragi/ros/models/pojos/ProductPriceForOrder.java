@@ -4,12 +4,11 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
-import java.io.Serializable;
-import java.sql.Timestamp;
+import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
-
-import org.jooq.types.UInteger;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 
 /**

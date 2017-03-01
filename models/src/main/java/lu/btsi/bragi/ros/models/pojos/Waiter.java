@@ -4,12 +4,11 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
-import java.io.Serializable;
-import java.sql.Timestamp;
+import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
-
-import org.jooq.types.UInteger;
+import java.io.Serializable;
+import java.sql.Timestamp;
 
 
 /**
@@ -87,6 +86,6 @@ public class Waiter implements Serializable {
 
     @Override
     public String toString() {
-        return getId() + ": " + getName();
+        return "N° "+id+": "+name;
     }
 }
