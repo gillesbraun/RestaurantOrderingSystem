@@ -19,6 +19,7 @@ public class MainController {
     @Inject ProductController productController;
     @Inject ProductLocalizedController productLocalizedController;
     @Inject ProductCategoryController productCategoryController;
+    @Inject ProductCategoryLocalizedController productCategoryLocalizedController;
 
     public Optional<Message> sendToRightController(String message) throws ClassNotFoundException, MessageException {
         return Controller.sendToController(message);
