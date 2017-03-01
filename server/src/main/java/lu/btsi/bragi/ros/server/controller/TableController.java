@@ -1,6 +1,7 @@
 package lu.btsi.bragi.ros.server.controller;
 
 import lu.btsi.bragi.ros.models.pojos.Table;
+import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.TableRecord;
 
 import java.util.List;
@@ -13,7 +14,7 @@ public class TableController extends Controller<Table> {
 
     private static Class mapTo = Table.class;
 
-    private lu.btsi.bragi.ros.server.database.tables.Table dbTable = lu.btsi.bragi.ros.server.database.tables.Table.TABLE;
+    private lu.btsi.bragi.ros.server.database.tables.Table dbTable = Tables.TABLE;
 
     public TableController() {
         super(mapTo);

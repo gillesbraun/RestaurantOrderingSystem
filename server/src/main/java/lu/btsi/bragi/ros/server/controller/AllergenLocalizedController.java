@@ -1,6 +1,7 @@
 package lu.btsi.bragi.ros.server.controller;
 
 import lu.btsi.bragi.ros.models.pojos.AllergenLocalized;
+import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.AllergenLocalizedRecord;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class AllergenLocalizedController extends Controller<AllergenLocalized> {
 
     private static Class mapTo = AllergenLocalized.class;
 
-    private lu.btsi.bragi.ros.server.database.tables.AllergenLocalized dbTable = lu.btsi.bragi.ros.server.database.tables.AllergenLocalized.ALLERGEN_LOCALIZED;
+    private lu.btsi.bragi.ros.server.database.tables.AllergenLocalized dbTable = Tables.ALLERGEN_LOCALIZED;
 
 
     public AllergenLocalizedController() {

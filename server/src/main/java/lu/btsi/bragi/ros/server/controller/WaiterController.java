@@ -1,6 +1,7 @@
 package lu.btsi.bragi.ros.server.controller;
 
 import lu.btsi.bragi.ros.models.pojos.Waiter;
+import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.WaiterRecord;
 
 import java.util.List;
@@ -12,7 +13,7 @@ public class WaiterController extends Controller<Waiter> {
 
     private static Class mapTo = Waiter.class;
 
-    lu.btsi.bragi.ros.server.database.tables.Waiter dbTable = lu.btsi.bragi.ros.server.database.tables.Waiter.WAITER;
+    lu.btsi.bragi.ros.server.database.tables.Waiter dbTable = Tables.WAITER;
 
 
     public WaiterController() {
