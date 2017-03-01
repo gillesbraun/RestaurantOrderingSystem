@@ -56,13 +56,17 @@ CREATE Table IF NOT EXISTS Language(
 
 CREATE TABLE IF NOT EXISTS Product_Category (
   id INT UNSIGNED PRIMARY KEY,
-  image_url VARCHAR(500)
+  image_url VARCHAR(500),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS Product_Category_Localized (
   product_category_id INT UNSIGNED,
   language_code CHAR(2),
   label VARCHAR(255) NOT NULL,
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (product_category_id, language_code),
 
   CONSTRAINT fk_ProductCategoryLocalized_Language
@@ -123,6 +127,8 @@ CREATE Table IF NOT EXISTS Allergen_Localized (
   allergen_id INT UNSIGNED,
   language_code CHAR(2),
   label VARCHAR(500),
+  created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (allergen_id, language_code),
 
   CONSTRAINT fk_AllergenLocalized_Allergen
