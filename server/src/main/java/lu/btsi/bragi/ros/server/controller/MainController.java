@@ -16,6 +16,9 @@ public class MainController {
     @Inject
     WaiterController waiterController;
 
+    @Inject
+    LanguageController languageController;
+
     public Optional<Message> sendToRightController(String message) throws ClassNotFoundException, MessageException {
         return Controller.sendToController(message);
     }
