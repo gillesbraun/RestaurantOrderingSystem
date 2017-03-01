@@ -13,9 +13,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Table;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -79,7 +81,13 @@ public class TablesStage extends Stage {
 
     private void loadData() {
         client.sendWithAction(new MessageGet<>(Table.class), (text) -> {
-            Message<Table> tables = new Message<>(text);
+            Message<Table> tables = null;
+            try {
+                tables = new Message<>(text);
+            } catch (MessageException e) {
+                ExceptionDialog d = new ExceptionDialog(e);
+                d.show();
+            }
 
             ObservableList<Table> list = FXCollections.observableList(tables.getPayload());
             Platform.runLater(() -> {
@@ -90,7 +98,7 @@ public class TablesStage extends Stage {
 
     public void deleteButtonPressed(ActionEvent actionEvent) {
         Table selectedItem = listTables.getSelectionModel().getSelectedItem();
-        Message<Table> update = new Message<>(MessageType.Delete, selectedItem);
+        Message<Table> update = new Message<>(MessageType.Delete, selectedItem, Table.class);
         client.send(update.toString());
         loadData();
     }
@@ -100,7 +108,7 @@ public class TablesStage extends Stage {
             return;
         Table selectedItem = listTables.getSelectionModel().getSelectedItem();
         selectedItem.setPlaces(UShort.valueOf(tablePlaces.getText()));
-        Message<Table> update = new Message<>(MessageType.Update, selectedItem);
+        Message<Table> update = new Message<>(MessageType.Update, selectedItem, Table.class);
         client.send(update.toString());
         loadData();
     }
@@ -115,7 +123,7 @@ public class TablesStage extends Stage {
             if(enteredName.isPresent()) {
                 Table table = new Table();
                 table.setPlaces(UShort.valueOf(enteredName.get()));
-                Message<Table> message = new Message<>(MessageType.Create, table);
+                Message<Table> message = new Message<>(MessageType.Create, table, Table.class);
                 client.send(message.toString());
                 loadData();
             }

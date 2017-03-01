@@ -2,6 +2,7 @@ package lu.btsi.bragi.ros.server.controller;
 
 import com.google.inject.Inject;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageException;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public class MainController {
     @Inject
     WaiterController waiterController;
 
-    public Optional<Message> sendToRightController(String message) throws ClassNotFoundException {
+    public Optional<Message> sendToRightController(String message) throws ClassNotFoundException, MessageException {
         return Controller.sendToController(message);
     }
 }

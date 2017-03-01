@@ -13,6 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
@@ -86,7 +87,12 @@ public class WaitersStage extends Stage {
 
     private void loadWaiters() {
         client.sendWithAction(new MessageGet<>(Waiter.class), (String m) -> {
-            Message<Waiter> mess = new Message<>(m);
+            Message<Waiter> mess = null;
+            try {
+                mess = new Message<>(m);
+            } catch (MessageException e) {
+                e.printStackTrace();
+            }
             List<Waiter> waiters = mess.getPayload();
             Platform.runLater(() -> {
                 listWaiters.setItems(FXCollections.observableList(waiters));
@@ -105,7 +111,7 @@ public class WaitersStage extends Stage {
         if(listWaiters.getSelectionModel().getSelectedItems().size() == 1 && waiterName.getText().trim().length() > 0) {
             Waiter waiter = listWaiters.getSelectionModel().getSelectedItem();
             waiter.setName(waiterName.getText());
-            Message<Waiter> message = new Message<>(MessageType.Update, waiter);
+            Message<Waiter> message = new Message<>(MessageType.Update, waiter, Waiter.class);
             client.send(message.toString());
             loadWaiters();
         }
@@ -120,7 +126,7 @@ public class WaitersStage extends Stage {
         if(enteredName.isPresent() && enteredName.get().trim().length() > 0) {
             Waiter waiter = new Waiter();
             waiter.setName(enteredName.get());
-            Message<Waiter> message = new Message<>(MessageType.Create, waiter);
+            Message<Waiter> message = new Message<>(MessageType.Create, waiter, Waiter.class);
             client.send(message.toString());
             loadWaiters();
         }

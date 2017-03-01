@@ -2,10 +2,7 @@ package lu.btsi.bragi.ros.models.message;
 
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Message Class used providing standardised communication between server and client. It provides multiple constructors
@@ -14,7 +11,7 @@ import java.util.UUID;
  */
 public class Message<T> {
     protected final MessageType type;
-    protected final Class<T> clazz;
+    protected final Class<? extends T> clazz;
     protected final UUID messageID;
     protected final List<T> payload;
 
@@ -31,7 +28,7 @@ public class Message<T> {
      * @param encodedMessage The raw string that is sent between client and server
      */
     @SuppressWarnings("unchecked")
-    public Message(String encodedMessage) {
+    public Message(String encodedMessage) throws MessageException {
         try {
             isMessageValid(encodedMessage);
             String[] split = encodedMessage.split(SEPARATOR);
@@ -45,6 +42,14 @@ public class Message<T> {
             } else {
                 this.payload = null;
             }
+            if(Exception.class.isAssignableFrom(clazz)) {
+                List<Throwable> throwables = (ArrayList<Throwable>)payload;
+                if(throwables.size() > 0) {
+                    throw new MessageException(throwables.get(0));
+                } else {
+                    throw new MessageException("Incoming message is exception. No specific data available.");
+                }
+            }
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             throw new RuntimeException("Could not read message.");
@@ -57,7 +62,7 @@ public class Message<T> {
      * @param content A list of elements to encapsulate
      * @param clazz Class of the element you want to encapsulate
      */
-    public Message(MessageType type, List<T> content, Class<T> clazz) {
+    public Message(MessageType type, List<T> content, Class<? extends T> clazz) {
         if(content == null) {
             throw new IllegalArgumentException("List must not be null.");
         }
@@ -72,10 +77,10 @@ public class Message<T> {
      * @param type The MessageType (Get, Delete, ...)
      * @param item The element you want to encapsulate
      */
-    public Message(MessageType type, T item) {
+    public Message(MessageType type, T item, Class<? extends T> clazz) {
         this.type = type;
         this.payload = new ArrayList<T>(Arrays.asList(item));
-        this.clazz = (Class<T>) item.getClass();
+        this.clazz = clazz;
         this.messageID = UUID.randomUUID();
     }
 
@@ -85,29 +90,57 @@ public class Message<T> {
      * @param type The <code>MessageType</code>, which probably should be Get
      * @param clazz The class of the Object you want to retrieve
      */
-    protected Message(MessageType type, Class<T> clazz) {
+    protected Message(MessageType type, Class<? extends T> clazz) {
         this.type = type;
         this.payload = null;
         this.clazz = clazz;
         this.messageID = UUID.randomUUID();
     }
 
-    private Message(MessageType type, Class<T> clazz, UUID messageID, List<T> payload) {
+    /**
+     * Constructor used internally for specifying every aspect of the message.
+     * @param type <code>MessageType</code> of the message
+     * @param clazz The class representing the type of each element in the payload
+     * @param messageID <code>UUID</code> which is used to identify messages and responses
+     * @param payload List of elements to be sent
+     */
+    private Message(MessageType type, Class<? extends T> clazz, UUID messageID, List<T> payload) {
         this.type = type;
         this.clazz = clazz;
         this.messageID = messageID;
         this.payload = payload;
     }
 
+    /**
+     * Creates a Message of <code>MessageType.Answer</code> used to send answers to clients. This method also assigns
+     * the answer the same UUID as the message you are creating it from, so the client knows to which request this
+     * answer refers to.
+     * @param payload The items to send
+     * @return <code>Message</code> which contains the response and UUID for the request, and is of type
+     * <code>MessageType.Answer</code>
+     */
     public Message<T> createAnswer(List<T> payload) {
-        return new Message<T>(MessageType.Answer, clazz, messageID, payload);
+        return new Message<>(MessageType.Answer, clazz, messageID, payload);
     }
 
     /**
-     * Returns the class of the provided Message
+     * Creates a Message of <code>MessageType.Error</code> used to send exceptions to clients. The receiving party
+     * can then handle the error in a meaningful way. This method also assigns the answer the same UUID as the message
+     * you are creating it from, so the client knows which request produced the error.
+     * @param throwable The <code>Exception</code> to send to the client.
+     * @param clazz The Class
+     * @return <code>Message</code> which contains an exception and is of type: <code>MessageType.Error</code>
+     */
+    public Message createAnswerException(Exception throwable, Class<? extends Exception> clazz) {
+        ArrayList<Exception> al = new ArrayList<>(Collections.singletonList(throwable));
+        return new Message<>(MessageType.Error, clazz, this.messageID, al);
+    }
+
+    /**
+     * Returns the class of the provided Message from String
      * @param encoded The raw message as it is sent between client and server
      * @return The class of the object encapsulated in the message
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException When the class is not unknown
      */
     public static Class messageClass(String encoded) throws ClassNotFoundException {
         isMessageValid(encoded);
@@ -126,6 +159,17 @@ public class Message<T> {
         return UUID.fromString(split[POS_UUID]);
     }
 
+    /**
+     * Returns the <code>MessageType</code> for the provided message.
+     * @param encoded The raw message string as it is sent
+     * @return The <code>MessageType</code> of that Message
+     */
+    public static MessageType messageType(String encoded) {
+        isMessageValid(encoded);
+        String[] split = encoded.split(SEPARATOR);
+        return MessageType.get(split[POS_MESSAGETYPE]);
+    }
+
     private static void isMessageValid(String str) throws MessageMalformedException {
         String[] split = str.split(SEPARATOR);
         if(split.length != 3 && split.length != 4) {
@@ -138,7 +182,6 @@ public class Message<T> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public String toString() {
         if(payload != null) {

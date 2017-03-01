@@ -2,6 +2,7 @@ package lu.btsi.bragi.ros.server.controller;
 
 import com.google.inject.Inject;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import org.jooq.DSLContext;
 
@@ -25,7 +26,7 @@ public abstract class Controller<T> {
         registeredControllers.put(type, this);
     }
 
-    protected static Optional<Message> sendToController(String message) throws ControllerNotFoundException, ClassNotFoundException {
+    protected static Optional<Message> sendToController(String message) throws ControllerNotFoundException, ClassNotFoundException, MessageException {
         Class clazz = Message.messageClass(message);
         Controller controller = registeredControllers.get(clazz);
         if(controller != null) {
@@ -35,31 +36,35 @@ public abstract class Controller<T> {
         throw new ControllerNotFoundException("No Controller found for class "+clazz +". Available controllers: "+ controllers);
     }
 
-    protected abstract List<T> handleGet();
+    protected abstract List<T> handleGet() throws Exception;
 
-    protected abstract void handleUpdate(T obj);
+    protected abstract void handleUpdate(T obj) throws Exception;
 
-    protected abstract void handleCreate(T obj);
+    protected abstract void handleCreate(T obj) throws Exception;
 
-    protected abstract void handleDelete(T obj);
+    protected abstract void handleDelete(T obj) throws Exception;
 
-    public Optional<Message> handle(String text) {
+    public Optional<Message> handle(String text) throws MessageException {
         Message<T> message = new Message<>(text);
         List<T> payload = message.getPayload();
-        if (message.getType() == MessageType.Get) {
-            List<T> newPayload = handleGet();
-            Message<T> answer = message.createAnswer(newPayload);
-            return Optional.of(answer);
-        }
-        for(T pojo : payload) {
-            if (message.getType() == MessageType.Update) {
-                handleUpdate(pojo);
-            } else if (message.getType() == MessageType.Delete) {
-                handleDelete(pojo);
-            } else if (message.getType() == MessageType.Create) {
-                handleCreate(pojo);
+        try {
+            if (message.getType() == MessageType.Get) {
+                List<T> newPayload = handleGet();
+                Message<T> answer = message.createAnswer(newPayload);
+                return Optional.of(answer);
             }
+            for (T pojo : payload) {
+                if (message.getType() == MessageType.Update) {
+                    handleUpdate(pojo);
+                } else if (message.getType() == MessageType.Delete) {
+                    handleDelete(pojo);
+                } else if (message.getType() == MessageType.Create) {
+                    handleCreate(pojo);
+                }
+            }
+            return Optional.empty();
+        } catch (Exception e) {
+            return Optional.of(message.createAnswerException(e, e.getClass()));
         }
-        return Optional.empty();
     }
 }

@@ -2,6 +2,7 @@ package lu.btsi.bragi.ros.server;
 
 import com.google.inject.Inject;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.server.controller.MainController;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -46,6 +47,8 @@ public class Server extends WebSocketServer {
                 conn.send(answer.get().toString());
             }
         } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (MessageException e) {
             e.printStackTrace();
         }
     }

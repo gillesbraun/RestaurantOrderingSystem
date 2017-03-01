@@ -1,7 +1,11 @@
 package lu.btsi.bragi.ros.client.connection;
 
+import javafx.application.Platform;
 import lu.btsi.bragi.ros.client.MessageCallback;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageException;
+import lu.btsi.bragi.ros.models.message.MessageType;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
 
@@ -37,11 +41,24 @@ public class Client extends WebSocketClient {
 
     @Override
     public void onMessage(String message) {
+        boolean isError = Message.messageType(message).equals(MessageType.Error);
         UUID messageUUID = Message.messageUUID(message);
         MessageCallback messageCallback = callbackMap.get(messageUUID);
         if(messageCallback != null) {
-            messageCallback.handleAnswer(message);
+            Platform.runLater(() -> messageCallback.handleAnswer(message));
             callbackMap.remove(messageUUID);
+        } else {
+            if(isError) {
+                try {
+                    new Message(message);
+                    // should not reach here
+                } catch (MessageException e) {
+                    Platform.runLater(() -> {
+                        ExceptionDialog exceptionDialog = new ExceptionDialog(e);
+                        exceptionDialog.show();
+                    });
+                }
+            }
         }
     }
 
