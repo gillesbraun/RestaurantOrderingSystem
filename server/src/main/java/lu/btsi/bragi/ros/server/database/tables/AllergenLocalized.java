@@ -13,6 +13,7 @@ import org.jooq.impl.TableImpl;
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
 
@@ -30,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class AllergenLocalized extends TableImpl<AllergenLocalizedRecord> {
 
-    private static final long serialVersionUID = -1807722691;
+    private static final long serialVersionUID = 1173882494;
 
     /**
      * The reference instance of <code>ros.Allergen_Localized</code>
@@ -59,6 +60,16 @@ public class AllergenLocalized extends TableImpl<AllergenLocalizedRecord> {
      * The column <code>ros.Allergen_Localized.label</code>.
      */
     public final TableField<AllergenLocalizedRecord, String> LABEL = createField("label", org.jooq.impl.SQLDataType.VARCHAR.length(500), this, "");
+
+    /**
+     * The column <code>ros.Allergen_Localized.created_at</code>.
+     */
+    public final TableField<AllergenLocalizedRecord, Timestamp> CREATED_AT = createField("created_at", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.inline("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
+
+    /**
+     * The column <code>ros.Allergen_Localized.updated_at</code>.
+     */
+    public final TableField<AllergenLocalizedRecord, Timestamp> UPDATED_AT = createField("updated_at", org.jooq.impl.SQLDataType.TIMESTAMP.nullable(false).defaultValue(org.jooq.impl.DSL.inline("CURRENT_TIMESTAMP", org.jooq.impl.SQLDataType.TIMESTAMP)), this, "");
 
     /**
      * Create a <code>ros.Allergen_Localized</code> table reference

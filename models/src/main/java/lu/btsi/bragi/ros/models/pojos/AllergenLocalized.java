@@ -8,6 +8,7 @@ import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 
 /**
@@ -23,11 +24,13 @@ import java.io.Serializable;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class AllergenLocalized implements Serializable {
 
-    private static final long serialVersionUID = 149037827;
+    private static final long serialVersionUID = 1410875736;
 
-    private UInteger allergenId;
-    private String   languageCode;
-    private String   label;
+    private UInteger  allergenId;
+    private String    languageCode;
+    private String    label;
+    private Timestamp createdAt;
+    private Timestamp updatedAt;
 
     public AllergenLocalized() {}
 
@@ -35,16 +38,22 @@ public class AllergenLocalized implements Serializable {
         this.allergenId = value.allergenId;
         this.languageCode = value.languageCode;
         this.label = value.label;
+        this.createdAt = value.createdAt;
+        this.updatedAt = value.updatedAt;
     }
 
     public AllergenLocalized(
-        UInteger allergenId,
-        String   languageCode,
-        String   label
+        UInteger  allergenId,
+        String    languageCode,
+        String    label,
+        Timestamp createdAt,
+        Timestamp updatedAt
     ) {
         this.allergenId = allergenId;
         this.languageCode = languageCode;
         this.label = label;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public UInteger getAllergenId() {
@@ -71,6 +80,22 @@ public class AllergenLocalized implements Serializable {
         this.label = label;
     }
 
+    public Timestamp getCreatedAt() {
+        return this.createdAt;
+    }
+
+    public void setCreatedAt(Timestamp createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Timestamp getUpdatedAt() {
+        return this.updatedAt;
+    }
+
+    public void setUpdatedAt(Timestamp updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("AllergenLocalized (");
@@ -78,6 +103,8 @@ public class AllergenLocalized implements Serializable {
         sb.append(allergenId);
         sb.append(", ").append(languageCode);
         sb.append(", ").append(label);
+        sb.append(", ").append(createdAt);
+        sb.append(", ").append(updatedAt);
 
         sb.append(")");
         return sb.toString();

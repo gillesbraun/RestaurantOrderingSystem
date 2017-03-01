@@ -3,7 +3,6 @@
 */
 package lu.btsi.bragi.ros.models.pojos;
 
-
 import javax.annotation.Generated;
 import java.io.Serializable;
 import java.sql.Timestamp;
