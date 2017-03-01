@@ -10,14 +10,12 @@ import java.util.Optional;
  * Created by gillesbraun on 15/02/2017.
  */
 public class MainController {
-    @Inject
-    TableController tableController;
 
-    @Inject
-    WaiterController waiterController;
-
-    @Inject
-    LanguageController languageController;
+    @Inject TableController tableController;
+    @Inject WaiterController waiterController;
+    @Inject LanguageController languageController;
+    @Inject AllergenController allergenController;
+    @Inject AllergenLocalizedController allergenLocalizedController;
 
     public Optional<Message> sendToRightController(String message) throws ClassNotFoundException, MessageException {
         return Controller.sendToController(message);
