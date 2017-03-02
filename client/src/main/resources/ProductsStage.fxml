@@ -3,104 +3,106 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="463.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <VBox BorderPane.alignment="CENTER">
-         <children>
-            <ListView fx:id="listProducts" prefWidth="200.0" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets left="14.0" right="14.0" top="14.0" />
-               </VBox.margin>
-            </ListView>
-            <HBox spacing="7.0">
-               <children>
-                  <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#buttonDeletePressed" />
-                  <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#buttonRefreshPressed" />
-                  <Button fx:id="buttonAddProduct" mnemonicParsing="false" onAction="#buttonAddProductPressed" />
-               </children>
-               <VBox.margin>
-                  <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
-               </VBox.margin>
-            </HBox>
-         </children>
-      </VBox>
-   </left>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="463.0" prefWidth="686.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <center>
-      <VBox fx:id="detailPane" disable="true" spacing="14.0" BorderPane.alignment="CENTER">
-         <children>
-            <HBox alignment="BASELINE_LEFT" spacing="7.0">
+      <SplitPane dividerPositions="0.33277591973244147" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <items>
+            <VBox prefHeight="461.0" prefWidth="264.0">
                <children>
-                  <Label alignment="CENTER" text="Product Number: " />
-                  <Label fx:id="labelID" alignment="CENTER" text="0" />
-               </children>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </HBox>
-            <HBox alignment="BASELINE_LEFT" spacing="7.0">
-               <children>
-                  <Label alignment="CENTER" text="Product Category" />
-                  <ChoiceBox fx:id="choiceBoxProductCategory" HBox.hgrow="ALWAYS" />
-                  <Button fx:id="buttonProductCategoryEdit" mnemonicParsing="false" onAction="#buttonProductCategoryEditPressed" />
-               </children>
-            </HBox>
-            <HBox alignment="BASELINE_LEFT" spacing="7.0">
-               <children>
-                  <Label alignment="CENTER" text="Price" />
-                  <TextField fx:id="textFieldPrice" HBox.hgrow="ALWAYS" />
-               </children>
-            </HBox>
-            <Separator prefWidth="200.0" />
-            <VBox>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <children>
-                  <Label text="Allergens:" />
-                  <ListView fx:id="listAllergens" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                  <ListView fx:id="listProducts" prefWidth="200.0" VBox.vgrow="ALWAYS">
                      <VBox.margin>
-                        <Insets bottom="7.0" top="7.0" />
+                        <Insets left="14.0" right="14.0" top="14.0" />
                      </VBox.margin>
                   </ListView>
-                  <HBox alignment="BASELINE_LEFT" spacing="7.0">
+                  <HBox spacing="7.0">
                      <children>
-                        <Label alignment="CENTER" text="Add Allergen:" />
-                        <ChoiceBox fx:id="choiceBoxAllergen" HBox.hgrow="ALWAYS" />
-                        <Button fx:id="buttonAddAllergen" mnemonicParsing="false" onAction="#buttonAddAllergenPressed" />
-                        <Button fx:id="buttonEditAllergen" mnemonicParsing="false" onAction="#buttonEditAllergenPressed" />
+                        <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#buttonDeletePressed" />
+                        <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#buttonRefreshPressed" />
+                        <Button fx:id="buttonAddProduct" mnemonicParsing="false" onAction="#buttonAddProductPressed" />
                      </children>
+                     <VBox.margin>
+                        <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+                     </VBox.margin>
                   </HBox>
                </children>
             </VBox>
-            <Separator prefWidth="200.0" />
-            <VBox spacing="7.0">
+            <VBox fx:id="detailPane" disable="true" prefHeight="461.0" prefWidth="418.0" spacing="14.0">
                <children>
-                  <Label text="Product Translations:" />
-                  <ListView fx:id="listTranslations" prefHeight="200.0" prefWidth="200.0" />
-                  <VBox spacing="7.0">
+                  <HBox alignment="BASELINE_LEFT" spacing="7.0">
                      <children>
-                        <Label alignment="CENTER" text="Add Translation:" />
+                        <Label alignment="CENTER" text="Product Number: " />
+                        <Label fx:id="labelID" alignment="CENTER" text="0" />
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox alignment="BASELINE_LEFT" spacing="7.0">
+                     <children>
+                        <Label alignment="CENTER" text="Product Category" />
+                        <ChoiceBox fx:id="choiceBoxProductCategory" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="buttonProductCategoryEdit" mnemonicParsing="false" onAction="#buttonProductCategoryEditPressed" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="BASELINE_LEFT" spacing="7.0">
+                     <children>
+                        <Label alignment="CENTER" text="Price" />
+                        <TextField fx:id="textFieldPrice" HBox.hgrow="ALWAYS" />
+                     </children>
+                  </HBox>
+                  <Separator prefWidth="200.0" />
+                  <VBox>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <Label text="Allergens:" />
+                        <ListView fx:id="listAllergens" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                           <VBox.margin>
+                              <Insets bottom="7.0" top="7.0" />
+                           </VBox.margin>
+                        </ListView>
                         <HBox alignment="BASELINE_LEFT" spacing="7.0">
                            <children>
-                              <TextField fx:id="textFieldTranslation" HBox.hgrow="ALWAYS" />
-                              <ChoiceBox fx:id="choiceBoxLanguage" />
-                              <Button fx:id="buttonAddTranslation" mnemonicParsing="false" onAction="#buttonAddTranslationPressed" />
-                              <Button fx:id="buttonEditLanguages" mnemonicParsing="false" onAction="#buttonEditLanguagesPressed" />
+                              <Label alignment="CENTER" text="Add Allergen:" />
+                              <ChoiceBox fx:id="choiceBoxAllergen" HBox.hgrow="ALWAYS" />
+                              <Button fx:id="buttonAddAllergen" mnemonicParsing="false" onAction="#buttonAddAllergenPressed" />
+                              <Button fx:id="buttonEditAllergen" mnemonicParsing="false" onAction="#buttonEditAllergenPressed" />
                            </children>
                         </HBox>
                      </children>
                   </VBox>
+                  <Separator prefWidth="200.0" />
+                  <VBox spacing="7.0">
+                     <children>
+                        <Label text="Product Translations:" />
+                        <ListView fx:id="listTranslations" prefHeight="200.0" prefWidth="200.0" />
+                        <VBox spacing="7.0">
+                           <children>
+                              <Label alignment="CENTER" text="Add Translation:" />
+                              <HBox alignment="BASELINE_LEFT" spacing="7.0">
+                                 <children>
+                                    <TextField fx:id="textFieldTranslation" HBox.hgrow="ALWAYS" />
+                                    <ChoiceBox fx:id="choiceBoxLanguage" />
+                                    <Button fx:id="buttonAddTranslation" mnemonicParsing="false" onAction="#buttonAddTranslationPressed" />
+                                    <Button fx:id="buttonEditLanguages" mnemonicParsing="false" onAction="#buttonEditLanguagesPressed" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </VBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#buttonUpdatePressed" text="Update" />
+                     </children>
+                  </HBox>
                </children>
+               <padding>
+                  <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+               </padding>
             </VBox>
-            <HBox prefHeight="100.0" prefWidth="200.0">
-               <children>
-                  <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#buttonUpdatePressed" text="Update" />
-               </children>
-            </HBox>
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
-         </BorderPane.margin>
-      </VBox>
+         </items>
+      </SplitPane>
    </center>
 </BorderPane>

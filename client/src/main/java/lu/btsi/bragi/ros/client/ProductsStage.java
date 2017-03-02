@@ -1,22 +1,38 @@
 package lu.btsi.bragi.ros.client;
 
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.util.Pair;
 import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageException;
+import lu.btsi.bragi.ros.models.message.MessageGet;
+import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.AllergenLocalized;
+import lu.btsi.bragi.ros.models.pojos.Product;
+import lu.btsi.bragi.ros.models.pojos.ProductCategory;
 import lu.btsi.bragi.ros.models.pojos.ProductCategoryLocalized;
-import lu.btsi.bragi.ros.models.pojos.ProductLocalized;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by gillesbraun on 27/02/2017.
@@ -27,7 +43,7 @@ public class ProductsStage extends Stage {
     @FXML private TextField textFieldPrice, textFieldTranslation;
     @FXML private Button buttonProductCategoryEdit, buttonDelete, buttonRefresh, buttonAddAllergen, buttonEditAllergen,
                          buttonAddTranslation, buttonEditLanguages, buttonAddProduct;
-    @FXML private ListView<ProductLocalized> listProducts, listTranslations;
+    @FXML private ListView<Product> listProducts, listTranslations;
     @FXML private ListView<AllergenLocalized> listAllergens;
     @FXML private ChoiceBox<ProductCategoryLocalized> choiceBoxProductCategory;
     @FXML private ChoiceBox<AllergenLocalized> choiceBoxAllergen;
@@ -54,7 +70,18 @@ public class ProductsStage extends Stage {
     }
 
     private void loadData() {
-
+        Platform.runLater(() -> {
+            Message getProducts = new MessageGet<>(Product.class);
+            client.sendWithAction(getProducts, message -> {
+                try {
+                    Message<Product> decoded = new Message<Product>(message);
+                    ObservableList<Product> products = FXCollections.observableList(decoded.getPayload());
+                    listProducts.setItems(products);
+                } catch (MessageException e) {
+                    e.printStackTrace();
+                }
+            });
+        });
     }
 
     public void buttonRefreshPressed(ActionEvent event) {
@@ -62,7 +89,54 @@ public class ProductsStage extends Stage {
     }
 
     public void buttonAddProductPressed(ActionEvent event) {
+        Message get = new MessageGet<>(ProductCategory.class);
+        client.sendWithAction(get, message -> {
+            try {
+                List<ProductCategory> payload = new Message<ProductCategory>(message).getPayload();
+                ObservableList<ProductCategory> productCategories = FXCollections.observableList(payload);
 
+                Dialog<Pair<ProductCategory, Double>> dialog = new Dialog<>();
+                ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
+                dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, addButtonType);
+
+                Label catL = new Label("Product Category");
+                ChoiceBox<ProductCategory> choiceBoxPC = new ChoiceBox<>(productCategories);
+                HBox cat = new HBox(14, catL, choiceBoxPC);
+                cat.setAlignment(Pos.CENTER_LEFT);
+
+                Label priceL = new Label("Price");
+                TextField textFieldPrice = new TextField("0.00");
+                HBox price = new HBox(14, priceL, textFieldPrice);
+                price.setAlignment(Pos.CENTER_LEFT);
+
+                Label header = new Label("Add Product");
+                header.setFont(Font.font(18));
+                VBox root = new VBox(14, header, cat, price);
+                root.setPadding(new Insets(14));
+                dialog.getDialogPane().setContent(root);
+
+                dialog.setResultConverter(param -> {
+                    if(param.equals(addButtonType)) {
+                        return new Pair<>(choiceBoxPC.getValue(), Double.valueOf(textFieldPrice.getText()));
+                    }
+                    return null;
+                });
+
+                Optional<Pair<ProductCategory, Double>> result = dialog.showAndWait();
+
+                result.ifPresent(res -> {
+                    Product product = new Product();
+                    product.setPrice(BigDecimal.valueOf(result.get().getValue()));
+                    product.setProductCategoryId(result.get().getKey().getId());
+                    Message<Product> createMsg = new Message<>(MessageType.Create, product, Product.class);
+                    client.send(createMsg.toString());
+                    loadData();
+                });
+
+            } catch (MessageException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
 

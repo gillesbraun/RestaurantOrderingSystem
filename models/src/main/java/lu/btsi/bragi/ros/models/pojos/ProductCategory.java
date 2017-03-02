@@ -85,14 +85,6 @@ public class ProductCategory implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("ProductCategory (");
-
-        sb.append(id);
-        sb.append(", ").append(imageUrl);
-        sb.append(", ").append(createdAt);
-        sb.append(", ").append(updatedAt);
-
-        sb.append(")");
-        return sb.toString();
+        return String.valueOf(id);
     }
 }
