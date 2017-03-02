@@ -3,7 +3,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="463.0" prefWidth="686.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="686.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <SplitPane dividerPositions="0.33277591973244147" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
@@ -65,8 +65,9 @@
                         <HBox alignment="BASELINE_LEFT" spacing="7.0">
                            <children>
                               <Label alignment="CENTER" text="Add Allergen:" />
-                              <ChoiceBox fx:id="choiceBoxAllergen" HBox.hgrow="ALWAYS" />
+                              <ChoiceBox fx:id="choiceBoxAllergen" />
                               <Button fx:id="buttonAddAllergen" mnemonicParsing="false" onAction="#buttonAddAllergenPressed" />
+                              <Button fx:id="buttonDeleteAllergen" disable="true" mnemonicParsing="false" onAction="#buttonDeleteAllergenPressed" />
                               <Button fx:id="buttonEditAllergen" mnemonicParsing="false" onAction="#buttonEditAllergenPressed" />
                            </children>
                         </HBox>
@@ -79,12 +80,13 @@
                         <ListView fx:id="listTranslations" prefHeight="200.0" prefWidth="200.0" />
                         <VBox spacing="7.0">
                            <children>
-                              <Label alignment="CENTER" text="Add Translation:" />
+                              <Label alignment="CENTER" text="Add / Edit Translation:" />
                               <HBox alignment="BASELINE_LEFT" spacing="7.0">
                                  <children>
                                     <TextField fx:id="textFieldTranslation" HBox.hgrow="ALWAYS" />
                                     <ChoiceBox fx:id="choiceBoxLanguage" />
                                     <Button fx:id="buttonAddTranslation" mnemonicParsing="false" onAction="#buttonAddTranslationPressed" />
+                                    <Button fx:id="buttonEditTranslation" mnemonicParsing="false" onAction="#buttonEditTranslationPressed" />
                                     <Button fx:id="buttonEditLanguages" mnemonicParsing="false" onAction="#buttonEditLanguagesPressed" />
                                  </children>
                               </HBox>
