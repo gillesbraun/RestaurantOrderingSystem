@@ -3,8 +3,11 @@ package lu.btsi.bragi.ros.server.controller;
 import lu.btsi.bragi.ros.models.pojos.ProductLocalized;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductLocalizedRecord;
+import org.jooq.Record1;
 
 import java.util.List;
+
+import static org.jooq.impl.DSL.count;
 
 /**
  * Created by gillesbraun on 01/03/2017.
@@ -35,7 +38,18 @@ public class ProductLocalizedController extends Controller<ProductLocalized> {
     protected void handleCreate(ProductLocalized obj) throws Exception {
         ProductLocalizedRecord productLocalizedRecord = new ProductLocalizedRecord();
         productLocalizedRecord.from(obj);
-        context.executeInsert(productLocalizedRecord);
+
+        Record1<Integer> count = context.select(count())
+                .from(dbTable)
+                .where(dbTable.PRODUCT_ID.equal(productLocalizedRecord.getProductId()))
+                .and(dbTable.LANGUAGE_CODE.eq(productLocalizedRecord.getLanguageCode())).fetchOne();
+        if(count.value1() == 0) {
+            context.executeInsert(productLocalizedRecord);
+        } else {
+            productLocalizedRecord.reset(dbTable.UPDATED_AT);
+            context.executeUpdate(productLocalizedRecord);
+        }
+
     }
 
     @Override
