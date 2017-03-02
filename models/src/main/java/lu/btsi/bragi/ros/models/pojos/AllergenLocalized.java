@@ -98,15 +98,6 @@ public class AllergenLocalized implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("AllergenLocalized (");
-
-        sb.append(allergenId);
-        sb.append(", ").append(languageCode);
-        sb.append(", ").append(label);
-        sb.append(", ").append(createdAt);
-        sb.append(", ").append(updatedAt);
-
-        sb.append(")");
-        return sb.toString();
+        return label;
     }
 }

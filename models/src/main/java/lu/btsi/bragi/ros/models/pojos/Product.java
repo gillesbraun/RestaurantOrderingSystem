@@ -98,15 +98,6 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Product (");
-
-        sb.append(id);
-        sb.append(", ").append(price);
-        sb.append(", ").append(productCategoryId);
-        sb.append(", ").append(createdAt);
-        sb.append(", ").append(updatedAt);
-
-        sb.append(")");
-        return sb.toString();
+        return "N° "+id+", Price: "+price+"€";
     }
 }

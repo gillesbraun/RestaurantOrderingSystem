@@ -97,15 +97,6 @@ public class ProductLocalized implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("ProductLocalized (");
-
-        sb.append(productId);
-        sb.append(", ").append(languageCode);
-        sb.append(", ").append(label);
-        sb.append(", ").append(createdAt);
-        sb.append(", ").append(updatedAt);
-
-        sb.append(")");
-        return sb.toString();
+        return languageCode + ": "+label;
     }
 }
