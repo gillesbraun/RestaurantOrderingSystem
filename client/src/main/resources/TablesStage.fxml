@@ -3,9 +3,9 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="298.0" prefWidth="510.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
-   <left>
-      <VBox prefHeight="200.0" prefWidth="175.0" BorderPane.alignment="CENTER">
+<SplitPane dividerPositions="0.3617021276595745" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="243.0" prefWidth="378.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <items>
+      <VBox prefHeight="200.0" prefWidth="175.0">
          <children>
             <ListView fx:id="listTables" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                <VBox.margin>
@@ -14,13 +14,13 @@
             </ListView>
             <HBox spacing="7.0">
                <children>
+                  <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#buttonRefreshPressed" />
+                  <Button fx:id="buttonCreate" mnemonicParsing="false" onAction="#buttonCreatePressed" />
                   <Button fx:id="buttonDelete" disable="true" mnemonicParsing="false" onAction="#deleteButtonPressed">
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#buttonRefreshPressed" />
-                  <Button fx:id="buttonCreate" mnemonicParsing="false" onAction="#buttonCreatePressed" />
                </children>
                <VBox.margin>
                   <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
@@ -28,9 +28,7 @@
             </HBox>
          </children>
       </VBox>
-   </left>
-   <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" spacing="14.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="14.0">
          <children>
             <HBox alignment="BASELINE_LEFT" spacing="14.0">
                <children>
@@ -40,21 +38,21 @@
             </HBox>
             <HBox alignment="BASELINE_LEFT" spacing="14.0">
                <children>
-                  <Label alignment="CENTER" text="Places:" />
+                  <Label alignment="CENTER" minWidth="-Infinity" text="Places:" />
                   <TextField fx:id="tablePlaces" />
                </children>
             </HBox>
             <HBox prefWidth="200.0" spacing="10.0">
                <children>
-                  <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#updateButtonPressed" text="Update" />
+                  <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#updateButtonPressed" text="Save" />
                </children>
             </HBox>
             <Label fx:id="labelCreated" text="-" textFill="#666666" />
             <Label fx:id="labelUpdated" text="-" textFill="#666666" />
          </children>
-         <BorderPane.margin>
+         <padding>
             <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
-         </BorderPane.margin>
+         </padding>
       </VBox>
-   </center>
-</BorderPane>
+   </items>
+</SplitPane>
