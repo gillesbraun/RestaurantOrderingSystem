@@ -135,4 +135,16 @@ public class MainFrame extends Application implements UICallback {
             }
         }
     }
+
+    public void menuItemAllergensPressed(ActionEvent evt) {
+        if(client != null) {
+            try {
+                AllergensStage allergensStage = new AllergensStage(client);
+                allergensStage.initOwner(parent);
+                allergensStage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

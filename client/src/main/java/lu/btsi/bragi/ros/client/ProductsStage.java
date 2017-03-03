@@ -452,6 +452,12 @@ public class ProductsStage extends Stage {
     }
 
     public void buttonEditAllergenPressed(ActionEvent event) {
-        // Todo: show window for edit
+        try {
+            AllergensStage allergensStage = new AllergensStage(client);
+            allergensStage.initOwner(getOwner());
+            allergensStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
