@@ -265,12 +265,17 @@ public class ProductsStage extends Stage {
     }
 
     public void buttonDeleteAllergenPressed(ActionEvent event) {
-        AllergenLocalized selectedItem = listAllergens.getSelectionModel().getSelectedItem();
-        if(selectedItem != null) {
-            Message<AllergenLocalized> messageAllLoc =
-                    new Message<>(MessageType.Delete, selectedItem, AllergenLocalized.class);
-            client.send(messageAllLoc.toString());
-            allergeneLocalizedForList.remove(selectedItem);
+        AllergenLocalized selectedAllergenLocalized = listAllergens.getSelectionModel().getSelectedItem();
+        Product selectedProduct = listProducts.getSelectionModel().getSelectedItem();
+        if(selectedAllergenLocalized != null && selectedProduct != null) {
+            ProductAllergen productAllergen = new ProductAllergen();
+            productAllergen.setAllergenId(selectedAllergenLocalized.getAllergenId());
+            productAllergen.setProductId(selectedProduct.getId());
+
+            Message<ProductAllergen> deleteProdAllerg =
+                    new Message<>(MessageType.Delete, productAllergen, ProductAllergen.class);
+            client.send(deleteProdAllerg.toString());
+            allergeneLocalizedForList.remove(selectedAllergenLocalized);
         }
     }
 
