@@ -432,7 +432,13 @@ public class ProductsStage extends Stage {
     }
 
     public void buttonEditLanguagesPressed(ActionEvent event) {
-        // Todo: show window for edit
+        try {
+            LanguagesStage languagesStage = new LanguagesStage(client);
+            languagesStage.initOwner(getOwner());
+            languagesStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void buttonProductCategoryEditPressed(ActionEvent event) {
