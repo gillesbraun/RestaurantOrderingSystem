@@ -111,4 +111,16 @@ public class MainFrame extends Application implements UICallback {
             }
         }
     }
+
+    public void menuItemLanguagesPressed(ActionEvent evt) {
+        if(client != null) {
+            try {
+                LanguagesStage languagesStage = new LanguagesStage(client);
+                languagesStage.initOwner(parent);
+                languagesStage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
