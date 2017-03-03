@@ -32,6 +32,7 @@ import org.jooq.types.UInteger;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,6 +64,7 @@ public class ProductsStage extends Stage {
     private ObservableList<ProductCategoryLocalized> productCategoriesForChoiceBox;
     private ObservableList<AllergenLocalized> allergensLocalizedForChoiceBox;
     private ObservableList<ProductLocalized> productLocalizedForListView;
+    private ObservableList<AllergenLocalized> allergeneLocalizedForList;
     private List<AllergenLocalized> allAllergenesLocalized;
 
     public ProductsStage(Client client) throws IOException {
@@ -145,7 +147,7 @@ public class ProductsStage extends Stage {
             });
         });
     }
-
+;
     private final ChangeListener<? super Product> productSelected = new ChangeListener<Product>() {
         @Override
         public void changed(ObservableValue<? extends Product> observable, Product oldValue, Product product) {
@@ -178,12 +180,13 @@ public class ProductsStage extends Stage {
                                 .collect(toList());
 
                         // Put all Allergens for this product in the list
-                        listAllergens.setItems(FXCollections.observableList(
+                        allergeneLocalizedForList = FXCollections.observableList(
                                 allAllergenesLocalized.stream()
                                         .filter(allergenLocalized -> allergeneIDs.contains(allergenLocalized.getAllergenId()))
                                         .filter(aL -> aL.getLanguageCode().equals(LANGUAGE))
                                         .collect(toList())
-                        ));
+                        );
+                        listAllergens.setItems(allergeneLocalizedForList);
 
                         // Put all not used Allergens in the choiceBox
                         allergensLocalizedForChoiceBox.setAll(
@@ -229,7 +232,7 @@ public class ProductsStage extends Stage {
                 detailPane.setDisable(true);
                 labelID.setText("");
                 textFieldPrice.setText("");
-                listAllergens.getItems().clear();
+                allergeneLocalizedForList.clear();
                 productLocalizedForListView.clear();
                 textFieldTranslation.setText("");
             }
@@ -264,8 +267,10 @@ public class ProductsStage extends Stage {
     public void buttonDeleteAllergenPressed(ActionEvent event) {
         AllergenLocalized selectedItem = listAllergens.getSelectionModel().getSelectedItem();
         if(selectedItem != null) {
-            productLocalizedForListView.remove(selectedItem);
-            listTranslations.refresh();
+            Message<AllergenLocalized> messageAllLoc =
+                    new Message<>(MessageType.Delete, selectedItem, AllergenLocalized.class);
+            client.send(messageAllLoc.toString());
+            allergeneLocalizedForList.remove(selectedItem);
         }
     }
 
@@ -323,7 +328,7 @@ public class ProductsStage extends Stage {
                 .filter(a -> a.getAllergenId().equals(choiceBoxAllergen.getValue().getAllergenId()))
                 .findFirst();
         if(selectedAllergen.isPresent()) {
-            listAllergens.getItems().add(selectedAllergen.get());
+            allergeneLocalizedForList.add(selectedAllergen.get());
         }
         updateAllergensChoiceBox();
     }
@@ -336,7 +341,7 @@ public class ProductsStage extends Stage {
             Message<Product> productMessage = new Message<>(MessageType.Update, p, Product.class);
             client.send(productMessage.toString());
 
-            listAllergens.getItems().forEach(allergenLocalized -> {
+            allergeneLocalizedForList.forEach(allergenLocalized -> {
                 ProductAllergen productAllergen = new ProductAllergen();
                 productAllergen.setProductId(p.getId());
                 productAllergen.setAllergenId(allergenLocalized.getAllergenId());
@@ -374,17 +379,24 @@ public class ProductsStage extends Stage {
     }
 
     private void updateAllergensChoiceBox() {
-        // Gather list of already added Allergens, only ID
-        List<UInteger> existingAllergens = listAllergens.getItems().stream()
-                .map(AllergenLocalized::getAllergenId)
-                .collect(toList());
+        List<UInteger> existingAllergens;
+        if(allergeneLocalizedForList != null) {
+            // Gather list of already added Allergens, only ID
+             existingAllergens = allergeneLocalizedForList.stream()
+                    .map(AllergenLocalized::getAllergenId)
+                    .collect(toList());
+        } else {
+            existingAllergens = new ArrayList<>();
+        }
         // Replace list with all that are not already in the list
         allergensLocalizedForChoiceBox.setAll(
-                allergensLocalizedForChoiceBox.stream()
-                .filter(allergenL -> ! existingAllergens.contains(allergenL.getAllergenId()))
-                .collect(toList())
+                allAllergenesLocalized.stream()
+                    .filter(aL -> aL.getLanguageCode().equals(LANGUAGE))
+                    .filter(allergenL -> ! existingAllergens.contains(allergenL.getAllergenId()))
+                    .collect(toList())
         );
         choiceBoxAllergen.setDisable(allergensLocalizedForChoiceBox.isEmpty());
+        buttonAddAllergen.setDisable(allergensLocalizedForChoiceBox.isEmpty());
     }
 
     private void updateTranslationChoiceBox() {
@@ -401,6 +413,7 @@ public class ProductsStage extends Stage {
 
         // Disable Translation adding when no languagesForChoiceBox available
         choiceBoxLanguage.setDisable(languagesForChoiceBox.isEmpty());
+        buttonAddTranslation.setDisable(languagesForChoiceBox.isEmpty());
     }
 
     public void buttonEditLanguagesPressed(ActionEvent event) {
