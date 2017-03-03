@@ -104,9 +104,19 @@ public class ProductsStage extends Stage {
             // Get all Products
             client.sendWithAction(new MessageGet<>(Product.class), message -> {
                 try {
+                    Product previousSelected = listProducts.getSelectionModel().getSelectedItem();
                     Message<Product> decoded = new Message<>(message);
                     ObservableList<Product> products = FXCollections.observableList(decoded.getPayload());
                     listProducts.setItems(products);
+                    System.out.println("previously selected: "+previousSelected);
+                    if(previousSelected != null) {
+                        Optional<Product> prev = products.stream()
+                                .filter(p -> p.getId().equals(previousSelected.getId()))
+                                .findFirst();
+                        if(prev.isPresent()) {
+                            listProducts.getSelectionModel().select(prev.get());
+                        }
+                    }
                 } catch (MessageException e) {
                     e.printStackTrace();
                 }
@@ -275,7 +285,7 @@ public class ProductsStage extends Stage {
             Message<ProductAllergen> deleteProdAllerg =
                     new Message<>(MessageType.Delete, productAllergen, ProductAllergen.class);
             client.send(deleteProdAllerg.toString());
-            allergeneLocalizedForList.remove(selectedAllergenLocalized);
+            loadData();
         }
     }
 
