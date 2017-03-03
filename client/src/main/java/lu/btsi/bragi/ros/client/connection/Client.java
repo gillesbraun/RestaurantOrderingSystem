@@ -39,6 +39,10 @@ public class Client extends WebSocketClient {
         }
     }
 
+    public void send(Message message) {
+        send(message.toString());
+    }
+
     @Override
     public void onMessage(String message) {
         boolean isError = Message.messageType(message).equals(MessageType.Error);
