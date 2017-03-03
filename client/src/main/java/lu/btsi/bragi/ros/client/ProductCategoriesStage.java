@@ -1,0 +1,245 @@
+package lu.btsi.bragi.ros.client;
+
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageException;
+import lu.btsi.bragi.ros.models.message.MessageGet;
+import lu.btsi.bragi.ros.models.pojos.Language;
+import lu.btsi.bragi.ros.models.pojos.ProductCategory;
+import lu.btsi.bragi.ros.models.pojos.ProductCategoryLocalized;
+import org.controlsfx.glyphfont.FontAwesome.Glyph;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.stream.Collectors.toList;
+import static lu.btsi.bragi.ros.models.message.MessageType.*;
+
+/**
+ * Created by gillesbraun on 03/03/2017.
+ */
+public class ProductCategoriesStage extends Stage {
+    private Client client;
+
+    @FXML private Label labelID;
+    @FXML private Button buttonRefreshProductCategories, buttonAddProductCategories, buttonDeleteProductCategories,
+            buttonAddTranslation, buttonEditTranslation, buttonSaveImageURLPressed;
+    @FXML private ListView<ProductCategory> listViewProductCategories;
+    @FXML private ListView<ProductCategoryLocalized> listViewTranslations;
+    @FXML private TextField textFieldTranslation, textFieldURL;
+    @FXML private ChoiceBox<Language> choiceBoxLanguage;
+    @FXML private VBox detailPane;
+
+    private ObservableList<ProductCategory> productsForList;
+    private ObservableList<ProductCategoryLocalized> productCaterogiesLocalizedForList;
+    private ObservableList<Language> languagesForChoiceBox;
+
+    public ProductCategoriesStage(Client client) throws IOException {
+        this.client = client;
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProductCategoriesStage.fxml"));
+        loader.setController(this);
+        Parent root = loader.load();
+
+        setTitle("Product Categories");
+        setScene(new Scene(root));
+
+        GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
+        buttonRefreshProductCategories.setGraphic(fa.create(Glyph.REFRESH));
+        buttonAddProductCategories.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
+        buttonDeleteProductCategories.setGraphic(fa.create(Glyph.TRASH));
+
+        buttonAddTranslation.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
+        buttonEditTranslation.setGraphic(fa.create(Glyph.ARROW_UP));
+
+        detailPane.setDisable(true);
+
+        textFieldTranslation.setOnKeyReleased(textFieldTranslationKeyReleased);
+
+        listViewProductCategories.getSelectionModel().selectedItemProperty().addListener(productCategorySelected);
+        listViewTranslations.getSelectionModel().selectedItemProperty().addListener(translationSelected);
+        loadData();
+    }
+
+    private final ChangeListener<? super ProductCategory> productCategorySelected = new ChangeListener<ProductCategory>() {
+        @Override
+        public void changed(ObservableValue<? extends ProductCategory> observable, ProductCategory oldValue, ProductCategory selectedPC) {
+            detailPane.setDisable(selectedPC == null);
+            loadTranslations();
+            if(selectedPC == null) {
+                productCaterogiesLocalizedForList.clear();
+                textFieldURL.clear();
+                languagesForChoiceBox.clear();
+                textFieldTranslation.clear();
+                labelID.setText("-");
+            } else {
+                loadTranslations();
+                textFieldURL.setText(selectedPC.getImageUrl());
+                labelID.setText(selectedPC.getId()+"");
+            }
+        }
+    };
+
+    private final ChangeListener<? super ProductCategoryLocalized> translationSelected = (observable, oldValue, selectedPCL) -> {
+        if(selectedPCL != null) {
+            textFieldTranslation.setText(selectedPCL.getLabel());
+        } else {
+            textFieldTranslation.clear();
+            buttonEditTranslation.setDisable(true);
+        }
+    };
+
+    // Translation TextField on key release
+    private final EventHandler<? super KeyEvent> textFieldTranslationKeyReleased = event -> {
+        ProductCategoryLocalized selectedPCL = listViewTranslations.getSelectionModel().getSelectedItem();
+        buttonEditTranslation.setDisable(selectedPCL == null || selectedPCL.getLabel().equals(textFieldTranslation.getText()));
+    };
+
+    private void loadData() {
+        // Get Categories
+        client.sendWithAction(new MessageGet<>(ProductCategory.class), message -> {
+            try {
+                // Get previously selected
+                ProductCategory prevItem = listViewProductCategories.getSelectionModel().getSelectedItem();
+
+                List<ProductCategory> allProducts = new Message<ProductCategory>(message).getPayload();
+                productsForList = FXCollections.observableList(allProducts);
+                listViewProductCategories.setItems(productsForList);
+
+                if(prevItem != null) {
+                    // Get instance of prev obj by id
+                    Optional<ProductCategory> newPrevious = allProducts.stream()
+                            .filter(pc -> pc.getId().equals(prevItem.getId()))
+                            .findFirst();
+                    if(newPrevious.isPresent()) {
+                        listViewProductCategories.getSelectionModel().select(newPrevious.get());
+                    }
+                }
+            } catch (MessageException e) {
+                e.printStackTrace();
+            }
+        });
+        loadTranslations();
+    }
+
+    private void loadTranslations() {
+        ProductCategory selectedPC = listViewProductCategories.getSelectionModel().getSelectedItem();
+        if(selectedPC == null)
+            return;
+        // Load translations for selected ProductCategory
+        client.sendWithAction(new MessageGet<>(ProductCategoryLocalized.class), message -> {
+            try {
+                List<ProductCategoryLocalized> allProductCaterogiesLocalized = new Message<ProductCategoryLocalized>(message).getPayload();
+                productCaterogiesLocalizedForList = FXCollections.observableList(allProductCaterogiesLocalized);
+                productCaterogiesLocalizedForList.setAll(
+                        allProductCaterogiesLocalized.stream()
+                                .filter(pcl -> pcl != null && pcl.getProductCategoryId().equals(selectedPC.getId()))
+                                .collect(toList())
+                );
+                listViewTranslations.setItems(productCaterogiesLocalizedForList);
+                updateLanguageChoiceBox();
+            } catch (MessageException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private void updateLanguageChoiceBox() {
+        ProductCategory selectedProductCategory = listViewProductCategories.getSelectionModel().getSelectedItem();
+        if(selectedProductCategory == null)
+            return;
+
+        client.sendWithAction(new MessageGet<>(Language.class), message -> {
+            try {
+                List<Language> languages = new Message<Language>(message).getPayload();
+
+                // Get IDs of languages that have translations for current product
+                List<String> langCodesTranslated = productCaterogiesLocalizedForList.stream()
+                        .filter(pcl -> pcl.getProductCategoryId().equals(selectedProductCategory.getId()))
+                        .map(ProductCategoryLocalized::getLanguageCode)
+                        .collect(toList());
+
+                // Gather list of not used languages
+                languagesForChoiceBox = FXCollections.observableList(
+                    languages.stream()
+                        .filter(l -> ! langCodesTranslated.contains(l.getCode()))
+                        .collect(toList())
+                );
+                choiceBoxLanguage.setItems(languagesForChoiceBox);
+                choiceBoxLanguage.setDisable(languagesForChoiceBox.isEmpty());
+                buttonAddTranslation.setDisable(languagesForChoiceBox.isEmpty());
+            } catch (MessageException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void buttonRefreshProductCategoriesPressed(ActionEvent evt) {
+        loadData();
+    }
+
+    public void buttonAddProductCategoriesPressed(ActionEvent evt) {
+        client.send(new Message<>(Create, new ProductCategory(), ProductCategory.class).toString());
+        loadData();
+    }
+
+    public void buttonDeleteProductCategoriesPressed(ActionEvent evt) {
+        ProductCategory selectedPC = listViewProductCategories.getSelectionModel().getSelectedItem();
+        if(selectedPC != null) {
+            client.send(new Message<>(Delete, selectedPC, ProductCategory.class).toString());
+            loadData();
+        }
+    }
+
+    public void buttonAddTranslationPressed(ActionEvent evt) {
+        ProductCategory selectedPC = listViewProductCategories.getSelectionModel().getSelectedItem();
+        if(textFieldTranslation.getText().trim().length() == 0 ||
+                choiceBoxLanguage.getValue() == null ||
+                selectedPC == null)
+            return;
+        ProductCategoryLocalized pcl = new ProductCategoryLocalized();
+        pcl.setProductCategoryId(selectedPC.getId());
+        pcl.setLanguageCode(choiceBoxLanguage.getValue().getCode());
+        pcl.setLabel(textFieldTranslation.getText());
+        client.send(new Message<>(Create, pcl, ProductCategoryLocalized.class).toString());
+        productCaterogiesLocalizedForList.add(pcl);
+        textFieldTranslation.clear();
+        loadTranslations();
+    }
+
+    public void buttonEditTranslationPressed(ActionEvent evt) {
+        ProductCategoryLocalized selectedPCL = listViewTranslations.getSelectionModel().getSelectedItem();
+        if(selectedPCL != null && textFieldTranslation.getText().trim().length() > 0) {
+            selectedPCL.setLabel(textFieldTranslation.getText());
+            textFieldTranslation.clear();
+            listViewTranslations.refresh();
+            client.send(new Message<>(Update, selectedPCL, ProductCategoryLocalized.class).toString());
+            loadTranslations();
+        }
+    }
+
+    public void buttonSaveImageURLPressed(ActionEvent evt) {
+        ProductCategory selectedPC = listViewProductCategories.getSelectionModel().getSelectedItem();
+        if(selectedPC != null && textFieldURL.getText().trim().length() > 0) {
+            selectedPC.setImageUrl(textFieldURL.getText());
+            client.send(new Message<>(Update, selectedPC, ProductCategory.class).toString());
+            loadData();
+        }
+    }
+}

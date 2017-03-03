@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<SplitPane dividerPositions="0.14792899408284024" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="290.0" prefWidth="585.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <items>
+      <VBox spacing="14.0">
+         <children>
+            <ListView fx:id="listViewProductCategories" prefWidth="100.0" />
+            <HBox prefHeight="100.0" prefWidth="200.0" spacing="7.0">
+               <children>
+                  <Button fx:id="buttonRefreshProductCategories" mnemonicParsing="false" onAction="#buttonRefreshProductCategoriesPressed" />
+                  <Button fx:id="buttonAddProductCategories" mnemonicParsing="false" onAction="#buttonAddProductCategoriesPressed" />
+                  <Button fx:id="buttonDeleteProductCategories" mnemonicParsing="false" onAction="#buttonDeleteProductCategoriesPressed" />
+               </children>
+            </HBox>
+         </children>
+         <padding>
+            <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+         </padding>
+      </VBox>
+      <VBox fx:id="detailPane" prefHeight="340.0" prefWidth="336.0" spacing="14.0">
+         <padding>
+            <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+         </padding>
+         <children>
+            <HBox alignment="CENTER_LEFT" spacing="7.0">
+               <children>
+                  <Label minWidth="-Infinity" text="N°: " />
+                  <Label fx:id="labelID" text="-" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="7.0">
+               <children>
+                  <Label minWidth="-Infinity" text="Image URL: " />
+                  <TextField fx:id="textFieldURL" HBox.hgrow="ALWAYS" />
+                  <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#buttonSaveImageURLPressed" text="Save" />
+               </children>
+            </HBox>
+            <Separator prefWidth="200.0" />
+            <VBox spacing="7.0">
+               <children>
+                  <Label minWidth="-Infinity" text="Translations:" />
+                  <ListView fx:id="listViewTranslations" />
+                  <Label text="Add / Edit Translation:" />
+                  <HBox spacing="7.0">
+                     <children>
+                        <TextField fx:id="textFieldTranslation" HBox.hgrow="ALWAYS" />
+                        <ChoiceBox fx:id="choiceBoxLanguage" prefWidth="75.0" />
+                        <Button fx:id="buttonAddTranslation" minWidth="-Infinity" mnemonicParsing="false" onAction="#buttonAddTranslationPressed" />
+                        <Button fx:id="buttonEditTranslation" minWidth="-Infinity" mnemonicParsing="false" onAction="#buttonEditTranslationPressed" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children>
+      </VBox>
+   </items>
+</SplitPane>

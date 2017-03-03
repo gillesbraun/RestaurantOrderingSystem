@@ -123,4 +123,16 @@ public class MainFrame extends Application implements UICallback {
             }
         }
     }
+
+    public void menuItemProductCategoriesPressed(ActionEvent evt) {
+        if(client != null) {
+            try {
+                ProductCategoriesStage productCategoriesStage = new ProductCategoriesStage(client);
+                productCategoriesStage.initOwner(parent);
+                productCategoriesStage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

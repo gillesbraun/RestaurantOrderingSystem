@@ -17,6 +17,7 @@
             <MenuItem mnemonicParsing="false" onAction="#menuItemTablesPressed" text="Tables" />
             <MenuItem mnemonicParsing="false" onAction="#menuItemWaitersPressed" text="Waiters" />
             <MenuItem mnemonicParsing="false" onAction="#menuItemProductsPressed" text="Products" />
+            <MenuItem mnemonicParsing="false" onAction="#menuItemProductCategoriesPressed" text="Product Categories" />
             <MenuItem mnemonicParsing="false" onAction="#menuItemLanguagesPressed" text="Languages" />
           </items>
         </Menu>
