@@ -36,17 +36,6 @@
                   <Label fx:id="tableID" text="" />
                </children>
             </HBox>
-            <HBox alignment="BASELINE_LEFT" spacing="14.0">
-               <children>
-                  <Label alignment="CENTER" minWidth="-Infinity" text="Places:" />
-                  <TextField fx:id="tablePlaces" />
-               </children>
-            </HBox>
-            <HBox prefWidth="200.0" spacing="10.0">
-               <children>
-                  <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#updateButtonPressed" text="Save" />
-               </children>
-            </HBox>
             <Label fx:id="labelCreated" text="-" textFill="#666666" />
             <Label fx:id="labelUpdated" text="-" textFill="#666666" />
          </children>

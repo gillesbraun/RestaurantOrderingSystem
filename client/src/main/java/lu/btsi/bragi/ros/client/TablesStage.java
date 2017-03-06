@@ -8,7 +8,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import lu.btsi.bragi.ros.client.connection.Client;
@@ -21,11 +23,11 @@ import org.controlsfx.dialog.ExceptionDialog;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.jooq.types.UShort;
 
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Optional;
 
 /**
  * Created by gillesbraun on 27/02/2017.
@@ -33,11 +35,9 @@ import java.util.Optional;
 public class TablesStage extends Stage {
     private Client client;
 
-    @FXML private TextField tablePlaces;
-
     @FXML private ListView<Table> listTables;
 
-    @FXML private Button buttonDelete, buttonUpdate, buttonCreate, buttonRefresh;
+    @FXML private Button buttonDelete, buttonCreate, buttonRefresh;
 
     @FXML private Label tableID, labelUpdated, labelCreated;
 
@@ -59,18 +59,14 @@ public class TablesStage extends Stage {
         listTables.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if(listTables.getSelectionModel().getSelectedItems().size() == 1) {
                 buttonDelete.setDisable(false);
-                buttonUpdate.setDisable(false);
                 Table table = listTables.getSelectionModel().getSelectedItem();
                 tableID.setText(table.getId()+"");
-                tablePlaces.setText(table.getPlaces()+"");
                 DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd MMM yyyy H:mm");
                 labelCreated.setText("Created: "+table.getCreatedAt().toLocalDateTime().format(dateFormat));
                 labelUpdated.setText("Updated: "+table.getUpdatedAt().toLocalDateTime().format(dateFormat));
             } else {
                 buttonDelete.setDisable(true);
-                buttonUpdate.setDisable(true);
                 tableID.setText("");
-                tablePlaces.setText("");
                 labelCreated.setText("");
                 labelUpdated.setText("");
             }
@@ -103,37 +99,12 @@ public class TablesStage extends Stage {
         loadData();
     }
 
-    public void updateButtonPressed(ActionEvent actionEvent) {
-        if(tablePlaces.getText().trim().length() == 0)
-            return;
-        Table selectedItem = listTables.getSelectionModel().getSelectedItem();
-        selectedItem.setPlaces(UShort.valueOf(tablePlaces.getText()));
-        Message<Table> update = new Message<>(MessageType.Update, selectedItem, Table.class);
-        client.send(update.toString());
-        loadData();
-    }
-
     public void buttonCreatePressed(ActionEvent actionEvent) {
-        TextInputDialog inputDialog = new TextInputDialog("");
-        inputDialog.setTitle("Create a new Table");
-        inputDialog.setHeaderText("Create a new Table");
-        inputDialog.setContentText("Enter the number of seats at the table: ");
-        Optional<String> enteredName = inputDialog.showAndWait();
-        try {
-            if(enteredName.isPresent()) {
-                Table table = new Table();
-                table.setPlaces(UShort.valueOf(enteredName.get()));
-                Message<Table> message = new Message<>(MessageType.Create, table, Table.class);
-                client.send(message.toString());
-                loadData();
-            }
-        } catch (NumberFormatException ex) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("An error has occured");
-            alert.setContentText("Please enter a number.");
-            alert.show();
-        }
+        Table table = new Table();
+        table.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+        Message<Table> message = new Message<>(MessageType.Create, table, Table.class);
+        client.send(message.toString());
+        loadData();
     }
 
     public void buttonRefreshPressed(ActionEvent event) {
