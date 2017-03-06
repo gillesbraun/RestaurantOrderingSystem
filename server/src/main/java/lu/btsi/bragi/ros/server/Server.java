@@ -51,7 +51,6 @@ public class Server extends WebSocketServer implements IMessageSender {
                 conn.send(answer.get().toString());
             }
             socketMap.remove(uuid);
-            System.out.println("size of uuidsockets: "+socketMap.keySet().size());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (MessageException e) {
