@@ -86,14 +86,6 @@ public class Location implements Serializable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Location (");
-
-        sb.append(id);
-        sb.append(", ").append(description);
-        sb.append(", ").append(createdAt);
-        sb.append(", ").append(updatedAt);
-
-        sb.append(")");
-        return sb.toString();
+        return "N° " + id + ": " + description;
     }
 }

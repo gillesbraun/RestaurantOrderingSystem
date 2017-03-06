@@ -147,4 +147,16 @@ public class MainFrame extends Application implements UICallback {
             }
         }
     }
+
+    public void menuItemLocationsPressed(ActionEvent evt) {
+        if(client != null) {
+            try {
+                LocationsStage locationsStage = new LocationsStage(client);
+                locationsStage.initOwner(parent);
+                locationsStage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }
