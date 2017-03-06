@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageType;
+import lu.btsi.bragi.ros.server.IMessageSender;
 import org.jooq.DSLContext;
 
 import java.util.HashMap;
@@ -21,12 +22,13 @@ public abstract class Controller<T> {
     protected DSLContext context;
 
     private static Map<Class, Controller> registeredControllers = new HashMap<>();
+    static IMessageSender messageSender;
 
     public Controller(Class type) {
         registeredControllers.put(type, this);
     }
 
-    protected static Optional<Message> sendToController(String message) throws ControllerNotFoundException, ClassNotFoundException, MessageException {
+    static Optional<Message> sendToController(String message) throws ControllerNotFoundException, ClassNotFoundException, MessageException {
         Class clazz = Message.messageClass(message);
         Controller controller = registeredControllers.get(clazz);
         if(controller != null) {
@@ -38,13 +40,26 @@ public abstract class Controller<T> {
 
     protected abstract List<T> handleGet() throws Exception;
 
+
+    protected void handleCreate(T obj, Message<T> originalMessage) throws Exception {
+        handleCreate(obj);
+    }
+
+    protected void handleDelete(T obj, Message<T> originalMessage) throws Exception {
+        handleDelete(obj);
+    }
+
+    protected void handleUpdate(T obj, Message<T> originalMessage) throws Exception {
+        handleUpdate(obj);
+    }
+
     protected abstract void handleUpdate(T obj) throws Exception;
 
     protected abstract void handleCreate(T obj) throws Exception;
 
     protected abstract void handleDelete(T obj) throws Exception;
 
-    public Optional<Message> handle(String text) throws MessageException {
+    private Optional<Message> handle(String text) throws MessageException {
         Message<T> message = new Message<>(text);
         List<T> payload = message.getPayload();
         try {
@@ -55,16 +70,20 @@ public abstract class Controller<T> {
             }
             for (T pojo : payload) {
                 if (message.getType() == MessageType.Update) {
-                    handleUpdate(pojo);
+                    handleUpdate(pojo, message);
                 } else if (message.getType() == MessageType.Delete) {
-                    handleDelete(pojo);
+                    handleDelete(pojo, message);
                 } else if (message.getType() == MessageType.Create) {
-                    handleCreate(pojo);
+                    handleCreate(pojo, message);
                 }
             }
             return Optional.empty();
         } catch (Exception e) {
             return Optional.of(message.createAnswerException(e, e.getClass()));
         }
+    }
+
+    public static void setMessageSender(IMessageSender messageSender) {
+        Controller.messageSender = messageSender;
     }
 }
