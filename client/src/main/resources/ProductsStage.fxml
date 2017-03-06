@@ -16,9 +16,9 @@
                   </ListView>
                   <HBox spacing="7.0">
                      <children>
-                        <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#buttonDeletePressed" />
                         <Button fx:id="buttonRefresh" mnemonicParsing="false" onAction="#buttonRefreshPressed" />
                         <Button fx:id="buttonAddProduct" mnemonicParsing="false" onAction="#buttonAddProductPressed" />
+                        <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#buttonDeletePressed" />
                      </children>
                      <VBox.margin>
                         <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
