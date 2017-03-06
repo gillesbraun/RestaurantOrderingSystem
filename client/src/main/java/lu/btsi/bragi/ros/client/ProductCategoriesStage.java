@@ -19,6 +19,7 @@ import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
 import lu.btsi.bragi.ros.models.pojos.Language;
+import lu.btsi.bragi.ros.models.pojos.Location;
 import lu.btsi.bragi.ros.models.pojos.ProductCategory;
 import lu.btsi.bragi.ros.models.pojos.ProductCategoryLocalized;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
@@ -40,16 +41,18 @@ public class ProductCategoriesStage extends Stage {
 
     @FXML private Label labelID;
     @FXML private Button buttonRefreshProductCategories, buttonAddProductCategories, buttonDeleteProductCategories,
-            buttonAddTranslation, buttonEditTranslation, buttonSaveImageURLPressed;
+            buttonAddTranslation, buttonEditTranslation, buttonSaveImageURLPressed, buttonEditLocations;
     @FXML private ListView<ProductCategory> listViewProductCategories;
     @FXML private ListView<ProductCategoryLocalized> listViewTranslations;
     @FXML private TextField textFieldTranslation, textFieldURL;
     @FXML private ChoiceBox<Language> choiceBoxLanguage;
+    @FXML private ChoiceBox<Location> choiceBoxLocation;
     @FXML private VBox detailPane;
 
     private ObservableList<ProductCategory> productsForList;
     private ObservableList<ProductCategoryLocalized> productCaterogiesLocalizedForList;
     private ObservableList<Language> languagesForChoiceBox;
+    private ObservableList<Location> locationsForChoiceBox;
 
     public ProductCategoriesStage(Client client) throws IOException {
         this.client = client;
@@ -67,6 +70,7 @@ public class ProductCategoriesStage extends Stage {
 
         buttonAddTranslation.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonEditTranslation.setGraphic(fa.create(Glyph.ARROW_UP));
+        buttonEditLocations.setGraphic(fa.create(Glyph.PENCIL));
 
         detailPane.setDisable(true);
 
@@ -103,9 +107,22 @@ public class ProductCategoriesStage extends Stage {
                 loadTranslations();
                 textFieldURL.setText(selectedPC.getImageUrl());
                 labelID.setText(selectedPC.getId()+"");
+                selectCurrentLocation();
             }
         }
     };
+
+    private void selectCurrentLocation() {
+        ProductCategory selectedItem = listViewProductCategories.getSelectionModel().getSelectedItem();
+        if(selectedItem == null)
+            return;
+        Optional<Location> locationForCurrent = locationsForChoiceBox.stream()
+                .filter(l -> l.getId().equals(selectedItem.getLocationId()))
+                .findFirst();
+        locationForCurrent.ifPresent(location -> {
+            choiceBoxLocation.getSelectionModel().select(location);
+        });
+    }
 
     private final ChangeListener<? super ProductCategoryLocalized> translationSelected = (observable, oldValue, selectedPCL) -> {
         if(selectedPCL != null) {
@@ -147,6 +164,7 @@ public class ProductCategoriesStage extends Stage {
             }
         });
         loadTranslations();
+        loadLocations();
     }
 
     private void loadTranslations() {
@@ -201,13 +219,37 @@ public class ProductCategoriesStage extends Stage {
         });
     }
 
+    private void loadLocations() {
+        client.sendWithAction(new MessageGet<>(Location.class), message -> {
+            List<Location> payload = null;
+            try {
+                payload = new Message<Location>(message).getPayload();
+                locationsForChoiceBox = FXCollections.observableList(payload);
+                choiceBoxLocation.setItems(locationsForChoiceBox);
+                selectCurrentLocation();
+            } catch (MessageException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public void buttonRefreshProductCategoriesPressed(ActionEvent evt) {
         loadData();
     }
 
     public void buttonAddProductCategoriesPressed(ActionEvent evt) {
-        client.send(new Message<>(Create, new ProductCategory(), ProductCategory.class).toString());
-        loadData();
+        ChoiceDialog<Location> locationChoiceDialog = new ChoiceDialog<>();
+        locationChoiceDialog.getItems().addAll(locationsForChoiceBox);
+        locationChoiceDialog.setHeaderText("Specify production location");
+        locationChoiceDialog.setContentText("Please specify the location where\n the products of this category are made.");
+        Optional<Location> location = locationChoiceDialog.showAndWait();
+
+        if(location.isPresent()) {
+            ProductCategory productCategory = new ProductCategory();
+            productCategory.setLocationId(location.get().getId());
+            client.send(new Message<>(Create, productCategory, ProductCategory.class).toString());
+            loadData();
+        }
     }
 
     public void buttonDeleteProductCategoriesPressed(ActionEvent evt) {
@@ -247,10 +289,22 @@ public class ProductCategoriesStage extends Stage {
 
     public void buttonSaveImageURLPressed(ActionEvent evt) {
         ProductCategory selectedPC = listViewProductCategories.getSelectionModel().getSelectedItem();
-        if(selectedPC != null && textFieldURL.getText().trim().length() > 0) {
-            selectedPC.setImageUrl(textFieldURL.getText());
+        if(selectedPC != null) {
+            if(textFieldURL.getText() != null && textFieldURL.getText().trim().length() > 0)
+                selectedPC.setImageUrl(textFieldURL.getText());
+            selectedPC.setLocationId(choiceBoxLocation.getValue().getId());
             client.send(new Message<>(Update, selectedPC, ProductCategory.class).toString());
             loadData();
+        }
+    }
+
+    public void buttonEditLocationsPressed(ActionEvent evt) {
+        try {
+            LocationsStage locationsStage = new LocationsStage(client);
+            locationsStage.initOwner(this);
+            locationsStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

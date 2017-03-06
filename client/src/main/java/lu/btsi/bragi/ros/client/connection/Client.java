@@ -75,7 +75,7 @@ public class Client extends WebSocketClient {
 
     @Override
     public void onError(Exception ex) {
-        if(!ex.getLocalizedMessage().contains("Connection refused")) {
+        if(ex != null && !ex.getLocalizedMessage().contains("Connection refused")) {
             ex.printStackTrace();
         }
     }

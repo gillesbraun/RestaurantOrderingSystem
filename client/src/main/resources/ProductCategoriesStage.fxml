@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -30,6 +29,13 @@
                <children>
                   <Label minWidth="-Infinity" text="N°: " />
                   <Label fx:id="labelID" text="-" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_LEFT" spacing="7.0">
+               <children>
+                  <Label minWidth="-Infinity" text="Location:" />
+                  <ChoiceBox fx:id="choiceBoxLocation" prefWidth="150.0" />
+                  <Button fx:id="buttonEditLocations" mnemonicParsing="false" onAction="#buttonEditLocationsPressed" />
                </children>
             </HBox>
             <HBox alignment="CENTER_LEFT" spacing="7.0">
