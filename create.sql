@@ -168,7 +168,8 @@ CREATE Table IF NOT EXISTS Allergen_Localized (
 CREATE Table IF NOT EXISTS Product_Price_For_Order (
   product_id INT UNSIGNED,
   order_id INT UNSIGNED,
-  price DOUBLE NOT NULL,
+  price_per_product DOUBLE NOT NULL,
+  quantity INT UNSIGNED NOT NULL,
   created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (product_id, order_id),

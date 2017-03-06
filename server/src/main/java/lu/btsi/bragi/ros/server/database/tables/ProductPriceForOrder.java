@@ -4,24 +4,18 @@
 package lu.btsi.bragi.ros.server.database.tables;
 
 
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import lu.btsi.bragi.ros.server.database.Keys;
 import lu.btsi.bragi.ros.server.database.Ros;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductPriceForOrderRecord;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Schema;
+import org.jooq.*;
 import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
 import org.jooq.impl.TableImpl;
 import org.jooq.types.UInteger;
+
+import javax.annotation.Generated;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -37,7 +31,7 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ProductPriceForOrder extends TableImpl<ProductPriceForOrderRecord> {
 
-    private static final long serialVersionUID = -106925722;
+    private static final long serialVersionUID = -583015637;
 
     /**
      * The reference instance of <code>ros.Product_Price_For_Order</code>
@@ -63,9 +57,14 @@ public class ProductPriceForOrder extends TableImpl<ProductPriceForOrderRecord> 
     public final TableField<ProductPriceForOrderRecord, UInteger> ORDER_ID = createField("order_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
     /**
-     * The column <code>ros.Product_Price_For_Order.price</code>.
+     * The column <code>ros.Product_Price_For_Order.price_per_product</code>.
      */
-    public final TableField<ProductPriceForOrderRecord, Double> PRICE = createField("price", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
+    public final TableField<ProductPriceForOrderRecord, Double> PRICE_PER_PRODUCT = createField("price_per_product", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
+
+    /**
+     * The column <code>ros.Product_Price_For_Order.quantity</code>.
+     */
+    public final TableField<ProductPriceForOrderRecord, UInteger> QUANTITY = createField("quantity", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
     /**
      * The column <code>ros.Product_Price_For_Order.created_at</code>.

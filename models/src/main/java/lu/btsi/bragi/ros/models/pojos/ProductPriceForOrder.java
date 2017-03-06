@@ -28,7 +28,8 @@ public class ProductPriceForOrder implements Serializable {
 
     private UInteger  productId;
     private UInteger  orderId;
-    private Double    price;
+    private Double    pricePerProduct;
+    private UInteger  quantity;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -37,21 +38,24 @@ public class ProductPriceForOrder implements Serializable {
     public ProductPriceForOrder(ProductPriceForOrder value) {
         this.productId = value.productId;
         this.orderId = value.orderId;
-        this.price = value.price;
+        this.pricePerProduct = value.pricePerProduct;
+        this.quantity = value.quantity;
         this.createdAt = value.createdAt;
         this.updatedAt = value.updatedAt;
     }
 
     public ProductPriceForOrder(
-        UInteger  productId,
-        UInteger  orderId,
-        Double    price,
-        Timestamp createdAt,
-        Timestamp updatedAt
+            UInteger  productId,
+            UInteger  orderId,
+            Double    pricePerProduct,
+            UInteger  quantity,
+            Timestamp createdAt,
+            Timestamp updatedAt
     ) {
         this.productId = productId;
         this.orderId = orderId;
-        this.price = price;
+        this.pricePerProduct = pricePerProduct;
+        this.quantity = quantity;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -72,12 +76,20 @@ public class ProductPriceForOrder implements Serializable {
         this.orderId = orderId;
     }
 
-    public Double getPrice() {
-        return this.price;
+    public Double getPricePerProduct() {
+        return this.pricePerProduct;
     }
 
-    public void setPrice(Double price) {
-        this.price = price;
+    public void setPricePerProduct(Double pricePerProduct) {
+        this.pricePerProduct = pricePerProduct;
+    }
+
+    public UInteger getQuantity() {
+        return this.quantity;
+    }
+
+    public void setQuantity(UInteger quantity) {
+        this.quantity = quantity;
     }
 
     public Timestamp getCreatedAt() {
@@ -102,7 +114,8 @@ public class ProductPriceForOrder implements Serializable {
 
         sb.append(productId);
         sb.append(", ").append(orderId);
-        sb.append(", ").append(price);
+        sb.append(", ").append(pricePerProduct);
+        sb.append(", ").append(quantity);
         sb.append(", ").append(createdAt);
         sb.append(", ").append(updatedAt);
 
