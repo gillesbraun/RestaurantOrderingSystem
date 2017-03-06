@@ -74,6 +74,17 @@ public class ProductCategoriesStage extends Stage {
 
         listViewProductCategories.getSelectionModel().selectedItemProperty().addListener(productCategorySelected);
         listViewTranslations.getSelectionModel().selectedItemProperty().addListener(translationSelected);
+        listViewTranslations.setCellFactory(param -> new ListCell<ProductCategoryLocalized>() {
+            @Override
+            protected void updateItem(ProductCategoryLocalized item, boolean empty) {
+                super.updateItem(item, empty);
+                if(item == null) {
+                    setText(null);
+                } else {
+                    setText(item.getLanguageCode() + ": " + item.getLabel());
+                }
+            }
+        });
         loadData();
     }
 

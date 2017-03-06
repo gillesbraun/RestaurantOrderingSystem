@@ -97,6 +97,6 @@ public class ProductCategoryLocalized implements Serializable {
 
     @Override
     public String toString() {
-        return languageCode + ": "+ label;
+        return label;
     }
 }

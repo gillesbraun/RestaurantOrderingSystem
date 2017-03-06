@@ -75,6 +75,13 @@ public class AllergensStage extends Stage {
         textFieldTranslation.setOnKeyReleased(textFieldTranslationKeyReleased);
         listViewAllergens.getSelectionModel().selectedItemProperty().addListener(allergenSelected);
         listViewTranslations.getSelectionModel().selectedItemProperty().addListener(translationSelected);
+        listViewTranslations.setCellFactory(param -> new ListCell<AllergenLocalized>() {
+            @Override
+            protected void updateItem(AllergenLocalized item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(item == null ? null : item.getLanguageCode() + ": " + item.getLabel());
+            }
+        });
         loadData();
     }
 

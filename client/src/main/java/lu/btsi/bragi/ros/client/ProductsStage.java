@@ -93,6 +93,13 @@ public class ProductsStage extends Stage {
 
         listProducts.getSelectionModel().selectedItemProperty().addListener(productSelected);
         listTranslations.getSelectionModel().selectedItemProperty().addListener(translationSelected);
+        listTranslations.setCellFactory(param -> new ListCell<ProductLocalized>(){
+            @Override
+            protected void updateItem(ProductLocalized item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(item == null ? null : item.getLanguageCode() + ": " + item.getLabel());
+            }
+        });
         listAllergens.getSelectionModel().selectedItemProperty().addListener(allergeneSelected);
 
         loadData();
