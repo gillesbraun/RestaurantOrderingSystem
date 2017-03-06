@@ -115,7 +115,6 @@ public class ProductsStage extends Stage {
                     Message<Product> decoded = new Message<>(message);
                     ObservableList<Product> products = FXCollections.observableList(decoded.getPayload());
                     listProducts.setItems(products);
-                    System.out.println("previously selected: "+previousSelected);
                     if(previousSelected != null) {
                         Optional<Product> prev = products.stream()
                                 .filter(p -> p.getId().equals(previousSelected.getId()))
