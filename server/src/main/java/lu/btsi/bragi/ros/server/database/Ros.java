@@ -4,28 +4,14 @@
 package lu.btsi.bragi.ros.server.database;
 
 
+import lu.btsi.bragi.ros.server.database.tables.*;
+import org.jooq.Catalog;
+import org.jooq.impl.SchemaImpl;
+
+import javax.annotation.Generated;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import lu.btsi.bragi.ros.server.database.tables.Allergen;
-import lu.btsi.bragi.ros.server.database.tables.AllergenLocalized;
-import lu.btsi.bragi.ros.server.database.tables.Invoice;
-import lu.btsi.bragi.ros.server.database.tables.Language;
-import lu.btsi.bragi.ros.server.database.tables.Order;
-import lu.btsi.bragi.ros.server.database.tables.Product;
-import lu.btsi.bragi.ros.server.database.tables.ProductAllergen;
-import lu.btsi.bragi.ros.server.database.tables.ProductCategory;
-import lu.btsi.bragi.ros.server.database.tables.ProductCategoryLocalized;
-import lu.btsi.bragi.ros.server.database.tables.ProductLocalized;
-import lu.btsi.bragi.ros.server.database.tables.ProductPriceForOrder;
-import lu.btsi.bragi.ros.server.database.tables.Table;
-import lu.btsi.bragi.ros.server.database.tables.Waiter;
-
-import org.jooq.Catalog;
-import org.jooq.impl.SchemaImpl;
 
 
 /**
@@ -41,7 +27,7 @@ import org.jooq.impl.SchemaImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Ros extends SchemaImpl {
 
-    private static final long serialVersionUID = -1734618423;
+    private static final long serialVersionUID = 999865326;
 
     /**
      * The reference instance of <code>ros</code>
@@ -67,6 +53,11 @@ public class Ros extends SchemaImpl {
      * The table <code>ros.Language</code>.
      */
     public final Language LANGUAGE = lu.btsi.bragi.ros.server.database.tables.Language.LANGUAGE;
+
+    /**
+     * The table <code>ros.Location</code>.
+     */
+    public final Location LOCATION = lu.btsi.bragi.ros.server.database.tables.Location.LOCATION;
 
     /**
      * The table <code>ros.Order</code>.
@@ -142,6 +133,7 @@ public class Ros extends SchemaImpl {
             AllergenLocalized.ALLERGEN_LOCALIZED,
             Invoice.INVOICE,
             Language.LANGUAGE,
+            Location.LOCATION,
             Order.ORDER,
             Product.PRODUCT,
             ProductAllergen.PRODUCT_ALLERGEN,

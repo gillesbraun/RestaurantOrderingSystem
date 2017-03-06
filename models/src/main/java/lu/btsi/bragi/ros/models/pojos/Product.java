@@ -3,6 +3,7 @@
 */
 package lu.btsi.bragi.ros.models.pojos;
 
+
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
@@ -24,11 +25,12 @@ import java.sql.Timestamp;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Product implements Serializable {
 
-    private static final long serialVersionUID = -958995203;
+    private static final long serialVersionUID = -1645283095;
 
     private UInteger   id;
     private BigDecimal price;
     private UInteger   productCategoryId;
+    private UInteger   locationId;
     private Timestamp  createdAt;
     private Timestamp  updatedAt;
 
@@ -38,6 +40,7 @@ public class Product implements Serializable {
         this.id = value.id;
         this.price = value.price;
         this.productCategoryId = value.productCategoryId;
+        this.locationId = value.locationId;
         this.createdAt = value.createdAt;
         this.updatedAt = value.updatedAt;
     }
@@ -46,12 +49,14 @@ public class Product implements Serializable {
         UInteger   id,
         BigDecimal price,
         UInteger   productCategoryId,
+        UInteger   locationId,
         Timestamp  createdAt,
         Timestamp  updatedAt
     ) {
         this.id = id;
         this.price = price;
         this.productCategoryId = productCategoryId;
+        this.locationId = locationId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -78,6 +83,14 @@ public class Product implements Serializable {
 
     public void setProductCategoryId(UInteger productCategoryId) {
         this.productCategoryId = productCategoryId;
+    }
+
+    public UInteger getLocationId() {
+        return this.locationId;
+    }
+
+    public void setLocationId(UInteger locationId) {
+        this.locationId = locationId;
     }
 
     public Timestamp getCreatedAt() {

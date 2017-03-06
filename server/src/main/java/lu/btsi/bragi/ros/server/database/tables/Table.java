@@ -4,24 +4,17 @@
 package lu.btsi.bragi.ros.server.database.tables;
 
 
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.annotation.Generated;
-
 import lu.btsi.bragi.ros.server.database.Keys;
 import lu.btsi.bragi.ros.server.database.Ros;
 import lu.btsi.bragi.ros.server.database.tables.records.TableRecord;
-
-import org.jooq.Field;
-import org.jooq.Identity;
-import org.jooq.Schema;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
+import org.jooq.*;
 import org.jooq.impl.TableImpl;
 import org.jooq.types.UInteger;
-import org.jooq.types.UShort;
+
+import javax.annotation.Generated;
+import java.sql.Timestamp;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -37,7 +30,7 @@ import org.jooq.types.UShort;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Table extends TableImpl<TableRecord> {
 
-    private static final long serialVersionUID = -1242880813;
+    private static final long serialVersionUID = -1903497465;
 
     /**
      * The reference instance of <code>ros.Table</code>
@@ -56,11 +49,6 @@ public class Table extends TableImpl<TableRecord> {
      * The column <code>ros.Table.id</code>.
      */
     public final TableField<TableRecord, UInteger> ID = createField("id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
-
-    /**
-     * The column <code>ros.Table.places</code>.
-     */
-    public final TableField<TableRecord, UShort> PLACES = createField("places", org.jooq.impl.SQLDataType.SMALLINTUNSIGNED.nullable(false), this, "");
 
     /**
      * The column <code>ros.Table.created_at</code>.

@@ -3,6 +3,7 @@
 */
 package lu.btsi.bragi.ros.models.pojos;
 
+
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
@@ -73,6 +74,6 @@ public class Allergen implements Serializable {
 
     @Override
     public String toString() {
-        return id+"";
+        return "N° " + id;
     }
 }

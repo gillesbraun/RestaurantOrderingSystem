@@ -3,6 +3,7 @@
 */
 package lu.btsi.bragi.ros.models.pojos;
 
+
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
@@ -23,10 +24,11 @@ import java.sql.Timestamp;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Order implements Serializable {
 
-    private static final long serialVersionUID = -1588851679;
+    private static final long serialVersionUID = -276657291;
 
     private UInteger  id;
-    private Byte      delivered;
+    private Byte      processing;
+    private Byte      processingDone;
     private UInteger  tableId;
     private UInteger  waiterId;
     private UInteger  invoiceId;
@@ -37,7 +39,8 @@ public class Order implements Serializable {
 
     public Order(Order value) {
         this.id = value.id;
-        this.delivered = value.delivered;
+        this.processing = value.processing;
+        this.processingDone = value.processingDone;
         this.tableId = value.tableId;
         this.waiterId = value.waiterId;
         this.invoiceId = value.invoiceId;
@@ -47,7 +50,8 @@ public class Order implements Serializable {
 
     public Order(
         UInteger  id,
-        Byte      delivered,
+        Byte      processing,
+        Byte      processingDone,
         UInteger  tableId,
         UInteger  waiterId,
         UInteger  invoiceId,
@@ -55,7 +59,8 @@ public class Order implements Serializable {
         Timestamp updatedAt
     ) {
         this.id = id;
-        this.delivered = delivered;
+        this.processing = processing;
+        this.processingDone = processingDone;
         this.tableId = tableId;
         this.waiterId = waiterId;
         this.invoiceId = invoiceId;
@@ -71,12 +76,20 @@ public class Order implements Serializable {
         this.id = id;
     }
 
-    public Byte getDelivered() {
-        return this.delivered;
+    public Byte getProcessing() {
+        return this.processing;
     }
 
-    public void setDelivered(Byte delivered) {
-        this.delivered = delivered;
+    public void setProcessing(Byte processing) {
+        this.processing = processing;
+    }
+
+    public Byte getProcessingDone() {
+        return this.processingDone;
+    }
+
+    public void setProcessingDone(Byte processingDone) {
+        this.processingDone = processingDone;
     }
 
     public UInteger getTableId() {
@@ -124,7 +137,8 @@ public class Order implements Serializable {
         StringBuilder sb = new StringBuilder("Order (");
 
         sb.append(id);
-        sb.append(", ").append(delivered);
+        sb.append(", ").append(processing);
+        sb.append(", ").append(processingDone);
         sb.append(", ").append(tableId);
         sb.append(", ").append(waiterId);
         sb.append(", ").append(invoiceId);

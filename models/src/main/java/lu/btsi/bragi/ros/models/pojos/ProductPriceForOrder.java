@@ -3,6 +3,7 @@
 */
 package lu.btsi.bragi.ros.models.pojos;
 
+
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;

@@ -4,26 +4,19 @@
 package lu.btsi.bragi.ros.server.database.tables;
 
 
+import lu.btsi.bragi.ros.server.database.Keys;
+import lu.btsi.bragi.ros.server.database.Ros;
+import lu.btsi.bragi.ros.server.database.tables.records.ProductRecord;
+import org.jooq.*;
+import org.jooq.Table;
+import org.jooq.impl.TableImpl;
+import org.jooq.types.UInteger;
+
+import javax.annotation.Generated;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.annotation.Generated;
-
-import lu.btsi.bragi.ros.server.database.Keys;
-import lu.btsi.bragi.ros.server.database.Ros;
-import lu.btsi.bragi.ros.server.database.tables.records.ProductRecord;
-
-import org.jooq.Field;
-import org.jooq.ForeignKey;
-import org.jooq.Identity;
-import org.jooq.Schema;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.UniqueKey;
-import org.jooq.impl.TableImpl;
-import org.jooq.types.UInteger;
 
 
 /**
@@ -39,7 +32,7 @@ import org.jooq.types.UInteger;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Product extends TableImpl<ProductRecord> {
 
-    private static final long serialVersionUID = -578785048;
+    private static final long serialVersionUID = -1824944100;
 
     /**
      * The reference instance of <code>ros.Product</code>
@@ -68,6 +61,11 @@ public class Product extends TableImpl<ProductRecord> {
      * The column <code>ros.Product.product_category_id</code>.
      */
     public final TableField<ProductRecord, UInteger> PRODUCT_CATEGORY_ID = createField("product_category_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
+
+    /**
+     * The column <code>ros.Product.location_id</code>.
+     */
+    public final TableField<ProductRecord, UInteger> LOCATION_ID = createField("location_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED, this, "");
 
     /**
      * The column <code>ros.Product.created_at</code>.
@@ -138,7 +136,7 @@ public class Product extends TableImpl<ProductRecord> {
      */
     @Override
     public List<ForeignKey<ProductRecord, ?>> getReferences() {
-        return Arrays.<ForeignKey<ProductRecord, ?>>asList(Keys.FK_PRODUCT_PRODUCTCATEGORY);
+        return Arrays.<ForeignKey<ProductRecord, ?>>asList(Keys.FK_PRODUCT_PRODUCTCATEGORY, Keys.FK_PRODUCT_LOCATION);
     }
 
     /**

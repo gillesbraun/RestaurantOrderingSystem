@@ -5,7 +5,6 @@ package lu.btsi.bragi.ros.models.pojos;
 
 
 import org.jooq.types.UInteger;
-import org.jooq.types.UShort;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
@@ -25,10 +24,9 @@ import java.sql.Timestamp;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class Table implements Serializable {
 
-    private static final long serialVersionUID = 648872574;
+    private static final long serialVersionUID = 682813017;
 
     private UInteger  id;
-    private UShort    places;
     private Timestamp createdAt;
     private Timestamp updatedAt;
 
@@ -36,19 +34,16 @@ public class Table implements Serializable {
 
     public Table(Table value) {
         this.id = value.id;
-        this.places = value.places;
         this.createdAt = value.createdAt;
         this.updatedAt = value.updatedAt;
     }
 
     public Table(
         UInteger  id,
-        UShort    places,
         Timestamp createdAt,
         Timestamp updatedAt
     ) {
         this.id = id;
-        this.places = places;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
@@ -59,14 +54,6 @@ public class Table implements Serializable {
 
     public void setId(UInteger id) {
         this.id = id;
-    }
-
-    public UShort getPlaces() {
-        return this.places;
-    }
-
-    public void setPlaces(UShort places) {
-        this.places = places;
     }
 
     public Timestamp getCreatedAt() {
@@ -87,6 +74,6 @@ public class Table implements Serializable {
 
     @Override
     public String toString() {
-        return "N° "+id+ " Places: "+places;
+        return "N° "+id;
     }
 }

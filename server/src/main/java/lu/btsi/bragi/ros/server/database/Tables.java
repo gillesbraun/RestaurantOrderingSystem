@@ -4,21 +4,9 @@
 package lu.btsi.bragi.ros.server.database;
 
 
-import javax.annotation.Generated;
+import lu.btsi.bragi.ros.server.database.tables.*;
 
-import lu.btsi.bragi.ros.server.database.tables.Allergen;
-import lu.btsi.bragi.ros.server.database.tables.AllergenLocalized;
-import lu.btsi.bragi.ros.server.database.tables.Invoice;
-import lu.btsi.bragi.ros.server.database.tables.Language;
-import lu.btsi.bragi.ros.server.database.tables.Order;
-import lu.btsi.bragi.ros.server.database.tables.Product;
-import lu.btsi.bragi.ros.server.database.tables.ProductAllergen;
-import lu.btsi.bragi.ros.server.database.tables.ProductCategory;
-import lu.btsi.bragi.ros.server.database.tables.ProductCategoryLocalized;
-import lu.btsi.bragi.ros.server.database.tables.ProductLocalized;
-import lu.btsi.bragi.ros.server.database.tables.ProductPriceForOrder;
-import lu.btsi.bragi.ros.server.database.tables.Table;
-import lu.btsi.bragi.ros.server.database.tables.Waiter;
+import javax.annotation.Generated;
 
 
 /**
@@ -53,6 +41,11 @@ public class Tables {
      * The table <code>ros.Language</code>.
      */
     public static final Language LANGUAGE = lu.btsi.bragi.ros.server.database.tables.Language.LANGUAGE;
+
+    /**
+     * The table <code>ros.Location</code>.
+     */
+    public static final Location LOCATION = lu.btsi.bragi.ros.server.database.tables.Location.LOCATION;
 
     /**
      * The table <code>ros.Order</code>.

@@ -35,8 +35,10 @@ public class Keys {
 
     public static final Identity<AllergenRecord, UInteger> IDENTITY_ALLERGEN = Identities0.IDENTITY_ALLERGEN;
     public static final Identity<InvoiceRecord, UInteger> IDENTITY_INVOICE = Identities0.IDENTITY_INVOICE;
+    public static final Identity<LocationRecord, UInteger> IDENTITY_LOCATION = Identities0.IDENTITY_LOCATION;
     public static final Identity<OrderRecord, UInteger> IDENTITY_ORDER = Identities0.IDENTITY_ORDER;
     public static final Identity<ProductRecord, UInteger> IDENTITY_PRODUCT = Identities0.IDENTITY_PRODUCT;
+    public static final Identity<ProductCategoryRecord, UInteger> IDENTITY_PRODUCT_CATEGORY = Identities0.IDENTITY_PRODUCT_CATEGORY;
     public static final Identity<ProductLocalizedRecord, UInteger> IDENTITY_PRODUCT_LOCALIZED = Identities0.IDENTITY_PRODUCT_LOCALIZED;
     public static final Identity<TableRecord, UInteger> IDENTITY_TABLE = Identities0.IDENTITY_TABLE;
     public static final Identity<WaiterRecord, UInteger> IDENTITY_WAITER = Identities0.IDENTITY_WAITER;
@@ -49,6 +51,7 @@ public class Keys {
     public static final UniqueKey<AllergenLocalizedRecord> KEY_ALLERGEN_LOCALIZED_PRIMARY = UniqueKeys0.KEY_ALLERGEN_LOCALIZED_PRIMARY;
     public static final UniqueKey<InvoiceRecord> KEY_INVOICE_PRIMARY = UniqueKeys0.KEY_INVOICE_PRIMARY;
     public static final UniqueKey<LanguageRecord> KEY_LANGUAGE_PRIMARY = UniqueKeys0.KEY_LANGUAGE_PRIMARY;
+    public static final UniqueKey<LocationRecord> KEY_LOCATION_PRIMARY = UniqueKeys0.KEY_LOCATION_PRIMARY;
     public static final UniqueKey<OrderRecord> KEY_ORDER_PRIMARY = UniqueKeys0.KEY_ORDER_PRIMARY;
     public static final UniqueKey<ProductRecord> KEY_PRODUCT_PRIMARY = UniqueKeys0.KEY_PRODUCT_PRIMARY;
     public static final UniqueKey<ProductAllergenRecord> KEY_PRODUCT_ALLERGEN_PRIMARY = UniqueKeys0.KEY_PRODUCT_ALLERGEN_PRIMARY;
@@ -69,8 +72,10 @@ public class Keys {
     public static final ForeignKey<OrderRecord, WaiterRecord> FK_ORDER_WAITER = ForeignKeys0.FK_ORDER_WAITER;
     public static final ForeignKey<OrderRecord, InvoiceRecord> FK_ORDER_INVOICE = ForeignKeys0.FK_ORDER_INVOICE;
     public static final ForeignKey<ProductRecord, ProductCategoryRecord> FK_PRODUCT_PRODUCTCATEGORY = ForeignKeys0.FK_PRODUCT_PRODUCTCATEGORY;
+    public static final ForeignKey<ProductRecord, LocationRecord> FK_PRODUCT_LOCATION = ForeignKeys0.FK_PRODUCT_LOCATION;
     public static final ForeignKey<ProductAllergenRecord, AllergenRecord> FK_PRODUCTALLERGEN_ALLERGEN = ForeignKeys0.FK_PRODUCTALLERGEN_ALLERGEN;
     public static final ForeignKey<ProductAllergenRecord, ProductRecord> FK_PRODUCTALLERGEN_PRODUCT = ForeignKeys0.FK_PRODUCTALLERGEN_PRODUCT;
+    public static final ForeignKey<ProductCategoryRecord, LocationRecord> FK_PRODUCTCATEGORY_LOCATION = ForeignKeys0.FK_PRODUCTCATEGORY_LOCATION;
     public static final ForeignKey<ProductCategoryLocalizedRecord, ProductCategoryRecord> FK_PRODUCTCATEGORYLOCALIZED_PRODUCTCATEGORY = ForeignKeys0.FK_PRODUCTCATEGORYLOCALIZED_PRODUCTCATEGORY;
     public static final ForeignKey<ProductCategoryLocalizedRecord, LanguageRecord> FK_PRODUCTCATEGORYLOCALIZED_LANGUAGE = ForeignKeys0.FK_PRODUCTCATEGORYLOCALIZED_LANGUAGE;
     public static final ForeignKey<ProductLocalizedRecord, ProductRecord> FK_PRODUCTLOCALIZED_PRODUCT = ForeignKeys0.FK_PRODUCTLOCALIZED_PRODUCT;
@@ -85,8 +90,10 @@ public class Keys {
     private static class Identities0 extends AbstractKeys {
         public static Identity<AllergenRecord, UInteger> IDENTITY_ALLERGEN = createIdentity(Allergen.ALLERGEN, Allergen.ALLERGEN.ID);
         public static Identity<InvoiceRecord, UInteger> IDENTITY_INVOICE = createIdentity(Invoice.INVOICE, Invoice.INVOICE.ID);
+        public static Identity<LocationRecord, UInteger> IDENTITY_LOCATION = createIdentity(Location.LOCATION, Location.LOCATION.ID);
         public static Identity<OrderRecord, UInteger> IDENTITY_ORDER = createIdentity(Order.ORDER, Order.ORDER.ID);
         public static Identity<ProductRecord, UInteger> IDENTITY_PRODUCT = createIdentity(Product.PRODUCT, Product.PRODUCT.ID);
+        public static Identity<ProductCategoryRecord, UInteger> IDENTITY_PRODUCT_CATEGORY = createIdentity(ProductCategory.PRODUCT_CATEGORY, ProductCategory.PRODUCT_CATEGORY.ID);
         public static Identity<ProductLocalizedRecord, UInteger> IDENTITY_PRODUCT_LOCALIZED = createIdentity(ProductLocalized.PRODUCT_LOCALIZED, ProductLocalized.PRODUCT_LOCALIZED.PRODUCT_ID);
         public static Identity<TableRecord, UInteger> IDENTITY_TABLE = createIdentity(Table.TABLE, Table.TABLE.ID);
         public static Identity<WaiterRecord, UInteger> IDENTITY_WAITER = createIdentity(Waiter.WAITER, Waiter.WAITER.ID);
@@ -97,6 +104,7 @@ public class Keys {
         public static final UniqueKey<AllergenLocalizedRecord> KEY_ALLERGEN_LOCALIZED_PRIMARY = createUniqueKey(AllergenLocalized.ALLERGEN_LOCALIZED, "KEY_Allergen_Localized_PRIMARY", AllergenLocalized.ALLERGEN_LOCALIZED.ALLERGEN_ID, AllergenLocalized.ALLERGEN_LOCALIZED.LANGUAGE_CODE);
         public static final UniqueKey<InvoiceRecord> KEY_INVOICE_PRIMARY = createUniqueKey(Invoice.INVOICE, "KEY_Invoice_PRIMARY", Invoice.INVOICE.ID);
         public static final UniqueKey<LanguageRecord> KEY_LANGUAGE_PRIMARY = createUniqueKey(Language.LANGUAGE, "KEY_Language_PRIMARY", Language.LANGUAGE.CODE);
+        public static final UniqueKey<LocationRecord> KEY_LOCATION_PRIMARY = createUniqueKey(Location.LOCATION, "KEY_Location_PRIMARY", Location.LOCATION.ID);
         public static final UniqueKey<OrderRecord> KEY_ORDER_PRIMARY = createUniqueKey(Order.ORDER, "KEY_Order_PRIMARY", Order.ORDER.ID);
         public static final UniqueKey<ProductRecord> KEY_PRODUCT_PRIMARY = createUniqueKey(Product.PRODUCT, "KEY_Product_PRIMARY", Product.PRODUCT.ID);
         public static final UniqueKey<ProductAllergenRecord> KEY_PRODUCT_ALLERGEN_PRIMARY = createUniqueKey(ProductAllergen.PRODUCT_ALLERGEN, "KEY_Product_Allergen_PRIMARY", ProductAllergen.PRODUCT_ALLERGEN.ALLERGEN_ID, ProductAllergen.PRODUCT_ALLERGEN.PRODUCT_ID);
@@ -115,8 +123,10 @@ public class Keys {
         public static final ForeignKey<OrderRecord, WaiterRecord> FK_ORDER_WAITER = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_WAITER_PRIMARY, Order.ORDER, "fk_Order_Waiter", Order.ORDER.WAITER_ID);
         public static final ForeignKey<OrderRecord, InvoiceRecord> FK_ORDER_INVOICE = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_INVOICE_PRIMARY, Order.ORDER, "fk_Order_Invoice", Order.ORDER.INVOICE_ID);
         public static final ForeignKey<ProductRecord, ProductCategoryRecord> FK_PRODUCT_PRODUCTCATEGORY = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_PRODUCT_CATEGORY_PRIMARY, Product.PRODUCT, "fk_Product_ProductCategory", Product.PRODUCT.PRODUCT_CATEGORY_ID);
+        public static final ForeignKey<ProductRecord, LocationRecord> FK_PRODUCT_LOCATION = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_LOCATION_PRIMARY, Product.PRODUCT, "fk_Product_Location", Product.PRODUCT.LOCATION_ID);
         public static final ForeignKey<ProductAllergenRecord, AllergenRecord> FK_PRODUCTALLERGEN_ALLERGEN = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_ALLERGEN_PRIMARY, ProductAllergen.PRODUCT_ALLERGEN, "fk_ProductAllergen_Allergen", ProductAllergen.PRODUCT_ALLERGEN.ALLERGEN_ID);
         public static final ForeignKey<ProductAllergenRecord, ProductRecord> FK_PRODUCTALLERGEN_PRODUCT = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_PRODUCT_PRIMARY, ProductAllergen.PRODUCT_ALLERGEN, "fk_ProductAllergen_Product", ProductAllergen.PRODUCT_ALLERGEN.PRODUCT_ID);
+        public static final ForeignKey<ProductCategoryRecord, LocationRecord> FK_PRODUCTCATEGORY_LOCATION = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_LOCATION_PRIMARY, ProductCategory.PRODUCT_CATEGORY, "fk_ProductCategory_Location", ProductCategory.PRODUCT_CATEGORY.LOCATION_ID);
         public static final ForeignKey<ProductCategoryLocalizedRecord, ProductCategoryRecord> FK_PRODUCTCATEGORYLOCALIZED_PRODUCTCATEGORY = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_PRODUCT_CATEGORY_PRIMARY, ProductCategoryLocalized.PRODUCT_CATEGORY_LOCALIZED, "fk_ProductCategoryLocalized_ProductCategory", ProductCategoryLocalized.PRODUCT_CATEGORY_LOCALIZED.PRODUCT_CATEGORY_ID);
         public static final ForeignKey<ProductCategoryLocalizedRecord, LanguageRecord> FK_PRODUCTCATEGORYLOCALIZED_LANGUAGE = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_LANGUAGE_PRIMARY, ProductCategoryLocalized.PRODUCT_CATEGORY_LOCALIZED, "fk_ProductCategoryLocalized_Language", ProductCategoryLocalized.PRODUCT_CATEGORY_LOCALIZED.LANGUAGE_CODE);
         public static final ForeignKey<ProductLocalizedRecord, ProductRecord> FK_PRODUCTLOCALIZED_PRODUCT = createForeignKey(lu.btsi.bragi.ros.server.database.Keys.KEY_PRODUCT_PRIMARY, ProductLocalized.PRODUCT_LOCALIZED, "fk_ProductLocalized_Product", ProductLocalized.PRODUCT_LOCALIZED.PRODUCT_ID);

@@ -31,7 +31,7 @@ import java.util.List;
 @SuppressWarnings({ "all", "unchecked", "rawtypes" })
 public class ProductCategory extends TableImpl<ProductCategoryRecord> {
 
-    private static final long serialVersionUID = -809227659;
+    private static final long serialVersionUID = 1720495175;
 
     /**
      * The reference instance of <code>ros.Product_Category</code>
@@ -55,6 +55,11 @@ public class ProductCategory extends TableImpl<ProductCategoryRecord> {
      * The column <code>ros.Product_Category.image_url</code>.
      */
     public final TableField<ProductCategoryRecord, String> IMAGE_URL = createField("image_url", org.jooq.impl.SQLDataType.VARCHAR.length(500), this, "");
+
+    /**
+     * The column <code>ros.Product_Category.location_id</code>.
+     */
+    public final TableField<ProductCategoryRecord, UInteger> LOCATION_ID = createField("location_id", org.jooq.impl.SQLDataType.INTEGERUNSIGNED.nullable(false), this, "");
 
     /**
      * The column <code>ros.Product_Category.created_at</code>.
@@ -100,6 +105,14 @@ public class ProductCategory extends TableImpl<ProductCategoryRecord> {
      * {@inheritDoc}
      */
     @Override
+    public Identity<ProductCategoryRecord, UInteger> getIdentity() {
+        return Keys.IDENTITY_PRODUCT_CATEGORY;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public UniqueKey<ProductCategoryRecord> getPrimaryKey() {
         return Keys.KEY_PRODUCT_CATEGORY_PRIMARY;
     }
@@ -110,6 +123,14 @@ public class ProductCategory extends TableImpl<ProductCategoryRecord> {
     @Override
     public List<UniqueKey<ProductCategoryRecord>> getKeys() {
         return Arrays.<UniqueKey<ProductCategoryRecord>>asList(Keys.KEY_PRODUCT_CATEGORY_PRIMARY);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<ForeignKey<ProductCategoryRecord, ?>> getReferences() {
+        return Arrays.<ForeignKey<ProductCategoryRecord, ?>>asList(Keys.FK_PRODUCTCATEGORY_LOCATION);
     }
 
     /**
