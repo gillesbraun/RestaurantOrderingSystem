@@ -13,6 +13,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.models.message.Message;
@@ -22,10 +24,13 @@ import lu.btsi.bragi.ros.models.pojos.Language;
 import lu.btsi.bragi.ros.models.pojos.Location;
 import lu.btsi.bragi.ros.models.pojos.ProductCategory;
 import lu.btsi.bragi.ros.models.pojos.ProductCategoryLocalized;
+import org.apache.http.client.fluent.Request;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -41,7 +46,7 @@ public class ProductCategoriesStage extends Stage {
 
     @FXML private Label labelID;
     @FXML private Button buttonRefreshProductCategories, buttonAddProductCategories, buttonDeleteProductCategories,
-            buttonAddTranslation, buttonEditTranslation, buttonSaveImageURLPressed, buttonEditLocations;
+        buttonAddTranslation, buttonEditTranslation, buttonSaveImageURLPressed, buttonEditLocations, buttonChooseImage;
     @FXML private ListView<ProductCategory> listViewProductCategories;
     @FXML private ListView<ProductCategoryLocalized> listViewTranslations;
     @FXML private TextField textFieldTranslation, textFieldURL;
@@ -305,6 +310,28 @@ public class ProductCategoriesStage extends Stage {
             locationsStage.show();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void buttonChooseImagePressed() {
+        ProductCategory selectedCategory = listViewProductCategories.getSelectionModel().getSelectedItem();
+        if(selectedCategory == null)
+            return;
+        FileChooser fc = new FileChooser();
+        fc.getExtensionFilters().add(new ExtensionFilter("Images", "*.png", "*.jpg", "*.jpeg"));
+        File file = fc.showOpenDialog(this);
+        if(file != null) {
+            try {
+                String url = "http://"+client.getRemoteIPAdress()+":8888/?category="+selectedCategory.getId();
+                Request.Post(url)
+                        .bodyStream(new FileInputStream(file))
+                .execute();
+                selectedCategory.setImageUrl(url);
+                client.send(new Message<>(Update, selectedCategory, ProductCategory.class));
+                loadData();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

@@ -52,7 +52,9 @@ public class Client extends WebSocketClient {
             Platform.runLater(() -> messageCallback.handleAnswer(message));
             callbackMap.remove(messageUUID);
         } else {
-            if(isError) {
+            if(!isError) {
+
+            } else {
                 try {
                     new Message(message);
                     // should not reach here
@@ -82,5 +84,9 @@ public class Client extends WebSocketClient {
 
     public void setConnectionCallback(ConnectionCallback connectionCallback) {
         this.connectionCallback = connectionCallback;
+    }
+
+    public String getRemoteIPAdress() {
+        return getConnection().getRemoteSocketAddress().getAddress().getHostAddress();
     }
 }

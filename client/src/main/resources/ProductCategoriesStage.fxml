@@ -42,6 +42,7 @@
                <children>
                   <Label minWidth="-Infinity" text="Image URL: " />
                   <TextField fx:id="textFieldURL" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="buttonChooseImage" mnemonicParsing="false" onAction="#buttonChooseImagePressed" text="Choose File" />
                   <Button minWidth="-Infinity" mnemonicParsing="false" onAction="#buttonSaveImageURLPressed" text="Save" />
                </children>
             </HBox>
