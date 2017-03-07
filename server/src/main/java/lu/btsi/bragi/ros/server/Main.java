@@ -2,15 +2,11 @@ package lu.btsi.bragi.ros.server;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageType;
-import lu.btsi.bragi.ros.models.pojos.Table;
 
 import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.Arrays;
 
 /**
  * Created by gillesbraun on 14/02/2017.
@@ -32,5 +28,7 @@ public class Main {
             e.printStackTrace();
         }
         System.out.println("listening on port " + main.getPort());
+
+        new WebServerImages(8888);
     }
 }
