@@ -326,7 +326,7 @@ public class ProductCategoriesStage extends Stage {
                 Request.Post(url)
                         .bodyStream(new FileInputStream(file))
                 .execute();
-                selectedCategory.setImageUrl(url);
+                selectedCategory.setImageUrl("/?category="+selectedCategory.getId());
                 client.send(new Message<>(Update, selectedCategory, ProductCategory.class));
                 loadData();
             } catch (IOException e) {
