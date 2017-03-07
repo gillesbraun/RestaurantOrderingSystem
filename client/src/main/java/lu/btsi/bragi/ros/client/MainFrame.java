@@ -53,8 +53,8 @@ public class MainFrame extends Application implements UICallback {
     private Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(5), event -> {
         client.sendWithAction(new MessageGet<>(Order.class), m -> {
             try {
-                ordersPane.getChildren().clear();
                 List<Order> payload = new Message<Order>(m).getPayload();
+                ordersPane.getChildren().clear();
                 payload.stream()
                     .sorted((o1, o2) -> o2.getCreatedAt().toLocalDateTime().compareTo(o1.getCreatedAt().toLocalDateTime()))
                     .filter(o -> o.getCreatedAt().toLocalDateTime().getDayOfMonth() == LocalDateTime.now().getDayOfMonth())

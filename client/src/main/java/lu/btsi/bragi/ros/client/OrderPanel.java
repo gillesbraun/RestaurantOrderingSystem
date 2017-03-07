@@ -6,7 +6,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.models.message.Message;
@@ -16,6 +16,9 @@ import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductLocalized;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 import org.jooq.types.UInteger;
 
 import java.time.format.DateTimeFormatter;
@@ -61,13 +64,34 @@ public class OrderPanel extends VBox {
             }
         });
         listViewProducts.setMinHeight(USE_COMPUTED_SIZE);
-        listViewProducts.setMouseTransparent(true);
         listViewProducts.setFocusTraversable(true);
 
         Label labelTable = new Label("Table: "+order.getTableId());
         Label labelTime = new Label("Time created: " + order.getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern("H:mm")));
-        HBox info1 = new HBox(14, labelWaiter, labelTime);
-        getChildren().addAll(info1, labelTable, listViewProducts);
+        BorderPane info1 = new BorderPane();
+        info1.setLeft(labelWaiter);
+        info1.setRight(labelTime);
+
+        GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
+        Label labelProcessing = new Label("Processing");
+        Label labelProcessingDone = new Label("Processing Done");
+        if(order.getProcessing().equals((byte)0)) {
+            // X
+            labelProcessing.setGraphic(fa.create(FontAwesome.Glyph.CIRCLE_THIN));
+        } else {
+            labelProcessing.setGraphic(fa.create(FontAwesome.Glyph.CHECK_CIRCLE));
+        }
+        if(order.getProcessingDone().equals((byte)0)) {
+            // X
+            labelProcessingDone.setGraphic(fa.create(FontAwesome.Glyph.CIRCLE_THIN));
+        } else {
+            labelProcessingDone.setGraphic(fa.create(FontAwesome.Glyph.CHECK_CIRCLE));
+        }
+        BorderPane info2 = new BorderPane();
+        info2.setLeft(labelProcessing);
+        info2.setRight(labelProcessingDone);
+        getChildren().addAll(info1, info2, labelTable, listViewProducts);
+
         loadWaiter();
         loadProducts();
     }
