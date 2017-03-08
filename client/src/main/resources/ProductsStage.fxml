@@ -48,6 +48,7 @@
                      <children>
                         <Label alignment="CENTER" text="Price" />
                         <TextField fx:id="textFieldPrice" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#buttonUpdatePressed" text="Update" />
                      </children>
                   </HBox>
                   <Separator prefWidth="200.0" />
@@ -94,11 +95,7 @@
                         </VBox>
                      </children>
                   </VBox>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
-                     <children>
-                        <Button fx:id="buttonUpdate" mnemonicParsing="false" onAction="#buttonUpdatePressed" text="Update" />
-                     </children>
-                  </HBox>
+                  <HBox prefHeight="100.0" prefWidth="200.0" />
                </children>
                <padding>
                   <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />

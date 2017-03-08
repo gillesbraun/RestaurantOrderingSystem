@@ -22,9 +22,7 @@ import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
-import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.*;
-import org.controlsfx.dialog.ExceptionDialog;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -32,11 +30,11 @@ import org.jooq.types.UInteger;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
+import static lu.btsi.bragi.ros.models.message.MessageType.*;
 
 /**
  * Created by gillesbraun on 27/02/2017.
@@ -60,12 +58,14 @@ public class ProductsStage extends Stage {
     @FXML private Label labelID;
     @FXML private VBox detailPane;
 
-    private ObservableList<Language> languagesForChoiceBox;
-    private ObservableList<ProductCategoryLocalized> productCategoriesForChoiceBox;
-    private ObservableList<AllergenLocalized> allergensLocalizedForChoiceBox;
-    private ObservableList<ProductLocalized> productLocalizedForListView;
-    private ObservableList<AllergenLocalized> allergeneLocalizedForList;
+    private ObservableList<Language> languagesForChoiceBox = FXCollections.observableArrayList();
+    private ObservableList<ProductCategoryLocalized> productCategoriesForChoiceBox = FXCollections.observableArrayList();
+    private ObservableList<AllergenLocalized> allergensLocalizedForChoiceBox = FXCollections.observableArrayList();
+    private ObservableList<ProductLocalized> productLocalizedForListView = FXCollections.observableArrayList();
+    private ObservableList<AllergenLocalized> allergeneLocalizedForList = FXCollections.observableArrayList();
     private List<AllergenLocalized> allAllergenesLocalized;
+    private List<Language> allLanguages;
+    private List<ProductCategoryLocalized> allProductCategoriesLocalized;
 
     public ProductsStage(Client client) throws IOException {
         this.client = client;
@@ -86,6 +86,7 @@ public class ProductsStage extends Stage {
         buttonDelete.setGraphic(fa.create(Glyph.TRASH));
         buttonEditTranslation.setGraphic(fa.create(Glyph.CHECK_CIRCLE));
         buttonDeleteAllergen.setGraphic(fa.create(Glyph.TRASH));
+        buttonEditTranslation.setDisable(true);
 
         textFieldPrice.focusedProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> textFieldPrice.selectAll());
@@ -102,13 +103,14 @@ public class ProductsStage extends Stage {
         });
         listAllergens.getSelectionModel().selectedItemProperty().addListener(allergeneSelected);
 
+        choiceBoxLanguage.setItems(languagesForChoiceBox);
         loadData();
     }
 
 
     private void loadData() {
         Platform.runLater(() -> {
-            // Get all Products
+            // Get all Products for left listView
             client.sendWithAction(new MessageGet<>(Product.class), message -> {
                 try {
                     Product previousSelected = listProducts.getSelectionModel().getSelectedItem();
@@ -128,23 +130,23 @@ public class ProductsStage extends Stage {
                 }
             });
 
-            // Get Product Categories
+            // Get Product Categories for display in choicebox
             client.sendWithAction(new MessageGet<>(ProductCategoryLocalized.class), message -> {
                 try {
-                    Message<ProductCategoryLocalized> categories = new Message<>(message);
-                    productCategoriesForChoiceBox = FXCollections.observableList(categories.getPayload());
+                    allProductCategoriesLocalized = new Message<ProductCategoryLocalized>(message).getPayload();
                     productCategoriesForChoiceBox.setAll(
-                            productCategoriesForChoiceBox.stream()
+                            allProductCategoriesLocalized.stream()
                             .filter(pcl -> pcl.getLanguageCode().equals(LANGUAGE))
                             .collect(toList())
                     );
                     choiceBoxProductCategory.setItems(productCategoriesForChoiceBox);
+                    updateProductCategoryChoiceBox();
                 } catch (MessageException e) {
                     e.printStackTrace();
                 }
             });
 
-            // Get Allergens in a specific Language
+            // Get Localized Allergens for display in choicebox
             client.sendWithAction(new MessageGet<>(AllergenLocalized.class), message -> {
                 try {
                     Message<AllergenLocalized> messageAllergensLocalized = new Message<>(message);
@@ -161,9 +163,18 @@ public class ProductsStage extends Stage {
                     e.printStackTrace();
                 }
             });
+
+            // Get all languages
+            client.sendWithAction(new MessageGet<>(Language.class), message -> {
+                try {
+                    allLanguages = new Message<Language>(message).getPayload();
+                } catch (MessageException e) {
+                    e.printStackTrace();
+                }
+            });
         });
     }
-;
+
     private final ChangeListener<? super Product> productSelected = new ChangeListener<Product>() {
         @Override
         public void changed(ObservableValue<? extends Product> observable, Product oldValue, Product product) {
@@ -172,77 +183,29 @@ public class ProductsStage extends Stage {
                 buttonDelete.setDisable(false);
                 labelID.setText(product.getId()+"");
 
-                // Get ProductCategory from ID for selected Product
-                Optional<ProductCategoryLocalized> productCategoryActual = choiceBoxProductCategory.getItems()
-                        .stream()
-                        .filter(
-                                productCategory -> productCategory.getProductCategoryId().equals(product.getProductCategoryId()))
-                        .findFirst();
-                // Select the current Category
-                if(productCategoryActual.isPresent()) {
-                    choiceBoxProductCategory.getSelectionModel().select(productCategoryActual.get());
-                }
-
                 // Set the current price
                 textFieldPrice.setText(String.valueOf(product.getPrice()));
 
                 // Get the allergens
-                client.sendWithAction(new MessageGet<>(ProductAllergen.class), message -> {
-                    try {
-                        List<ProductAllergen> payload = new Message<ProductAllergen>(message).getPayload();
-                        List<UInteger> allergeneIDs = payload.stream()
-                                .filter(productAllergen -> productAllergen.getProductId().equals(product.getId()))
-                                .map(ProductAllergen::getAllergenId)
-                                .collect(toList());
+                allergeneLocalizedForList = FXCollections.observableList(
+                        product.getProductAllergen().stream()
+                        .map(ProductAllergen::getAllergen)
+                        .flatMap(a -> a.getAllergenLocalized().stream()
+                                .filter(aL -> aL.getLanguageCode().equals(LANGUAGE)))
+                        .collect(toList())
+                );
+                listAllergens.setItems(allergeneLocalizedForList);
 
-                        // Put all Allergens for this product in the list
-                        allergeneLocalizedForList = FXCollections.observableList(
-                                allAllergenesLocalized.stream()
-                                        .filter(allergenLocalized -> allergeneIDs.contains(allergenLocalized.getAllergenId()))
-                                        .filter(aL -> aL.getLanguageCode().equals(LANGUAGE))
-                                        .collect(toList())
-                        );
-                        listAllergens.setItems(allergeneLocalizedForList);
-
-                        // Put all not used Allergens in the choiceBox
-                        allergensLocalizedForChoiceBox.setAll(
-                                allAllergenesLocalized.stream()
-                                    .filter(allergenLocalized -> allergenLocalized.getLanguageCode().equals(LANGUAGE))
-                                    .filter(allergenLocalized -> ! allergeneIDs.contains(allergenLocalized.getAllergenId()))
-                                    .collect(toList())
-                        );
-
-                        updateAllergensChoiceBox();
-                    } catch (MessageException e) {
-                        new ExceptionDialog(e).show();
-                    }
-                });
+                updateAllergensChoiceBox();
 
                 // Get the translations
-                client.sendWithAction(new MessageGet<>(ProductLocalized.class), message -> {
-                    try {
-                        List<ProductLocalized> payload = new Message<ProductLocalized>(message).getPayload();
-                        List<ProductLocalized> collect = payload.stream()
-                                .filter(productLocalized -> productLocalized.getProductId().equals(product.getId()))
-                                .collect(toList());
-                        productLocalizedForListView = FXCollections.observableList(collect);
-                        listTranslations.setItems(productLocalizedForListView);
-                    } catch (MessageException e) {
-                        e.printStackTrace();
-                    }
-                });
+                productLocalizedForListView = FXCollections.observableList(product.getProductLocalized());
+                listTranslations.setItems(productLocalizedForListView);
 
-                // Get Languages
-                client.sendWithAction(new MessageGet<>(Language.class), message -> {
-                    try {
-                        List<Language> mLanguages = new Message<Language>(message).getPayload();
-                        languagesForChoiceBox = FXCollections.observableList(mLanguages);
-                        choiceBoxLanguage.setItems(languagesForChoiceBox);
-                        updateTranslationChoiceBox();
-                    } catch (MessageException e) {
-                        e.printStackTrace();
-                    }
-                });
+                // Update language choicebox
+                updateTranslationChoiceBox();
+
+                updateProductCategoryChoiceBox();
             } else {
                 buttonDelete.setDisable(true);
                 detailPane.setDisable(true);
@@ -254,6 +217,17 @@ public class ProductsStage extends Stage {
             }
         }
     };
+
+    private void updateProductCategoryChoiceBox() {
+        Product product = listProducts.getSelectionModel().getSelectedItem();
+        if(product == null)
+            return;
+        // Get ProductCategory from ID for selected Product
+        UInteger productCategoryId = product.getProductCategoryId();
+        productCategoriesForChoiceBox.stream()
+                .filter(pcl -> pcl.getProductCategoryId().equals(productCategoryId))
+                .findFirst().ifPresent(found -> choiceBoxProductCategory.getSelectionModel().select(found));
+    }
 
     private final ChangeListener<? super ProductLocalized> translationSelected = new ChangeListener<ProductLocalized>() {
         @Override
@@ -277,6 +251,11 @@ public class ProductsStage extends Stage {
         if(selectedItem != null && textFieldTranslation.getText().trim().length() > 0) {
             selectedItem.setLabel(textFieldTranslation.getText());
             listTranslations.refresh();
+            textFieldTranslation.setText("");
+            textFieldTranslation.requestFocus();
+
+            client.send(new Message<>(Update, selectedItem, ProductLocalized.class));
+            buttonEditTranslation.setDisable(true);
         }
     }
 
@@ -289,7 +268,7 @@ public class ProductsStage extends Stage {
             productAllergen.setProductId(selectedProduct.getId());
 
             Message<ProductAllergen> deleteProdAllerg =
-                    new Message<>(MessageType.Delete, productAllergen, ProductAllergen.class);
+                    new Message<>(Delete, productAllergen, ProductAllergen.class);
             client.send(deleteProdAllerg.toString());
             loadData();
         }
@@ -336,49 +315,46 @@ public class ProductsStage extends Stage {
             Product product = new Product();
             product.setPrice(BigDecimal.valueOf(result.get().getValue()));
             product.setProductCategoryId(result.get().getKey().getProductCategoryId());
-            Message<Product> createMsg = new Message<>(MessageType.Create, product, Product.class);
+            Message<Product> createMsg = new Message<>(Create, product, Product.class);
             client.send(createMsg.toString());
             loadData();
         }
     }
 
     public void buttonAddAllergenPressed(ActionEvent event) {
-        // Search for Allergen by ID
-        Optional<AllergenLocalized> selectedAllergen = allergensLocalizedForChoiceBox
-                .stream()
-                .filter(a -> a.getAllergenId().equals(choiceBoxAllergen.getValue().getAllergenId()))
-                .findFirst();
-        if(selectedAllergen.isPresent()) {
-            allergeneLocalizedForList.add(selectedAllergen.get());
-        }
+        Product selectedProduct = listProducts.getSelectionModel().getSelectedItem();
+        if(choiceBoxAllergen.getValue() == null || selectedProduct == null)
+            return;
+        AllergenLocalized allergenLocalized = choiceBoxAllergen.getValue();
+
+        ProductAllergen productAllergen = new ProductAllergen();
+        productAllergen.setAllergenId(allergenLocalized.getAllergenId());
+        productAllergen.setProductId(selectedProduct.getId());
+        client.send(new Message<>(Create, productAllergen, ProductAllergen.class));
+        System.out.println("Sent message: "+productAllergen);
+        allergeneLocalizedForList.add(allergenLocalized);
+        loadData();
         updateAllergensChoiceBox();
     }
 
     public void buttonUpdatePressed(ActionEvent event) {
-        Product p = listProducts.getSelectionModel().getSelectedItem();
-        if(p != null) {
-            p.setPrice(BigDecimal.valueOf(Double.valueOf(textFieldPrice.getText())));
-            p.setProductCategoryId(choiceBoxProductCategory.getValue().getProductCategoryId());
-            Message<Product> productMessage = new Message<>(MessageType.Update, p, Product.class);
-            client.send(productMessage.toString());
+        Product product = listProducts.getSelectionModel().getSelectedItem();
+        if(product != null &&
+                textFieldPrice.getText().trim().length() > 0 &&
+                choiceBoxProductCategory.getValue() != null) {
 
-            allergeneLocalizedForList.forEach(allergenLocalized -> {
-                ProductAllergen productAllergen = new ProductAllergen();
-                productAllergen.setProductId(p.getId());
-                productAllergen.setAllergenId(allergenLocalized.getAllergenId());
-                Message<ProductAllergen> message = new Message<>(MessageType.Create, productAllergen, ProductAllergen.class);
-                client.send(message.toString());
-            });
+            product.setPrice(BigDecimal.valueOf(Double.valueOf(textFieldPrice.getText())));
+            product.setProductCategoryId(choiceBoxProductCategory.getValue().getProductCategoryId());
 
-            Message<ProductLocalized> message = new Message<>(MessageType.Create, productLocalizedForListView, ProductLocalized.class);
-            client.send(message.toString());
+            Message<Product> productMessage = new Message<>(Update, product, Product.class);
+            client.send(productMessage);
         }
     }
 
     public void buttonDeletePressed(ActionEvent event) {
         Product p;
         if((p = listProducts.getSelectionModel().getSelectedItem()) != null) {
-            Message<Product> productMessage = new Message<>(MessageType.Delete, p, Product.class);
+            Message<Product> productMessage = new Message<>(Delete, p, Product.class);
             client.send(productMessage.toString());
             loadData();
         }
@@ -393,6 +369,7 @@ public class ProductsStage extends Stage {
         productLocalized.setProductId(listProducts.getSelectionModel().getSelectedItem().getId());
         productLocalized.setLanguageCode(choiceBoxLanguage.getValue().getCode());
         productLocalizedForListView.add(productLocalized);
+        client.send(new Message<>(Create, productLocalized, ProductLocalized.class));
         textFieldTranslation.setText("");
         textFieldTranslation.requestFocus();
 
@@ -400,37 +377,25 @@ public class ProductsStage extends Stage {
     }
 
     private void updateAllergensChoiceBox() {
-        List<UInteger> existingAllergens;
-        if(allergeneLocalizedForList != null) {
-            // Gather list of already added Allergens, only ID
-             existingAllergens = allergeneLocalizedForList.stream()
-                    .map(AllergenLocalized::getAllergenId)
-                    .collect(toList());
-        } else {
-            existingAllergens = new ArrayList<>();
-        }
-        // Replace list with all that are not already in the list
-        allergensLocalizedForChoiceBox.setAll(
+        // Get Allergens not yet added (for choicebox)
+        allergensLocalizedForChoiceBox = FXCollections.observableList(
                 allAllergenesLocalized.stream()
-                    .filter(aL -> aL.getLanguageCode().equals(LANGUAGE))
-                    .filter(allergenL -> ! existingAllergens.contains(allergenL.getAllergenId()))
-                    .collect(toList())
+                        .filter(aL -> ! allergeneLocalizedForList.stream().map(AllergenLocalized::getAllergenId).collect(toList()).contains(aL.getAllergenId()))
+                        .filter(aL -> aL.getLanguageCode().equals(LANGUAGE))
+                        .collect(toList())
         );
+        choiceBoxAllergen.setItems(allergensLocalizedForChoiceBox);
         choiceBoxAllergen.setDisable(allergensLocalizedForChoiceBox.isEmpty());
         buttonAddAllergen.setDisable(allergensLocalizedForChoiceBox.isEmpty());
     }
 
     private void updateTranslationChoiceBox() {
-        List<String> languagesTranslated = productLocalizedForListView.stream()
-                .map(ProductLocalized::getLanguageCode)
-                .collect(toList());
-
-        // Set choiceBox items to those that haven't been used
+        List<String> languagesPresent = productLocalizedForListView.stream().map(ProductLocalized::getLanguageCode).collect(toList());
         languagesForChoiceBox.setAll(
-                languagesForChoiceBox.stream()
-                        .filter(language -> !languagesTranslated.contains(language.getCode()))
-                        .collect(toList())
-        );
+                allLanguages.stream()
+                .filter(l -> ! languagesPresent.contains(l.getCode()))
+                .collect(toList()
+        ));
 
         // Disable Translation adding when no languagesForChoiceBox available
         choiceBoxLanguage.setDisable(languagesForChoiceBox.isEmpty());
