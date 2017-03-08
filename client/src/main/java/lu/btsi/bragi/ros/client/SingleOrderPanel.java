@@ -1,6 +1,5 @@
 package lu.btsi.bragi.ros.client;
 
-import com.google.gson.Gson;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
@@ -122,7 +121,6 @@ public class SingleOrderPanel extends VBox {
     }
 
     private void loadProducts() {
-        System.out.println(new Gson().toJson(order));
         productsPriceForOrder = order.getProductPriceForOrder();
         productsLocalizedForList = FXCollections.observableList(
                 order.getProductPriceForOrder().stream()
