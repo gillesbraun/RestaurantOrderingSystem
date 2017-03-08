@@ -1,5 +1,6 @@
 package lu.btsi.bragi.ros.server.controller;
 
+import lu.btsi.bragi.ros.models.pojos.Product;
 import lu.btsi.bragi.ros.models.pojos.ProductAllergen;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductAllergenRecord;
@@ -55,5 +56,17 @@ public class ProductAllergenController extends Controller<ProductAllergen> {
         ProductAllergenRecord productAllergenRecord = new ProductAllergenRecord();
         productAllergenRecord.from(obj);
         context.executeDelete(productAllergenRecord);
+    }
+
+    List<ProductAllergen> getProductAllergen(Product product) {
+        List<ProductAllergen> productAllergens = context.select()
+                .from(dbTable)
+                .where(dbTable.PRODUCT_ID.eq(product.getId()))
+                .fetch()
+                .into(pojo);
+        productAllergens.forEach(productAllergen -> {
+            productAllergen.setAllergen(getController(AllergenController.class).getAllergen(productAllergen));
+        });
+        return productAllergens;
     }
 }

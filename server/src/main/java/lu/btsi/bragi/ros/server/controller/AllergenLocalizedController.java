@@ -1,5 +1,6 @@
 package lu.btsi.bragi.ros.server.controller;
 
+import lu.btsi.bragi.ros.models.pojos.Allergen;
 import lu.btsi.bragi.ros.models.pojos.AllergenLocalized;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.AllergenLocalizedRecord;
@@ -46,5 +47,13 @@ public class AllergenLocalizedController extends Controller<AllergenLocalized> {
         AllergenLocalizedRecord allergenLocalizedRecord = new AllergenLocalizedRecord();
         allergenLocalizedRecord.from(obj);
         context.executeDelete(allergenLocalizedRecord);
+    }
+
+    List<AllergenLocalized> getAllergenLocalized(Allergen allergen) {
+        return context.select()
+                .from(dbTable)
+                .where(dbTable.ALLERGEN_ID.eq(allergen.getId()))
+                .fetch()
+                .into(pojo);
     }
 }

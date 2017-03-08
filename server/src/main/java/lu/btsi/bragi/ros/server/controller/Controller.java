@@ -83,6 +83,10 @@ public abstract class Controller<T> {
         }
     }
 
+    public static Controller get(Object key) {
+        return registeredControllers.get(key);
+    }
+
     public static void setMessageSender(IMessageSender messageSender) {
         Controller.messageSender = messageSender;
     }

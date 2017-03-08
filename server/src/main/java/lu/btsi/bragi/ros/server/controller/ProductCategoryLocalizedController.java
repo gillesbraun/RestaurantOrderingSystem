@@ -1,5 +1,6 @@
 package lu.btsi.bragi.ros.server.controller;
 
+import lu.btsi.bragi.ros.models.pojos.ProductCategory;
 import lu.btsi.bragi.ros.models.pojos.ProductCategoryLocalized;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductCategoryLocalizedRecord;
@@ -43,5 +44,13 @@ public class ProductCategoryLocalizedController extends Controller<ProductCatego
         ProductCategoryLocalizedRecord productCategoryLocalizedRecord = new ProductCategoryLocalizedRecord();
         productCategoryLocalizedRecord.from(obj);
         context.executeDelete(productCategoryLocalizedRecord);
+    }
+
+    List<ProductCategoryLocalized> getProductCategoryLocalized(ProductCategory productCategory) {
+        return context.select()
+                .from(dbTable)
+                .where(dbTable.PRODUCT_CATEGORY_ID.eq(productCategory.getId()))
+                .fetch()
+                .into(pojo);
     }
 }
