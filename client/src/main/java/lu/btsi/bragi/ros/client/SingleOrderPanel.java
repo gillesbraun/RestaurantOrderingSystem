@@ -1,8 +1,8 @@
 package lu.btsi.bragi.ros.client;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -30,9 +30,9 @@ import static java.util.stream.Collectors.toList;
 /**
  * Created by gillesbraun on 07/03/2017.
  */
-public class OrderPanel extends VBox {
+public class SingleOrderPanel extends VBox {
 
-    private static final String LANGUAGE = "en";
+    private static final String LANGUAGE = "de";
     private Client client;
     private Order order;
 
@@ -42,11 +42,11 @@ public class OrderPanel extends VBox {
     private ObservableList<ProductLocalized> productsLocalizedForList;
     private List<ProductPriceForOrder> productsPriceForOrder;
 
-    public OrderPanel(Client client, Order order) {
+    public SingleOrderPanel(Client client, Order order) {
         this.client = client;
         this.order = order;
-        setPadding(new Insets(14));
         setSpacing(7);
+
 
         listViewProducts.setCellFactory(param -> new ListCell<ProductLocalized>() {
             @Override
@@ -64,7 +64,7 @@ public class OrderPanel extends VBox {
             }
         });
         listViewProducts.setMinHeight(USE_COMPUTED_SIZE);
-        listViewProducts.setFocusTraversable(true);
+        listViewProducts.setFocusTraversable(false);
 
         Label labelTable = new Label("Table: "+order.getTableId());
         Label labelTime = new Label("Time created: " + order.getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern("H:mm")));
@@ -91,6 +91,8 @@ public class OrderPanel extends VBox {
         info2.setLeft(labelProcessing);
         info2.setRight(labelProcessingDone);
         getChildren().addAll(info1, info2, labelTable, listViewProducts);
+        setFillWidth(true);
+        setPrefHeight(USE_COMPUTED_SIZE);
 
         loadWaiter();
         loadProducts();
@@ -104,6 +106,7 @@ public class OrderPanel extends VBox {
                         .filter(ppfo -> ppfo.getOrderId().equals(order.getId()))
                         .collect(toList());
 
+
                 List<UInteger> productIDs = productsPriceForOrder.stream()
                         .map(ProductPriceForOrder::getProductId)
                         .collect(toList());
@@ -116,6 +119,9 @@ public class OrderPanel extends VBox {
                                 .filter(pL -> pL.getLanguageCode().equals(LANGUAGE))
                                 .collect(toList());
                         productsLocalizedForList = FXCollections.observableList(productsInOrderLocalized);
+
+                        listViewProducts.prefHeightProperty().bind(Bindings.size(productsLocalizedForList).multiply(28));
+
                         listViewProducts.setItems(productsLocalizedForList);
                     } catch (MessageException e) {
                         e.printStackTrace();
