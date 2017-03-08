@@ -86,4 +86,15 @@ public abstract class Controller<T> {
     public static void setMessageSender(IMessageSender messageSender) {
         Controller.messageSender = messageSender;
     }
+
+    static <T extends Controller> T getController(Class<T> controllerClass) {
+        Optional<Controller> first = registeredControllers.values().stream()
+                .filter(controller -> controller.getClass().equals(controllerClass))
+                .findFirst();
+        if (first.isPresent()) {
+            return controllerClass.cast(first.get());
+        } else {
+            throw new ControllerNotFoundException("Controller '" + controllerClass.getSimpleName() + "' is not loaded");
+        }
+    }
 }
