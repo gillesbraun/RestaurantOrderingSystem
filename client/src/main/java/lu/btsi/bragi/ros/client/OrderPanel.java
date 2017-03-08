@@ -76,13 +76,13 @@ public class OrderPanel extends VBox {
         Label labelProcessing = new Label("Processing");
         Label labelProcessingDone = new Label("Processing Done");
         if(order.getProcessing().equals((byte)0)) {
-            // X
+            // empty
             labelProcessing.setGraphic(fa.create(FontAwesome.Glyph.CIRCLE_THIN));
         } else {
             labelProcessing.setGraphic(fa.create(FontAwesome.Glyph.CHECK_CIRCLE));
         }
         if(order.getProcessingDone().equals((byte)0)) {
-            // X
+            // empty
             labelProcessingDone.setGraphic(fa.create(FontAwesome.Glyph.CIRCLE_THIN));
         } else {
             labelProcessingDone.setGraphic(fa.create(FontAwesome.Glyph.CHECK_CIRCLE));
