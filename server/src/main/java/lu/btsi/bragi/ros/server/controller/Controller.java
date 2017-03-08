@@ -21,16 +21,16 @@ public abstract class Controller<T> {
     @Inject
     protected DSLContext context;
 
-    private static Map<Class, Controller> registeredControllers = new HashMap<>();
+    private static Map<Class<?>, Controller> registeredControllers = new HashMap<>();
     static IMessageSender messageSender;
 
-    public Controller(Class type) {
+    public Controller(Class<T> type) {
         registeredControllers.put(type, this);
     }
 
     static Optional<Message> sendToController(String message) throws ControllerNotFoundException, ClassNotFoundException, MessageException {
         Class clazz = Message.messageClass(message);
-        Controller controller = registeredControllers.get(clazz);
+        Controller<?> controller = registeredControllers.get(clazz);
         if(controller != null) {
             return controller.handle(message);
         }
