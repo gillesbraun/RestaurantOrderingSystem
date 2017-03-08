@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class OrderController extends Controller<Order> {
 
-    private static final Class pojo = Order.class;
+    private static final Class<Order> pojo = Order.class;
     private static final lu.btsi.bragi.ros.server.database.tables.Order dbTable = Tables.ORDER;
 
     public OrderController() {
@@ -22,7 +22,13 @@ public class OrderController extends Controller<Order> {
 
     @Override
     protected List<Order> handleGet() throws Exception {
-        return context.fetch(dbTable).into(pojo);
+        List<Order> into = context.fetch(dbTable).into(pojo);
+        into.forEach(order -> {
+            order.setWaiter(getController(WaiterController.class).getWaiterForOrder(order));
+            order.setProductPriceForOrder(getController(ProductPriceForOrderController.class).getProductPriceForOrderForOrder(order));
+            order.setTable(getController(TableController.class).getTableForOrder(order));
+        });
+        return into;
     }
 
     @Override
@@ -38,7 +44,7 @@ public class OrderController extends Controller<Order> {
         OrderRecord orderRecord = new OrderRecord();
         orderRecord.from(obj);
         OrderRecord id = context.insertInto(dbTable).set(orderRecord).returning(dbTable.ID).fetchOne();
-        Order into = (Order)context.selectFrom(dbTable).where(dbTable.ID.equal(id.getId())).fetchOne().into(pojo);
+        Order into = context.selectFrom(dbTable).where(dbTable.ID.equal(id.getId())).fetchOne().into(pojo);
         messageSender.sendReply(originalMessage.createAnswer(Arrays.asList(into)));
         //messageSender.messageSender(new Message<>(MessageType.Broadcast, into, Order.class));
     }

@@ -1,5 +1,6 @@
 package lu.btsi.bragi.ros.server.controller;
 
+import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.Table;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.TableRecord;
@@ -12,7 +13,7 @@ import java.util.List;
  */
 public class TableController extends Controller<Table> {
 
-    private static Class mapTo = Table.class;
+    private static Class<Table> mapTo = Table.class;
 
     private lu.btsi.bragi.ros.server.database.tables.Table dbTable = Tables.TABLE;
 
@@ -24,6 +25,14 @@ public class TableController extends Controller<Table> {
     protected List<Table> handleGet() {
         List<Table> list = context.fetch(dbTable).into(mapTo);
         return list;
+    }
+
+    Table getTableForOrder(Order order) {
+        return context.select()
+                .from(dbTable)
+                .where(dbTable.ID.equal(order.getTableId()))
+                .fetchOne()
+                .into(mapTo);
     }
 
     @Override

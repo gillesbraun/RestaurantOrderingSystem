@@ -1,5 +1,6 @@
 package lu.btsi.bragi.ros.client;
 
+import com.google.gson.Gson;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
@@ -14,13 +15,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lu.btsi.bragi.ros.client.connection.Client;
-import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageException;
-import lu.btsi.bragi.ros.models.message.MessageGet;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductLocalized;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
-import lu.btsi.bragi.ros.models.pojos.Waiter;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -37,7 +34,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class SingleOrderPanel extends VBox {
 
-    private static final String LANGUAGE = "de";
+    private static final String LANGUAGE = "en";
     private Client client;
     private Order order;
 
@@ -65,7 +62,7 @@ public class SingleOrderPanel extends VBox {
         }
     };
 
-    public SingleOrderPanel(Client client, Order order) {
+    SingleOrderPanel(Client client, Order order) {
         this.client = client;
         this.order = order;
         setSpacing(7);
@@ -120,58 +117,25 @@ public class SingleOrderPanel extends VBox {
         setFillWidth(true);
         setPrefHeight(USE_COMPUTED_SIZE);
 
-        loadWaiter();
+        labelWaiter.setText("Waiter: " + order.getWaiter().getName());
         loadProducts();
     }
 
     private void loadProducts() {
-        client.sendWithAction(new MessageGet<ProductPriceForOrder>(ProductPriceForOrder.class), message -> {
-            try {
-                List<ProductPriceForOrder> payload = new Message<ProductPriceForOrder>(message).getPayload();
-                productsPriceForOrder = payload.stream()
-                        .filter(ppfo -> ppfo.getOrderId().equals(order.getId()))
-                        .collect(toList());
-
-
-                List<UInteger> productIDs = productsPriceForOrder.stream()
-                        .map(ProductPriceForOrder::getProductId)
-                        .collect(toList());
-
-                client.sendWithAction(new MessageGet<>(ProductLocalized.class), message1 -> {
-                    try {
-                        List<ProductLocalized> productLocalizedList = new Message<ProductLocalized>(message1).getPayload();
-                        List<ProductLocalized> productsInOrderLocalized = productLocalizedList.stream()
-                                .filter(pL -> productIDs.contains(pL.getProductId()))
+        System.out.println(new Gson().toJson(order));
+        productsPriceForOrder = order.getProductPriceForOrder();
+        productsLocalizedForList = FXCollections.observableList(
+                order.getProductPriceForOrder().stream()
+                        .flatMap(
+                                productPriceForOrder ->
+                                productPriceForOrder.getProduct().getProductLocalized().stream()
                                 .filter(pL -> pL.getLanguageCode().equals(LANGUAGE))
-                                .collect(toList());
-                        productsLocalizedForList = FXCollections.observableList(productsInOrderLocalized);
+                        )
+                .collect(toList())
+        );
+        listViewProducts.prefHeightProperty().bind(Bindings.size(productsLocalizedForList).multiply(28));
 
-                        listViewProducts.prefHeightProperty().bind(Bindings.size(productsLocalizedForList).multiply(28));
-
-                        listViewProducts.setItems(productsLocalizedForList);
-                    } catch (MessageException e) {
-                        e.printStackTrace();
-                    }
-                });
-
-            } catch (MessageException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    private void loadWaiter() {
-        client.sendWithAction(new MessageGet<>(Waiter.class), m -> {
-            try {
-                List<Waiter> payload = new Message<Waiter>(m).getPayload();
-                Optional<Waiter> waiterFound = payload.stream()
-                        .filter(w -> w.getId().equals(order.getWaiterId()))
-                        .findFirst();
-                waiterFound.ifPresent(w -> labelWaiter.setText("Waiter: "+w.getName()));
-            } catch (MessageException e) {
-                e.printStackTrace();
-            }
-        });
+        listViewProducts.setItems(productsLocalizedForList);
     }
 
 }

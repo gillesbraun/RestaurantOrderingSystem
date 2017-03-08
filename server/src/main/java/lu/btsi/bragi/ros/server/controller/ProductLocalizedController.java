@@ -1,5 +1,6 @@
 package lu.btsi.bragi.ros.server.controller;
 
+import lu.btsi.bragi.ros.models.pojos.Product;
 import lu.btsi.bragi.ros.models.pojos.ProductLocalized;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductLocalizedRecord;
@@ -14,7 +15,7 @@ import static org.jooq.impl.DSL.count;
  */
 public class ProductLocalizedController extends Controller<ProductLocalized> {
 
-    private static final Class pojo = ProductLocalized.class;
+    private static final Class<ProductLocalized> pojo = ProductLocalized.class;
     private static final lu.btsi.bragi.ros.server.database.tables.ProductLocalized dbTable = Tables.PRODUCT_LOCALIZED;
 
     public ProductLocalizedController() {
@@ -49,7 +50,6 @@ public class ProductLocalizedController extends Controller<ProductLocalized> {
             productLocalizedRecord.reset(dbTable.UPDATED_AT);
             context.executeUpdate(productLocalizedRecord);
         }
-
     }
 
     @Override
@@ -57,5 +57,13 @@ public class ProductLocalizedController extends Controller<ProductLocalized> {
         ProductLocalizedRecord productLocalizedRecord = new ProductLocalizedRecord();
         productLocalizedRecord.from(obj);
         context.executeDelete(productLocalizedRecord);
+    }
+
+    List<ProductLocalized> getProductsLocalized(Product product) {
+        return context.select()
+                .from(dbTable)
+                .where(dbTable.PRODUCT_ID.eq(product.getId()))
+                .fetch()
+                .into(pojo);
     }
 }

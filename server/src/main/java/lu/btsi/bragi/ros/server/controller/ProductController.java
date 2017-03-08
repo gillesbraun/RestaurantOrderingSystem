@@ -1,6 +1,7 @@
 package lu.btsi.bragi.ros.server.controller;
 
 import lu.btsi.bragi.ros.models.pojos.Product;
+import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductRecord;
 
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class ProductController extends Controller<Product> {
 
-    private static final Class pojo = Product.class;
+    private static final Class<Product> pojo = Product.class;
     private static final lu.btsi.bragi.ros.server.database.tables.Product dbTable = Tables.PRODUCT;
 
     ProductController() {
@@ -43,5 +44,15 @@ public class ProductController extends Controller<Product> {
         ProductRecord productRecord = new ProductRecord();
         productRecord.from(obj);
         context.executeDelete(productRecord);
+    }
+
+    Product getProduct(ProductPriceForOrder productPriceForOrders) {
+        Product product = context.select()
+                .from(dbTable)
+                .where(dbTable.ID.eq(productPriceForOrders.getProductId()))
+                .fetchOne()
+                .into(pojo);
+        product.setProductLocalized(getController(ProductLocalizedController.class).getProductsLocalized(product));
+        return product;
     }
 }

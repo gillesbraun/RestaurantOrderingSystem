@@ -1,5 +1,6 @@
 package lu.btsi.bragi.ros.server.controller;
 
+import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.WaiterRecord;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class WaiterController extends Controller<Waiter> {
 
-    private static Class mapTo = Waiter.class;
+    private static Class<Waiter> mapTo = Waiter.class;
 
     lu.btsi.bragi.ros.server.database.tables.Waiter dbTable = Tables.WAITER;
 
@@ -24,6 +25,14 @@ public class WaiterController extends Controller<Waiter> {
     protected List<Waiter> handleGet() {
         List<Waiter> list = context.fetch(dbTable).into(mapTo);
         return list;
+    }
+
+    Waiter getWaiterForOrder(Order order) {
+        return context.select()
+                .from(dbTable)
+                .where(dbTable.ID.eq(order.getWaiterId()))
+                .fetchOne()
+                .into(mapTo);
     }
 
     @Override
