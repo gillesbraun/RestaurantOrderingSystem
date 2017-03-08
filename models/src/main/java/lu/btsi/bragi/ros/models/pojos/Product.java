@@ -35,6 +35,8 @@ public class Product implements Serializable {
     private Timestamp  createdAt;
     private Timestamp  updatedAt;
     private List<ProductLocalized> productLocalized;
+    private ProductCategory productCategory;
+    private List<ProductAllergen> productAllergen;
 
     public Product() {}
 
@@ -122,5 +124,21 @@ public class Product implements Serializable {
 
     public List<ProductLocalized> getProductLocalized() {
         return productLocalized;
+    }
+
+    public void setProductCategory(ProductCategory productCategory) {
+        this.productCategory = productCategory;
+    }
+
+    public ProductCategory getProductCategory() {
+        return productCategory;
+    }
+
+    public void setProductAllergen(List<ProductAllergen> productAllergen) {
+        this.productAllergen = productAllergen;
+    }
+
+    public List<ProductAllergen> getProductAllergen() {
+        return productAllergen;
     }
 }

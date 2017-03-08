@@ -9,6 +9,7 @@ import org.jooq.types.UInteger;
 import javax.annotation.Generated;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -29,6 +30,7 @@ public class Allergen implements Serializable {
     private UInteger  id;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private List<AllergenLocalized> allergenLocalized;
 
     public Allergen() {}
 
@@ -75,5 +77,13 @@ public class Allergen implements Serializable {
     @Override
     public String toString() {
         return "N° " + id;
+    }
+
+    public void setAllergenLocalized(List<AllergenLocalized> allergenLocalized) {
+        this.allergenLocalized = allergenLocalized;
+    }
+
+    public List<AllergenLocalized> getAllergenLocalized() {
+        return allergenLocalized;
     }
 }

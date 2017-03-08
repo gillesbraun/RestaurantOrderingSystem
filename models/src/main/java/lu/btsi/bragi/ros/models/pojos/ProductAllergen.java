@@ -30,6 +30,7 @@ public class ProductAllergen implements Serializable {
     private UInteger  productId;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private Allergen allergen;
 
     public ProductAllergen() {}
 
@@ -95,5 +96,13 @@ public class ProductAllergen implements Serializable {
 
         sb.append(")");
         return sb.toString();
+    }
+
+    public void setAllergen(Allergen allergen) {
+        this.allergen = allergen;
+    }
+
+    public Allergen getAllergen() {
+        return allergen;
     }
 }

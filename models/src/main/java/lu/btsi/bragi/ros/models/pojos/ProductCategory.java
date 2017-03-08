@@ -9,6 +9,7 @@ import org.jooq.types.UInteger;
 import javax.annotation.Generated;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -31,6 +32,8 @@ public class ProductCategory implements Serializable {
     private UInteger  locationId;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private List<ProductCategoryLocalized> productCategoryLocalizedList;
+    private List<ProductCategoryLocalized> productCategoryLocalized;
 
     public ProductCategory() {}
 
@@ -99,5 +102,13 @@ public class ProductCategory implements Serializable {
     @Override
     public String toString() {
         return "N° "+id;
+    }
+
+    public void setProductCategoryLocalized(List<ProductCategoryLocalized> productCategoryLocalized) {
+        this.productCategoryLocalized = productCategoryLocalized;
+    }
+
+    public List<ProductCategoryLocalized> getProductCategoryLocalized() {
+        return productCategoryLocalized;
     }
 }
