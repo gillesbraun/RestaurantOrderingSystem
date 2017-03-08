@@ -32,6 +32,7 @@ public class ProductPriceForOrder implements Serializable {
     private UInteger  quantity;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private Product   product;
 
     public ProductPriceForOrder() {}
 
@@ -121,5 +122,13 @@ public class ProductPriceForOrder implements Serializable {
 
         sb.append(")");
         return sb.toString();
+    }
+
+    public void setProduct(Product product) {
+        this.product = product;
+    }
+
+    public Product getProduct() {
+        return product;
     }
 }

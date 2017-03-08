@@ -10,6 +10,7 @@ import javax.annotation.Generated;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -33,6 +34,7 @@ public class Product implements Serializable {
     private UInteger   locationId;
     private Timestamp  createdAt;
     private Timestamp  updatedAt;
+    private List<ProductLocalized> productLocalized;
 
     public Product() {}
 
@@ -112,5 +114,13 @@ public class Product implements Serializable {
     @Override
     public String toString() {
         return "N° "+id+", Price: "+price+"€";
+    }
+
+    public void setProductLocalized(List<ProductLocalized> productLocalized) {
+        this.productLocalized = productLocalized;
+    }
+
+    public List<ProductLocalized> getProductLocalized() {
+        return productLocalized;
     }
 }
