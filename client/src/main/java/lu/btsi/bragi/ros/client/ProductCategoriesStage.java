@@ -74,7 +74,7 @@ public class ProductCategoriesStage extends Stage {
         buttonDeleteProductCategories.setGraphic(fa.create(Glyph.TRASH));
 
         buttonAddTranslation.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
-        buttonEditTranslation.setGraphic(fa.create(Glyph.ARROW_UP));
+        buttonEditTranslation.setGraphic(fa.create(Glyph.CHECK_CIRCLE));
         buttonEditLocations.setGraphic(fa.create(Glyph.PENCIL));
 
         detailPane.setDisable(true);
