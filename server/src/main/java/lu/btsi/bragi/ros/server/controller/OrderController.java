@@ -51,6 +51,7 @@ public class OrderController extends Controller<Order> {
 
     @Override
     protected void handleCreate(Order obj) throws Exception {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     @Override
