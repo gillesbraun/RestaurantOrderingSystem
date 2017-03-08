@@ -14,7 +14,7 @@ import static org.jooq.impl.DSL.count;
  */
 public class ProductAllergenController extends Controller<ProductAllergen> {
 
-    private static final Class pojo = ProductAllergen.class;
+    private static final Class<ProductAllergen> pojo = ProductAllergen.class;
     private static final lu.btsi.bragi.ros.server.database.tables.ProductAllergen dbTable = Tables.PRODUCT_ALLERGEN;
 
     public ProductAllergenController() {

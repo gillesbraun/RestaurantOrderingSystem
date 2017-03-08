@@ -11,17 +11,17 @@ import java.util.List;
  */
 public class LanguageController extends Controller<Language> {
 
-    private static final Class mapTo = Language.class;
+    private static final Class<Language> pojo = Language.class;
 
     private static final lu.btsi.bragi.ros.server.database.tables.Language dbTable = Tables.LANGUAGE;
 
     LanguageController() {
-        super(mapTo);
+        super(pojo);
     }
 
     @Override
     protected List<Language> handleGet() throws Exception {
-        return context.fetch(dbTable).into(mapTo);
+        return context.fetch(dbTable).into(pojo);
     }
 
     @Override

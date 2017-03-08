@@ -13,17 +13,16 @@ import java.util.List;
  */
 public class TableController extends Controller<Table> {
 
-    private static Class<Table> mapTo = Table.class;
-
-    private lu.btsi.bragi.ros.server.database.tables.Table dbTable = Tables.TABLE;
+    private static final Class<Table> pojo = Table.class;
+    private static final lu.btsi.bragi.ros.server.database.tables.Table dbTable = Tables.TABLE;
 
     public TableController() {
-        super(mapTo);
+        super(pojo);
     }
 
     @Override
     protected List<Table> handleGet() {
-        List<Table> list = context.fetch(dbTable).into(mapTo);
+        List<Table> list = context.fetch(dbTable).into(pojo);
         return list;
     }
 
@@ -32,7 +31,7 @@ public class TableController extends Controller<Table> {
                 .from(dbTable)
                 .where(dbTable.ID.equal(order.getTableId()))
                 .fetchOne()
-                .into(mapTo);
+                .into(pojo);
     }
 
     @Override

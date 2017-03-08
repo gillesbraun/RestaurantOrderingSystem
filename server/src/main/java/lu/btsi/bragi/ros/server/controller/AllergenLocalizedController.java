@@ -11,18 +11,18 @@ import java.util.List;
  */
 public class AllergenLocalizedController extends Controller<AllergenLocalized> {
 
-    private static Class mapTo = AllergenLocalized.class;
+    private static Class<AllergenLocalized> pojo = AllergenLocalized.class;
 
     private lu.btsi.bragi.ros.server.database.tables.AllergenLocalized dbTable = Tables.ALLERGEN_LOCALIZED;
 
 
     public AllergenLocalizedController() {
-        super(mapTo);
+        super(pojo);
     }
 
     @Override
     protected List<AllergenLocalized> handleGet() throws Exception {
-        List<AllergenLocalized> list = context.fetch(dbTable).into(mapTo);
+        List<AllergenLocalized> list = context.fetch(dbTable).into(pojo);
         return list;
     }
 

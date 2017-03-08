@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class LocationController extends Controller<Location> {
 
-    private static final Class pojo = Location.class;
+    private static final Class<Location> pojo = Location.class;
     private static final lu.btsi.bragi.ros.server.database.tables.Location dbTable = Tables.LOCATION;
 
     public LocationController() {

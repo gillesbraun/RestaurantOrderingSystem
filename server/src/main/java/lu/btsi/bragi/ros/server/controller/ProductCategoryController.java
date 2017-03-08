@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class ProductCategoryController extends Controller<ProductCategory> {
 
-    private static final Class pojo = ProductCategory.class;
+    private static final Class<ProductCategory> pojo = ProductCategory.class;
     private static final lu.btsi.bragi.ros.server.database.tables.ProductCategory dbTable = Tables.PRODUCT_CATEGORY;
 
     public ProductCategoryController() {

@@ -12,9 +12,8 @@ import java.util.List;
  */
 public class WaiterController extends Controller<Waiter> {
 
-    private static Class<Waiter> mapTo = Waiter.class;
-
-    lu.btsi.bragi.ros.server.database.tables.Waiter dbTable = Tables.WAITER;
+    private static final Class<Waiter> pojo = Waiter.class;
+    private static final lu.btsi.bragi.ros.server.database.tables.Waiter dbTable = Tables.WAITER;
 
 
     public WaiterController() {
@@ -23,7 +22,7 @@ public class WaiterController extends Controller<Waiter> {
 
     @Override
     protected List<Waiter> handleGet() {
-        List<Waiter> list = context.fetch(dbTable).into(mapTo);
+        List<Waiter> list = context.fetch(dbTable).into(pojo);
         return list;
     }
 
@@ -32,7 +31,7 @@ public class WaiterController extends Controller<Waiter> {
                 .from(dbTable)
                 .where(dbTable.ID.eq(order.getWaiterId()))
                 .fetchOne()
-                .into(mapTo);
+                .into(pojo);
     }
 
     @Override
