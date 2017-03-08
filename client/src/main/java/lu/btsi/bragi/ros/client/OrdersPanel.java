@@ -4,7 +4,6 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
-import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -37,9 +36,8 @@ public class OrdersPanel extends ScrollPane {
 
     OrdersPanel(Client client) {
         this.client = client;
-        setPadding(new Insets(14));
-        setMinWidth(USE_COMPUTED_SIZE);
-        vbox.setSpacing(14);
+        setMinWidth(vbox.getPrefWidth());
+        setHbarPolicy(ScrollBarPolicy.NEVER);
 
         timeline.setCycleCount(Animation.INDEFINITE);
         timeline.play();

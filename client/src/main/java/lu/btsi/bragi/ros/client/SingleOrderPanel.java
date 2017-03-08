@@ -69,6 +69,7 @@ public class SingleOrderPanel extends VBox {
         this.client = client;
         this.order = order;
         setSpacing(7);
+        setPadding(new Insets(14));
         if(order.getProcessing().equals((byte)0)) {
             backgroundFlasher.play();
         }
