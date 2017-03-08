@@ -1,13 +1,18 @@
 package lu.btsi.bragi.ros.client;
 
+import javafx.animation.Animation;
+import javafx.animation.Interpolator;
+import javafx.animation.Transition;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.util.Duration;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
@@ -42,11 +47,31 @@ public class SingleOrderPanel extends VBox {
     private ObservableList<ProductLocalized> productsLocalizedForList;
     private List<ProductPriceForOrder> productsPriceForOrder;
 
+    private final Background bgYellow = new Background(new BackgroundFill(Color.LIGHTYELLOW, null, null));
+    private final Background bgNormal = Background.EMPTY;
+
+    private Animation backgroundFlasher = new Transition() {
+        {
+            setDelay(Duration.millis(1000));
+            setCycleDuration(Duration.millis(1500));
+            setInterpolator(Interpolator.EASE_BOTH);
+            setAutoReverse(true);
+            setCycleCount(6);
+        }
+        @Override
+        protected void interpolate(double frac) {
+            Color color = new Color(1, 1, 0.7, frac);
+            setBackground(new Background(new BackgroundFill(color, CornerRadii.EMPTY, Insets.EMPTY)));
+        }
+    };
+
     public SingleOrderPanel(Client client, Order order) {
         this.client = client;
         this.order = order;
         setSpacing(7);
-
+        if(order.getProcessing().equals((byte)0)) {
+            backgroundFlasher.play();
+        }
 
         listViewProducts.setCellFactory(param -> new ListCell<ProductLocalized>() {
             @Override
