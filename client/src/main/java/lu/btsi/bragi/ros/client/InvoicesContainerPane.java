@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
@@ -24,14 +25,14 @@ import java.util.stream.Collectors;
  */
 class InvoicesContainerPane extends ScrollPane {
     private Client client;
-    private VBox content = new VBox(7);
+    private VBox content = new VBox();
+    private ProgressIndicator progressLoading = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
 
     InvoicesContainerPane(Client client) {
         this.client = client;
         setHbarPolicy(ScrollBarPolicy.NEVER);
         setStyle("-fx-background-color:transparent;");
         content.setFillWidth(true);
-        content.setSpacing(7);
         loadInvoices();
         setFitToWidth(true);
         content.setFillWidth(true);
@@ -40,6 +41,7 @@ class InvoicesContainerPane extends ScrollPane {
     }
 
     private void loadInvoices() {
+        content.getChildren().add(progressLoading);
         client.sendWithAction(new MessageGet<>(Order.class), message -> {
             try {
                 List<Order> payload = new Message<Order>(message).getPayload();
@@ -49,6 +51,7 @@ class InvoicesContainerPane extends ScrollPane {
                                 Order::getTable, Collectors.toList()
                         ));
                 Platform.runLater(() -> {
+                    content.getChildren().remove(progressLoading);
                     unpaidOrders.forEach((table, orders) -> {
                         try {
                             content.getChildren().add(new SingleInvoicePane(table, orders));
