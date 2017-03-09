@@ -10,6 +10,7 @@
       <menus>
         <Menu mnemonicParsing="false" text="File">
           <items>
+                  <MenuItem fx:id="menuItemRefresh" mnemonicParsing="false" onAction="#menuItemRefreshPressed" text="Refresh" />
             <MenuItem mnemonicParsing="false" onAction="#menuItemQuitPressed" text="Quit" />
           </items>
         </Menu>
@@ -29,6 +30,7 @@
             <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
           </items>
         </Menu>
+            <Menu mnemonicParsing="false" />
       </menus>
     </MenuBar>
       <SplitPane dividerPositions="0.7588075880758808" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
@@ -67,7 +69,7 @@
                   </VBox>
               </items>
             </SplitPane>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="137.0" prefWidth="668.0">
+          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="137.0" prefWidth="668.0" SplitPane.resizableWithParent="false">
                <children>
                   <TextArea fx:id="statusTextArea" editable="false" prefHeight="200.0" prefWidth="640.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
                      <font>

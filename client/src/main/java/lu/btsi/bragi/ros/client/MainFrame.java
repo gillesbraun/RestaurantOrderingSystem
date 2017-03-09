@@ -10,14 +10,20 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
+import javafx.scene.effect.Shadow;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.connection.UICallback;
 import lu.btsi.bragi.ros.client.editViews.*;
+import org.controlsfx.glyphfont.FontAwesome;
+import org.controlsfx.glyphfont.GlyphFont;
+import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.IOException;
 
@@ -39,6 +45,8 @@ public class MainFrame extends Application implements UICallback {
     private VBox panelOrdersContainer, invoicesContainer;
 
     @FXML private Label labelOrdersTitle;
+
+    @FXML private MenuItem menuItemRefresh;
 
     private OrdersPanel ordersPane;
     private InvoicesContainerPane invoicesContainerPane;
@@ -64,6 +72,10 @@ public class MainFrame extends Application implements UICallback {
         primaryStage.show();
         this.parent = primaryStage;
 
+        GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
+        menuItemRefresh.setGraphic(fa.create(FontAwesome.Glyph.REFRESH));
+        menuItemRefresh.getGraphic().setEffect(new Shadow(1, Color.BLACK));
+
         connectionManager.newClient();
     }
 
@@ -71,6 +83,15 @@ public class MainFrame extends Application implements UICallback {
     public void connectionOpened(String message, Client client) {
         this.client = client;
         displayMessage(message);
+        loadContent();
+    }
+
+    public void menuItemRefreshPressed(ActionEvent event) {
+        loadContent();
+        statusTextArea.appendText("herro\n");
+    }
+
+    private void loadContent() {
         ordersPane = new OrdersPanel(client);
         invoicesContainerPane = new InvoicesContainerPane(client);
         Platform.runLater(() -> {
