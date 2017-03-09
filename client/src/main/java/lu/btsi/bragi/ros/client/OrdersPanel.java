@@ -4,6 +4,7 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
@@ -64,7 +65,9 @@ public class OrdersPanel extends ScrollPane {
                         vbox.getChildren().add(new Separator(Orientation.HORIZONTAL));
                 });
                 if(ordersToday.size() == 0) {
-                    getChildren().add(new Label("No orders placed today."));
+                    Label label = new Label("No orders placed today.");
+                    label.setPadding(new Insets(14));
+                    vbox.getChildren().add(label);
                 }
                 setContent(vbox);
             } catch (MessageException e) {
