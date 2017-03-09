@@ -44,7 +44,15 @@ public class InvoiceController extends Controller<Invoice> {
     protected void handleCreate(Invoice obj) throws Exception {
         InvoiceRecord invoiceRecord = new InvoiceRecord();
         invoiceRecord.from(obj);
-        context.executeInsert(invoiceRecord);
+
+        InvoiceRecord afterInsert = context.insertInto(dbTable)
+                .set(dbTable.PAID, obj.getPaid())
+                .returning(dbTable.ID)
+                .fetchOne();
+
+        obj.getOrders().forEach(order -> {
+            getController(OrderController.class).updateInvoice(order, afterInsert.getId());
+        });
     }
 
     @Override

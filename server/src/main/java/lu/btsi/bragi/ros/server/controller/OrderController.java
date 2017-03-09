@@ -5,6 +5,7 @@ import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
+import org.jooq.types.UInteger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -75,5 +76,13 @@ public class OrderController extends Controller<Order> {
                 .into(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;
+    }
+
+    void updateInvoice(Order order, UInteger id) {
+        OrderRecord orderRecord = new OrderRecord();
+        orderRecord.from(order);
+        orderRecord.reset(dbTable.UPDATED_AT);
+        orderRecord.setInvoiceId(id);
+        context.executeUpdate(orderRecord);
     }
 }

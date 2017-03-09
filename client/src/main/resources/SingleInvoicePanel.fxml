@@ -23,7 +23,7 @@
             </HBox>
          </right>
          <center>
-            <Button mnemonicParsing="false" text="Pay" BorderPane.alignment="CENTER">
+            <Button fx:id="buttonPay" mnemonicParsing="false" onAction="#buttonPayPressed" text="Pay" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="14.0" right="14.0" />
                </BorderPane.margin></Button>
@@ -39,7 +39,7 @@
             </HBox>
          </left>
          <right>
-            <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
+            <HBox spacing="10.0" BorderPane.alignment="CENTER">
                <children>
                   <Label text="Paid:" />
                   <Label fx:id="labelPaid" text="-" />

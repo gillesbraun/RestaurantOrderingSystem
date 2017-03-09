@@ -40,13 +40,20 @@ class InvoicesContainerPane extends ScrollPane {
         setContent(content);
     }
 
-    private void loadInvoices() {
+    void send(Message m) {
+        client.send(m);
+    }
+
+    void loadInvoices() {
         content.getChildren().add(progressLoading);
         client.sendWithAction(new MessageGet<>(Order.class), message -> {
             try {
                 List<Order> payload = new Message<Order>(message).getPayload();
                 Map<Table, List<Order>> unpaidOrders = payload.stream()
                         .filter(order -> order.getInvoiceId() == null)
+                        .sorted((o1, o2) ->
+                            o2.getCreatedAt().toLocalDateTime().compareTo(o1.getCreatedAt().toLocalDateTime())
+                        )
                         .collect(Collectors.groupingBy(
                                 Order::getTable, Collectors.toList()
                         ));
@@ -54,7 +61,7 @@ class InvoicesContainerPane extends ScrollPane {
                     content.getChildren().remove(progressLoading);
                     unpaidOrders.forEach((table, orders) -> {
                         try {
-                            content.getChildren().add(new SingleInvoicePane(table, orders));
+                            content.getChildren().add(new SingleInvoicePane(table, orders, this));
                             content.getChildren().add(new Separator(Orientation.HORIZONTAL));
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -66,7 +73,7 @@ class InvoicesContainerPane extends ScrollPane {
                     } else {
                         Label label = new Label("No open invoices available.");
                         label.setPadding(new Insets(14));
-                        getChildren().add(label);
+                        content.getChildren().add(label);
                     }
                 });
             } catch (MessageException e) {
