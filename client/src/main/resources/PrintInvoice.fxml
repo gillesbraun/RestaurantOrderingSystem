@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -20,7 +19,7 @@
          <children>
             <Label fx:id="labelAddress1" text="19, rue Guillaume Schneider" textAlignment="CENTER" wrapText="true">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
          </children>
@@ -29,7 +28,7 @@
          <children>
             <Label fx:id="labelAddress2" text="L-2522 Luxembourg" textAlignment="CENTER" wrapText="true">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
          </children>
@@ -40,7 +39,7 @@
                <children>
                   <Label fx:id="labelDateTime" text="30.01.2017 / 13:37">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                </children>
@@ -53,12 +52,12 @@
                      <children>
                         <Label text="Invoice N°: ">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                         <Label fx:id="labelInvoice" text="12345">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                      </children>
@@ -67,12 +66,12 @@
                      <children>
                         <Label text="Table:">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                         <Label fx:id="labelTable" text="12">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                      </children>
@@ -91,37 +90,10 @@
          <children>
             <HBox spacing="14.0">
                <children>
-                  <VBox fx:id="containerProductName" spacing="7.0" HBox.hgrow="ALWAYS">
-                     <children>
-                        <Label text="2x Placeholder">
-               <font>
-                  <Font name="Arial"/>
-               </font>
-            </Label>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="containerProductA" spacing="7.0">
-                     <children>
-                        <Label text="a" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="containerProductPrice" spacing="7.0">
-                     <children>
-                        <Label text="3,95 €">
-               <font>
-                  <Font name="Arial"/>
-               </font>
-            </Label>
-                     </children>
-                  </VBox>
-                  <VBox fx:id="containerProductPriceTotal" spacing="7.0">
-                     <children>
-                        <Label text="7,90 €">
-               <font>
-                  <Font name="Arial"/>
-               </font>
-            </Label>
-                     </children>
+                  <VBox fx:id="containerProductName" spacing="7.0" HBox.hgrow="ALWAYS" />
+                  <VBox fx:id="containerProductA" spacing="7.0" />
+                  <VBox fx:id="containerProductPrice" alignment="CENTER_RIGHT" spacing="7.0" />
+                  <VBox fx:id="containerProductPriceTotal" alignment="CENTER_RIGHT" spacing="7.0">
                      <HBox.margin>
                         <Insets left="7.0" />
                      </HBox.margin>
@@ -161,12 +133,12 @@
                <children>
                   <Label text="You were served by:" textAlignment="CENTER" wrapText="true">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                   <Label fx:id="labelWaiter" text="Butters">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                </children>
@@ -178,12 +150,12 @@
                <children>
                   <Label text="Tax Number:" textAlignment="CENTER" wrapText="true">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                   <Label fx:id="labelTaxNumber" text="123456">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                </children>
@@ -192,12 +164,12 @@
                <children>
                   <Label text="Tel.:" textAlignment="CENTER" wrapText="true">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                   <Label fx:id="labelTelephone" text="123456">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                </children>
@@ -206,12 +178,12 @@
                <children>
                   <Label text="E-mail:" textAlignment="CENTER" wrapText="true">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                   <Label fx:id="labelEmail" text="123456">
                <font>
-                  <Font name="Arial"/>
+                  <Font name="Arial" />
                </font>
             </Label>
                </children>

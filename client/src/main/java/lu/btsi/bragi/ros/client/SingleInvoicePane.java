@@ -71,7 +71,7 @@ public class SingleInvoicePane extends VBox {
                         .filter(ppfo -> ppfo.getProductId().equals(item.getProductId()))
                         .map(ProductPriceForOrder::getPricePerProduct)
                         .findFirst();
-                quantity.ifPresent(qty -> setText(qty + " " + item.getLabel() + " " + price.orElse(0.0) + "€"));
+                quantity.ifPresent(qty -> setText(qty + " " + item.getLabel() + " " + price.orElse(0.0) + "\u20ac"));
             }
         });
 
@@ -88,7 +88,7 @@ public class SingleInvoicePane extends VBox {
                 .flatMap(order -> order.getProductPriceForOrder().stream())
                 .map(value -> BigDecimal.valueOf(value.getPricePerProduct()).multiply(new BigDecimal(value.getQuantity().toBigInteger())))
                 .reduce(BigDecimal::add);
-        sumOptional.ifPresent(sum -> labelTotalPrice.setText(sum + " €"));
+        sumOptional.ifPresent(sum -> labelTotalPrice.setText(sum + " \u20ac"));
     }
 
     private void fillList() {
@@ -111,7 +111,6 @@ public class SingleInvoicePane extends VBox {
         Invoice invoice = new Invoice();
         invoice.setPaid((byte)1);
         invoice.setOrders(orders);
-        System.out.println(invoice.getOrders().size());
         try {
             Printer printer = Printer.getDefaultPrinter();
             PrinterJob printerJob = PrinterJob.createPrinterJob(printer);

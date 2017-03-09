@@ -10,13 +10,13 @@ import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 import lu.btsi.bragi.ros.models.pojos.Waiter;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.stream.Collectors;
 
 class PrintableInvoice extends Invoice {
+    private String CURRENCY = "\u20ac";
     private static final String TAX_NUM = "123123";
     private static final String EMAIL = "info@ltam.lu";
     private static final String TELEPHONE = "+352 123456789";
@@ -26,11 +26,13 @@ class PrintableInvoice extends Invoice {
         address = "19, rue Guillaume Schneider",
         address2 = "L-2522 Luxembourg";
     @FXML private Label labelTitle, labelAddress1, labelAddress2, labelInvoice, labelDateTime, labelTable, labelPriceTotal,
-            labelWaiter, labelTaxNumber, labelTelephone, labelEmail;
+            labelWaiter, labelTaxNumber, labelTelephone, labelEmail, labelTotalPrice;
     @FXML private VBox containerProductName, containerProductA, containerProductPrice, containerProductPriceTotal;
 
     PrintableInvoice(Invoice value, String language) {
         super(value);
+        setOrders(value.getOrders());
+        setPaid(value.getPaid());
         this.language = language;
     }
 
@@ -39,7 +41,7 @@ class PrintableInvoice extends Invoice {
         loader.setController(this);
         VBox printable = loader.load();
         printable.getStylesheets().add(getClass().getResource("/app.css").toExternalForm());
-        //assignComponents();
+        assignComponents();
 
         return printable;
     }
@@ -50,7 +52,7 @@ class PrintableInvoice extends Invoice {
         labelAddress2.setText(address2);
 
         labelInvoice.setText("getId().toString()");
-        String datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd / HH:mm"));
+        String datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy / HH:mm"));
         labelDateTime.setText(datetime);
         getOrders().stream()
                 .map(Order::getTableId)
@@ -81,12 +83,21 @@ class PrintableInvoice extends Invoice {
                             productPriceForOrder.getQuantity() + "x " +productLocalized.getLabel()
                     ));
                     containerProductPrice.getChildren().add(new Label(
-                            new BigDecimal(productPriceForOrder.getPricePerProduct()).toString() + " €"
+                            String.format("%.2f", productPriceForOrder.getPricePerProduct()) + " " + CURRENCY
                     ));
                     containerProductPriceTotal.getChildren().add(new Label(
-                            new BigDecimal(productPriceForOrder.getPricePerProduct()).multiply(
-                                    new BigDecimal(productPriceForOrder.getQuantity().toBigInteger())).toString() + " €"));
+                            String.format("%.2f", Math.round(productPriceForOrder.getQuantity().longValue() *
+                                    productPriceForOrder.getPricePerProduct() * 100D) / 100D)
+                                    + " " + CURRENCY
+                    ));
             });
+
+            // Calculate Total
+            double sum = productPriceForOrders.stream()
+                    .mapToDouble(ppfo -> ppfo.getPricePerProduct() * ppfo.getQuantity().longValue())
+                    .sum();
+            sum = Math.round(sum * 100D) / 100D;
+            labelTotalPrice.setText(sum + " "+ CURRENCY);
 
             String waiters = getOrders().stream().map(Order::getWaiter).map(Waiter::getName).collect(Collectors.joining(", "));
             labelWaiter.setText(waiters);
