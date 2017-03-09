@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox spacing="14.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <BorderPane>
+         <left>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Invoice N°:" />
+                  <Label fx:id="labelInvoice" text="-" />
+               </children>
+            </HBox>
+         </left>
+         <right>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Table:" />
+                  <Label fx:id="labelTable" text="-" />
+               </children>
+            </HBox>
+         </right>
+         <center>
+            <Button mnemonicParsing="false" text="Pay" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets left="14.0" right="14.0" />
+               </BorderPane.margin></Button>
+         </center>
+      </BorderPane>
+      <BorderPane>
+         <left>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Total Amount:" />
+                  <Label fx:id="labelTotalPrice" text="-.-- €" />
+               </children>
+            </HBox>
+         </left>
+         <right>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Paid:" />
+                  <Label fx:id="labelPaid" text="-" />
+               </children>
+            </HBox>
+         </right>
+      </BorderPane>
+      <Label text="Products Ordered:" />
+      <ListView fx:id="listViewProducts" />
+   </children>
+   <padding>
+      <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+   </padding>
+</VBox>

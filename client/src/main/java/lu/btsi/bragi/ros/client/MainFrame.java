@@ -36,11 +36,12 @@ public class MainFrame extends Application implements UICallback {
     private Menu menuEdit;
 
     @FXML
-    private VBox panelOrdersContainer, invoicesPane;
+    private VBox panelOrdersContainer, invoicesContainer;
 
     @FXML private Label labelOrdersTitle;
 
     private OrdersPanel ordersPane;
+    private InvoicesContainerPane invoicesContainerPane;
 
     private EventHandler<WindowEvent> onClose = event -> {
         if(client != null) {
@@ -71,9 +72,11 @@ public class MainFrame extends Application implements UICallback {
         this.client = client;
         displayMessage(message);
         ordersPane = new OrdersPanel(client);
+        invoicesContainerPane = new InvoicesContainerPane(client);
         Platform.runLater(() -> {
             menuEdit.setDisable(false);
             panelOrdersContainer.getChildren().setAll(ordersPane);
+            invoicesContainer.getChildren().setAll(invoicesContainerPane);
         });
     }
 
