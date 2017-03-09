@@ -1,5 +1,7 @@
 package lu.btsi.bragi.ros.client;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
@@ -8,6 +10,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
@@ -28,15 +31,19 @@ class InvoicesContainerPane extends ScrollPane {
     private VBox content = new VBox();
     private ProgressIndicator progressLoading = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
 
+    private Timeline refreshTimer = new Timeline(
+            new KeyFrame(Duration.ZERO, e -> loadInvoices()),
+            new KeyFrame(Duration.seconds(15)));
+
     InvoicesContainerPane(Client client) {
         this.client = client;
         setHbarPolicy(ScrollBarPolicy.NEVER);
         setStyle("-fx-background-color:transparent;");
         content.setFillWidth(true);
-        loadInvoices();
         setFitToWidth(true);
         content.setFillWidth(true);
-
+        refreshTimer.setCycleCount(Timeline.INDEFINITE);
+        refreshTimer.play();
         setContent(content);
     }
 
@@ -45,6 +52,7 @@ class InvoicesContainerPane extends ScrollPane {
     }
 
     void loadInvoices() {
+        content.getChildren().clear();
         content.getChildren().add(progressLoading);
         client.sendWithAction(new MessageGet<>(Order.class), message -> {
             try {
