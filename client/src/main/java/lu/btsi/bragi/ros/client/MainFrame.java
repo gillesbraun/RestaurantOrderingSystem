@@ -88,7 +88,6 @@ public class MainFrame extends Application implements UICallback {
 
     public void menuItemRefreshPressed(ActionEvent event) {
         loadContent();
-        statusTextArea.appendText("herro\n");
     }
 
     private void loadContent() {
