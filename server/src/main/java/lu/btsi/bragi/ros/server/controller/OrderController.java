@@ -1,12 +1,15 @@
 package lu.btsi.bragi.ros.server.controller;
 
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by gillesbraun on 06/03/2017.
@@ -22,13 +25,9 @@ public class OrderController extends Controller<Order> {
 
     @Override
     protected List<Order> handleGet() throws Exception {
-        List<Order> into = context.fetch(dbTable).into(pojo);
-        into.forEach(order -> {
-            order.setWaiter(getController(WaiterController.class).getWaiterForOrder(order));
-            order.setProductPriceForOrder(getController(ProductPriceForOrderController.class).getProductPriceForOrderForOrder(order));
-            order.setTable(getController(TableController.class).getTableForOrder(order));
-        });
-        return into;
+        List<Order> orders = context.fetch(dbTable).into(pojo);
+        orders.stream().map(this::fetchReferences).collect(toList());
+        return orders;
     }
 
     @Override
@@ -59,5 +58,22 @@ public class OrderController extends Controller<Order> {
         OrderRecord orderRecord = new OrderRecord();
         orderRecord.from(obj);
         context.executeDelete(orderRecord);
+    }
+
+    private Order fetchReferences(Order order) {
+        order.setWaiter(getController(WaiterController.class).getWaiterForOrder(order));
+        order.setProductPriceForOrder(getController(ProductPriceForOrderController.class).getProductPriceForOrderForOrder(order));
+        order.setTable(getController(TableController.class).getTableForOrder(order));
+        return order;
+    }
+
+    List<Order> getOrders(Invoice invoice) {
+        List<Order> orders = context.select()
+                .from(dbTable)
+                .where(dbTable.INVOICE_ID.equal(invoice.getId()))
+                .fetch()
+                .into(pojo);
+        orders = orders.stream().map(this::fetchReferences).collect(toList());
+        return orders;
     }
 }

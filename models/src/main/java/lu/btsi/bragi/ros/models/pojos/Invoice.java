@@ -9,6 +9,7 @@ import org.jooq.types.UInteger;
 import javax.annotation.Generated;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -30,6 +31,7 @@ public class Invoice implements Serializable {
     private Byte      paid;
     private Timestamp createdAt;
     private Timestamp updatedAt;
+    private List<Order> orders;
 
     public Invoice() {}
 
@@ -95,5 +97,13 @@ public class Invoice implements Serializable {
 
         sb.append(")");
         return sb.toString();
+    }
+
+    public void setOrders(List<Order> orders) {
+        this.orders = orders;
+    }
+
+    public List<Order> getOrders() {
+        return orders;
     }
 }

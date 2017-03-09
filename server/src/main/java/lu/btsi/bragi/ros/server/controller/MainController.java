@@ -24,6 +24,7 @@ public class MainController {
     @Inject LocationController locationController;
     @Inject OrderController orderController;
     @Inject ProductPriceForOrderController productPriceForOrderController;
+    @Inject InvoiceController invoiceController;
 
     public Optional<Message> sendToRightController(String message) throws ClassNotFoundException, MessageException {
         return Controller.sendToController(message);
