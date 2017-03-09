@@ -69,7 +69,6 @@ public class MainFrame extends Application implements UICallback {
         primaryStage.setOnCloseRequest(onClose);
         primaryStage.setTitle("ROS Client");
         Scene scene = new Scene(root, 800, 500);
-        scene.getStylesheets().add(getClass().getResource("/app.css").toExternalForm());
         primaryStage.setScene(scene);
         primaryStage.show();
         this.parent = primaryStage;

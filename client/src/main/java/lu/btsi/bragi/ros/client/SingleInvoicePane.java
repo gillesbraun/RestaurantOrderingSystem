@@ -6,13 +6,13 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.print.Printer;
+import javafx.print.PrinterJob;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
-import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.*;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
@@ -111,7 +111,20 @@ public class SingleInvoicePane extends VBox {
         Invoice invoice = new Invoice();
         invoice.setPaid((byte)1);
         invoice.setOrders(orders);
-        parent.send(new Message<>(MessageType.Create, invoice, Invoice.class));
-        parent.loadInvoices();
+        System.out.println(invoice.getOrders().size());
+        try {
+            Printer printer = Printer.getDefaultPrinter();
+            PrinterJob printerJob = PrinterJob.createPrinterJob(printer);
+            printerJob.showPrintDialog(null);
+            VBox node = new PrintableInvoice(invoice, LANGUAGE).getNode();
+            node.getStylesheets().add(getClass().getResource("/app.css").toExternalForm());
+            printerJob.printPage(node);
+            printerJob.endJob();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        //parent.send(new Message<>(MessageType.Create, invoice, Invoice.class));
+        //parent.loadInvoices();
     }
 }
