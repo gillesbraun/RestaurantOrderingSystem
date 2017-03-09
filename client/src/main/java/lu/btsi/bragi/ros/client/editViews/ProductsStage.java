@@ -43,7 +43,7 @@ public class ProductsStage extends Stage {
     private static final String LANGUAGE = "en";
     private Client client;
 
-    public static final String CURRENCY_SYMBOL = "€";
+    public static final String CURRENCY_SYMBOL = "\u20ac";
 
     @FXML private TextField textFieldPrice, textFieldTranslation;
     @FXML private Button buttonProductCategoryEdit, buttonDelete, buttonRefresh, buttonAddAllergen, buttonEditAllergen,
