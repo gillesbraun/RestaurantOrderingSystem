@@ -17,6 +17,7 @@ import javafx.stage.WindowEvent;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.connection.UICallback;
+import lu.btsi.bragi.ros.client.editViews.*;
 
 import java.io.IOException;
 

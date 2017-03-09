@@ -1,4 +1,4 @@
-package lu.btsi.bragi.ros.client;
+package lu.btsi.bragi.ros.client.editViews;
 
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
