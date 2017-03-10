@@ -6,28 +6,28 @@
 <VBox spacing="14.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane>
-         <left>
-            <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
-               <children>
-                  <Label text="Invoice N°:" />
-                  <Label fx:id="labelInvoice" text="-" />
-               </children>
-            </HBox>
-         </left>
-         <right>
-            <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
-               <children>
-                  <Label text="Table:" />
-                  <Label fx:id="labelTable" text="-" />
-               </children>
-            </HBox>
-         </right>
          <center>
             <Button fx:id="buttonPay" mnemonicParsing="false" onAction="#buttonPayPressed" text="Pay" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="14.0" right="14.0" />
                </BorderPane.margin></Button>
          </center>
+         <left>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Table:" />
+                  <Label fx:id="labelTable" text="-" />
+               </children>
+            </HBox>
+         </left>
+         <right>
+            <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Label text="Invoice N°:" />
+                  <Label fx:id="labelInvoice" text="-" />
+               </children>
+            </HBox>
+         </right>
       </BorderPane>
       <BorderPane>
          <left>
