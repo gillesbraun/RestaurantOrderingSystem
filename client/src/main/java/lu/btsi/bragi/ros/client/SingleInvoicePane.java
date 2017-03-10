@@ -13,6 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
+import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.*;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
@@ -123,7 +125,7 @@ public class SingleInvoicePane extends VBox {
             e.printStackTrace();
         }
 
-        //parent.send(new Message<>(MessageType.Create, invoice, Invoice.class));
-        //parent.loadInvoices();
+        parent.send(new Message<>(MessageType.Create, invoice, Invoice.class));
+        parent.loadInvoices();
     }
 }
