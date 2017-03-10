@@ -30,7 +30,6 @@
             <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
           </items>
         </Menu>
-            <Menu mnemonicParsing="false" />
       </menus>
     </MenuBar>
       <SplitPane dividerPositions="0.7588075880758808" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
