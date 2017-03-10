@@ -50,7 +50,7 @@ class PrintableInvoice extends Invoice {
         labelAddress1.setText(address);
         labelAddress2.setText(address2);
 
-        labelInvoice.setText("getId().toString()");
+        labelInvoice.setText("ID");
         String datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy / HH:mm"));
         labelDateTime.setText(datetime);
         getOrders().stream()
@@ -77,9 +77,8 @@ class PrintableInvoice extends Invoice {
                 .filter(ppfo -> ppfo.getProductId().equals(productLocalized.getProductId()))
                 .findFirst()
                 .ifPresent(productPriceForOrder -> {
-
                     containerProductName.getChildren().add(new Label(
-                            productPriceForOrder.getQuantity() + "x " +productLocalized.getLabel()
+                            productPriceForOrder.getQuantity() + "x " + productLocalized.getLabel()
                     ));
                     containerProductPrice.getChildren().add(new Label(
                             String.format("%.2f", productPriceForOrder.getPricePerProduct()) + " " + CURRENCY
@@ -96,7 +95,9 @@ class PrintableInvoice extends Invoice {
                     .mapToDouble(ppfo -> ppfo.getPricePerProduct() * ppfo.getQuantity().longValue())
                     .sum();
             sum = Math.round(sum * 100D) / 100D;
-            labelTotalPrice.setText(sum + " "+ CURRENCY);
+            labelTotalPrice.setText(String.format("%.2f", sum) + " " + CURRENCY);
+            labelTotalPrice.setStyle("-fx-font-family: \"Arial\";");
+
 
             String waiters = getOrders().stream().map(Order::getWaiter).map(Waiter::getName).collect(Collectors.joining(", "));
             labelWaiter.setText(waiters);
