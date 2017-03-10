@@ -40,7 +40,6 @@ class PrintableInvoice extends Invoice {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/PrintInvoice.fxml"));
         loader.setController(this);
         VBox printable = loader.load();
-        printable.getStylesheets().add(getClass().getResource("/app.css").toExternalForm());
         assignComponents();
 
         return printable;

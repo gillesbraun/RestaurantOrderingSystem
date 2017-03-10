@@ -116,7 +116,7 @@ public class SingleInvoicePane extends VBox {
             PrinterJob printerJob = PrinterJob.createPrinterJob(printer);
             printerJob.showPrintDialog(null);
             VBox node = new PrintableInvoice(invoice, LANGUAGE).getNode();
-            node.getStylesheets().add(getClass().getResource("/app.css").toExternalForm());
+            node.setStyle("-fx-font-family: \"Arial\";");
             printerJob.printPage(node);
             printerJob.endJob();
         } catch (IOException e) {
