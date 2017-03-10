@@ -9,7 +9,11 @@ import org.jooq.types.UInteger;
 import javax.annotation.Generated;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -105,5 +109,88 @@ public class Invoice implements Serializable {
 
     public List<Order> getOrders() {
         return orders;
+    }
+
+    public String getWaiters() {
+        if(getOrders() == null)
+            return "";
+        return getOrders().stream().map(Order::getWaiter).map(Waiter::getName).collect(Collectors.joining(", "));
+    }
+
+    public UInteger getTable() {
+        if(getOrders() == null)
+            return null;
+        return getOrders().stream()
+                .map(Order::getTableId)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public List<InvoiceEntry> getProductListInvoice(String languageCode, String currency) {
+        if(getOrders() == null)
+            return new ArrayList<>();
+
+        List<ProductPriceForOrder> productPriceForOrderList = getOrders().stream()
+                .flatMap(order -> order.getProductPriceForOrder()
+                        .stream()).collect(toList());
+
+        List<InvoiceEntry> invoiceEntryList = new ArrayList<>();
+
+        // Iterate through product localized in given language
+        productPriceForOrderList.stream()
+                .map(ProductPriceForOrder::getProduct)
+                .flatMap(product ->
+                        product.getProductLocalized()
+                                .stream()
+                                .filter(pL ->
+                                        pL.getLanguageCode()
+                                                .equals(languageCode))
+                ).forEach(productLocalized -> {
+            // Get product info (quantity, price of product in order
+            productPriceForOrderList.stream()
+                .filter(ppfo -> ppfo.getProductId().equals(productLocalized.getProductId()))
+                .findFirst()
+                .ifPresent(productInfo -> {
+
+                    String totalPriceOfProduct = String.format("%.2f " + currency,
+                            Math.round(
+                                    productInfo.getQuantity().longValue() * productInfo.getPricePerProduct() * 100D
+                            ) / 100D);
+                    invoiceEntryList.add(
+                            new InvoiceEntry(
+                                productInfo.getQuantity() + "x " + productLocalized.getLabel(),
+                                String.format("%.2f " + currency, productInfo.getPricePerProduct()),
+                                totalPriceOfProduct
+                            )
+                    );
+
+                });
+        });
+        return invoiceEntryList;
+    }
+
+    public String getTotalPrice(String currency) {
+        if(getOrders() == null)
+            return "";
+
+        List<ProductPriceForOrder> productPriceForOrderList = getOrders().stream()
+                .flatMap(order -> order.getProductPriceForOrder()
+                        .stream()).collect(toList());
+
+        double total = productPriceForOrderList.stream()
+                .mapToDouble(ppfo -> ppfo.getPricePerProduct() * ppfo.getQuantity().longValue())
+                .sum();
+        total = Math.round(total * 100D) / 100D;
+        return String.format("%.2f " + currency, total);
+    }
+
+    public static class InvoiceEntry {
+        public final String productName, productPrice, productPriceTotal;
+
+        public InvoiceEntry(String productName, String productPrice, String productPriceTotal) {
+            this.productName = productName;
+            this.productPrice = productPrice;
+            this.productPriceTotal = productPriceTotal;
+        }
     }
 }

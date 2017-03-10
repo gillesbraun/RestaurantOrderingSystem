@@ -5,15 +5,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
-import lu.btsi.bragi.ros.models.pojos.Order;
-import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
-import lu.btsi.bragi.ros.models.pojos.Waiter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.stream.Collectors;
 
 class PrintableInvoice extends Invoice {
     private String CURRENCY = "\u20ac";
@@ -25,7 +20,7 @@ class PrintableInvoice extends Invoice {
     private String restaurantName = "Restaurant chez BTSi",
         address = "19, rue Guillaume Schneider",
         address2 = "L-2522 Luxembourg";
-    @FXML private Label labelTitle, labelAddress1, labelAddress2, labelInvoice, labelDateTime, labelTable, labelPriceTotal,
+    @FXML private Label labelTitle, labelAddress1, labelAddress2, labelInvoice, labelDateTime, labelTable,
             labelWaiter, labelTaxNumber, labelTelephone, labelEmail, labelTotalPrice;
     @FXML private VBox containerProductName, containerProductA, containerProductPrice, containerProductPriceTotal;
 
@@ -53,58 +48,18 @@ class PrintableInvoice extends Invoice {
         labelInvoice.setText("ID");
         String datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy / HH:mm"));
         labelDateTime.setText(datetime);
-        getOrders().stream()
-                .map(Order::getTableId)
-                .findFirst()
-                .ifPresent(tableID -> {
-            labelTable.setText(tableID + "");
-        });
-        List<ProductPriceForOrder> productPriceForOrders = getOrders().stream().flatMap(
-                order -> order.getProductPriceForOrder().stream()).collect(Collectors.toList());
-
-        getOrders().stream().flatMap(
-                order -> order.getProductPriceForOrder().stream())
-                .map(ProductPriceForOrder::getProduct)
-                .flatMap(
-                        product -> product.getProductLocalized().stream()
-                        .filter(productLocalized -> productLocalized.getLanguageCode().equals(language))
-                ).forEach(productLocalized -> {
-
-
+        labelTable.setText(getTable() + "");
+        getProductListInvoice(language, CURRENCY).forEach(invoiceEntry -> {
+            containerProductName.getChildren().add(new Label(invoiceEntry.productName));
             containerProductA.getChildren().add(new Label(Character.toString((char) 0x00e1)));
-
-            productPriceForOrders.stream()
-                .filter(ppfo -> ppfo.getProductId().equals(productLocalized.getProductId()))
-                .findFirst()
-                .ifPresent(productPriceForOrder -> {
-                    containerProductName.getChildren().add(new Label(
-                            productPriceForOrder.getQuantity() + "x " + productLocalized.getLabel()
-                    ));
-                    containerProductPrice.getChildren().add(new Label(
-                            String.format("%.2f", productPriceForOrder.getPricePerProduct()) + " " + CURRENCY
-                    ));
-                    containerProductPriceTotal.getChildren().add(new Label(
-                            String.format("%.2f", Math.round(productPriceForOrder.getQuantity().longValue() *
-                                    productPriceForOrder.getPricePerProduct() * 100D) / 100D)
-                                    + " " + CURRENCY
-                    ));
-            });
-
-            // Calculate Total
-            double sum = productPriceForOrders.stream()
-                    .mapToDouble(ppfo -> ppfo.getPricePerProduct() * ppfo.getQuantity().longValue())
-                    .sum();
-            sum = Math.round(sum * 100D) / 100D;
-            labelTotalPrice.setText(String.format("%.2f", sum) + " " + CURRENCY);
-            labelTotalPrice.setStyle("-fx-font-family: \"Arial\";");
-
-
-            String waiters = getOrders().stream().map(Order::getWaiter).map(Waiter::getName).collect(Collectors.joining(", "));
-            labelWaiter.setText(waiters);
-
-            labelTaxNumber.setText(TAX_NUM);
-            labelTelephone.setText(TELEPHONE);
-            labelEmail.setText(EMAIL);
+            containerProductPrice.getChildren().add(new Label(invoiceEntry.productPrice));
+            containerProductPriceTotal.getChildren().add(new Label(invoiceEntry.productPriceTotal));
         });
+        labelTotalPrice.setText(getTotalPrice(CURRENCY));
+
+        labelWaiter.setText(getWaiters());
+        labelTaxNumber.setText(TAX_NUM);
+        labelTelephone.setText(TELEPHONE);
+        labelEmail.setText(EMAIL);
     }
 }
