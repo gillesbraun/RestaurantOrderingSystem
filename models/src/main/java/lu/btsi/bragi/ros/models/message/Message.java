@@ -1,7 +1,10 @@
 package lu.btsi.bragi.ros.models.message;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 
+import java.lang.reflect.Type;
+import java.sql.Timestamp;
+import java.text.DateFormat;
 import java.util.*;
 
 /**
@@ -21,6 +24,11 @@ public class Message<T> {
     private static final int POS_UUID = 2;
     private static final int POS_PAYLOAD = 3;
 
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Timestamp.class, new TimestampSerializer())
+            .registerTypeAdapter(Timestamp.class, new TimestampDeserializer())
+            .create();
+
     /**
      * Decodes the encodedMessage and assigns the content to the new instance. It is required to define the Type of
      * the elements that are stored in the message, to be type-safe. Sou if you want to decode a Message that should
@@ -36,7 +44,6 @@ public class Message<T> {
             this.clazz = (Class<T>) Class.forName(split[POS_CLASS]);
             this.messageID = UUID.fromString(split[POS_UUID]);
             if(split.length == 4) {
-                Gson gson = new Gson();
                 ListOfType listWithType = new ListOfType<>(clazz);
                 this.payload = gson.fromJson(split[POS_PAYLOAD], listWithType);
             } else {
@@ -185,7 +192,7 @@ public class Message<T> {
     @Override
     public String toString() {
         if(payload != null) {
-            String json = new Gson().toJson(payload, new ListOfType<>(clazz));
+            String json = gson.toJson(payload, new ListOfType<>(clazz));
             return type.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + messageID + SEPARATOR + json;
         } else {
             return type.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + messageID;
@@ -202,5 +209,19 @@ public class Message<T> {
 
     public List<T> getPayload() {
         return payload;
+    }
+
+    private class TimestampSerializer implements JsonSerializer<Timestamp> {
+        @Override
+        public JsonElement serialize(Timestamp src, Type typeOfSrc, JsonSerializationContext context) {
+            return src == null ? null : new JsonPrimitive(src.getTime());
+        }
+    }
+
+    private class TimestampDeserializer implements JsonDeserializer<Timestamp>{
+        @Override
+        public Timestamp deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+            return json == null ? null : new Timestamp(json.getAsLong());
+        }
     }
 }
