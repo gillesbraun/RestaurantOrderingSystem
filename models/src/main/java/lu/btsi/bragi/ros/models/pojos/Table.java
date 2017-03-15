@@ -38,6 +38,23 @@ public class Table implements Serializable {
         this.updatedAt = value.updatedAt;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Table table = (Table) o;
+
+        if (id != null ? !id.equals(table.id) : table.id != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
+    }
+
     public Table(
         UInteger  id,
         Timestamp createdAt,
