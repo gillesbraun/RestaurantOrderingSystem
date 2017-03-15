@@ -3,11 +3,11 @@ package lu.btsi.bragi.ros.server.controller;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
+import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
 import org.jooq.types.UInteger;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -41,12 +41,18 @@ public class OrderController extends Controller<Order> {
 
     @Override
     protected void handleCreate(Order obj, Message<Order> originalMessage) throws Exception {
-        OrderRecord orderRecord = new OrderRecord();
-        orderRecord.from(obj);
-        OrderRecord id = context.insertInto(dbTable).set(orderRecord).returning(dbTable.ID).fetchOne();
-        Order into = context.selectFrom(dbTable).where(dbTable.ID.equal(id.getId())).fetchOne().into(pojo);
-        messageSender.sendReply(originalMessage.createAnswer(Arrays.asList(into)));
-        //messageSender.messageSender(new Message<>(MessageType.Broadcast, into, Order.class));
+        OrderRecord record = new OrderRecord();
+        record.from(obj);
+        OrderRecord newId = context.insertInto(dbTable)
+                .set(dbTable.TABLE_ID, obj.getTable().getId())
+                .set(dbTable.WAITER_ID, obj.getWaiter().getId())
+                .returning(dbTable.ID)
+                .fetchOne();
+
+        for (ProductPriceForOrder productPriceForOrder : obj.getProductPriceForOrder()) {
+            productPriceForOrder.setOrderId(newId.getId());
+            getController(ProductPriceForOrderController.class).handleCreate(productPriceForOrder);
+        }
     }
 
     @Override
