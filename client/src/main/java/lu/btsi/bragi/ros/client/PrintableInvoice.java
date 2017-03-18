@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 class PrintableInvoice extends Invoice {
-    private String CURRENCY = "\u20ac";
     private static final String TAX_NUM = "123123";
     private static final String EMAIL = "info@ltam.lu";
     private static final String TELEPHONE = "+352 123456789";
