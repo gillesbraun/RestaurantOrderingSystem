@@ -13,6 +13,7 @@ import org.jooq.impl.TableImpl;
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.List;
@@ -59,7 +60,7 @@ public class ProductPriceForOrder extends TableImpl<ProductPriceForOrderRecord> 
     /**
      * The column <code>ros.Product_Price_For_Order.price_per_product</code>.
      */
-    public final TableField<ProductPriceForOrderRecord, Double> PRICE_PER_PRODUCT = createField("price_per_product", org.jooq.impl.SQLDataType.DOUBLE.nullable(false), this, "");
+    public final TableField<ProductPriceForOrderRecord, BigDecimal> PRICE_PER_PRODUCT = createField("price_per_product", org.jooq.impl.SQLDataType.DECIMAL(10, 2).nullable(false), this, "");
 
     /**
      * The column <code>ros.Product_Price_For_Order.quantity</code>.

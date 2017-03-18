@@ -8,6 +8,7 @@ import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 
@@ -28,7 +29,7 @@ public class ProductPriceForOrder implements Serializable {
 
     private UInteger  productId;
     private UInteger  orderId;
-    private Double    pricePerProduct;
+    private BigDecimal pricePerProduct;
     private UInteger  quantity;
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -48,7 +49,7 @@ public class ProductPriceForOrder implements Serializable {
     public ProductPriceForOrder(
             UInteger  productId,
             UInteger  orderId,
-            Double    pricePerProduct,
+            BigDecimal    pricePerProduct,
             UInteger  quantity,
             Timestamp createdAt,
             Timestamp updatedAt
@@ -77,11 +78,11 @@ public class ProductPriceForOrder implements Serializable {
         this.orderId = orderId;
     }
 
-    public Double getPricePerProduct() {
+    public BigDecimal getPricePerProduct() {
         return this.pricePerProduct;
     }
 
-    public void setPricePerProduct(Double pricePerProduct) {
+    public void setPricePerProduct(BigDecimal pricePerProduct) {
         this.pricePerProduct = pricePerProduct;
     }
 
