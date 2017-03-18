@@ -57,6 +57,7 @@ public class OrdersPanel extends ScrollPane {
                 List<Order> ordersToday = payload.stream()
                         .sorted((o1, o2) -> o2.getCreatedAt().toLocalDateTime().compareTo(o1.getCreatedAt().toLocalDateTime()))
                         .filter(o -> o.getCreatedAt().toLocalDateTime().getDayOfMonth() == LocalDateTime.now().getDayOfMonth())
+                        .filter(o -> o.getInvoiceId() == null)
                         .collect(toList());
                 ordersToday.forEach(order -> {
                     vbox.getChildren().add(new SingleOrderPanel(client, order));
