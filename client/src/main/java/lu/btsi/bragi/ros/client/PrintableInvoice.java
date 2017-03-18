@@ -52,7 +52,7 @@ class PrintableInvoice extends Invoice {
         String currency = Config.getInstance().getCurrency();
         getProductListInvoice(Config.getInstance().getLanguage(), Config.getInstance().getCurrency()).forEach(invoiceEntry -> {
             containerProductName.getChildren().add(new Label(invoiceEntry.quantity + "x" + invoiceEntry.productName));
-            containerProductA.getChildren().add(new Label(Character.toString((char) 0x00e1)));
+            containerProductA.getChildren().add(new Label(Character.toString((char) 0x00e0)));
             containerProductPrice.getChildren().add(new Label(invoiceEntry.productPrice + currency));
             containerProductPriceTotal.getChildren().add(new Label(invoiceEntry.productPriceTotal + currency));
         });
