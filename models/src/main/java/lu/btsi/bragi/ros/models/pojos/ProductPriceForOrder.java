@@ -4,14 +4,13 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
-import java8.util.stream.StreamSupport;
+import java8.util.Optional;
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.List;
 
 
 /**

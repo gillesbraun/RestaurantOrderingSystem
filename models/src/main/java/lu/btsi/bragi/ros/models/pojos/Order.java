@@ -4,6 +4,7 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
+import java8.util.Optional;
 import java8.util.stream.Collectors;
 import java8.util.stream.StreamSupport;
 import org.jooq.types.UInteger;

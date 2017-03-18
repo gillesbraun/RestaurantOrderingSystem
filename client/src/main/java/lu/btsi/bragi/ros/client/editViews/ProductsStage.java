@@ -18,6 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Pair;
+import lu.btsi.bragi.ros.client.Config;
 import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
@@ -40,10 +41,8 @@ import static lu.btsi.bragi.ros.models.message.MessageType.*;
  * Created by gillesbraun on 27/02/2017.
  */
 public class ProductsStage extends Stage {
-    private static final String LANGUAGE = "en";
     private Client client;
 
-    public static final String CURRENCY_SYMBOL = "\u20ac";
 
     @FXML private TextField textFieldPrice, textFieldTranslation;
     @FXML private Button buttonProductCategoryEdit, buttonDelete, buttonRefresh, buttonAddAllergen, buttonEditAllergen,
@@ -93,6 +92,23 @@ public class ProductsStage extends Stage {
         });
 
         listProducts.getSelectionModel().selectedItemProperty().addListener(productSelected);
+        listProducts.setCellFactory(param -> new ListCell<Product>() {
+                    @Override
+                    protected void updateItem(Product item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if(item == null) {
+                            setText(null);
+                            return;
+                        }
+                        String str = String.format("N\u00b0: %s, Price: %.2f", item.getId(), item.getPrice().doubleValue());
+                        try {
+                            ProductLocalized productInLanguage = item.getProductInLanguage(Config.getInstance().getLanguage());
+                            str = str + " " + productInLanguage.getLabel();
+                        } catch (Exception e) {}
+                        setText(str);
+                    }
+                }
+        );
         listTranslations.getSelectionModel().selectedItemProperty().addListener(translationSelected);
         listTranslations.setCellFactory(param -> new ListCell<ProductLocalized>(){
             @Override
@@ -136,7 +152,7 @@ public class ProductsStage extends Stage {
                     allProductCategoriesLocalized = new Message<ProductCategoryLocalized>(message).getPayload();
                     productCategoriesForChoiceBox.setAll(
                             allProductCategoriesLocalized.stream()
-                            .filter(pcl -> pcl.getLanguageCode().equals(LANGUAGE))
+                            .filter(pcl -> pcl.getLanguageCode().equals(Config.getInstance().getLanguage().getCode()))
                             .collect(toList())
                     );
                     choiceBoxProductCategory.setItems(productCategoriesForChoiceBox);
@@ -153,7 +169,7 @@ public class ProductsStage extends Stage {
                     allAllergenesLocalized = messageAllergensLocalized.getPayload();
                     List<AllergenLocalized> l_AllergensLocalized = messageAllergensLocalized.getPayload()
                             .stream()
-                            .filter(all -> all.getLanguageCode().equals(LANGUAGE))
+                            .filter(all -> all.getLanguageCode().equals(Config.getInstance().getLanguage().getCode()))
                             .collect(toList());
                     allergensLocalizedForChoiceBox = FXCollections.observableList(l_AllergensLocalized);
                     choiceBoxAllergen.setItems(allergensLocalizedForChoiceBox);
@@ -191,7 +207,7 @@ public class ProductsStage extends Stage {
                         product.getProductAllergen().stream()
                         .map(ProductAllergen::getAllergen)
                         .flatMap(a -> a.getAllergenLocalized().stream()
-                                .filter(aL -> aL.getLanguageCode().equals(LANGUAGE)))
+                                .filter(aL -> aL.getLanguageCode().equals(Config.getInstance().getLanguage().getCode())))
                         .collect(toList())
                 );
                 listAllergens.setItems(allergeneLocalizedForList);
@@ -331,7 +347,6 @@ public class ProductsStage extends Stage {
         productAllergen.setAllergenId(allergenLocalized.getAllergenId());
         productAllergen.setProductId(selectedProduct.getId());
         client.send(new Message<>(Create, productAllergen, ProductAllergen.class));
-        System.out.println("Sent message: "+productAllergen);
         allergeneLocalizedForList.add(allergenLocalized);
         loadData();
         updateAllergensChoiceBox();
@@ -381,7 +396,7 @@ public class ProductsStage extends Stage {
         allergensLocalizedForChoiceBox = FXCollections.observableList(
                 allAllergenesLocalized.stream()
                         .filter(aL -> ! allergeneLocalizedForList.stream().map(AllergenLocalized::getAllergenId).collect(toList()).contains(aL.getAllergenId()))
-                        .filter(aL -> aL.getLanguageCode().equals(LANGUAGE))
+                        .filter(aL -> aL.getLanguageCode().equals(Config.getInstance().getLanguage().getCode()))
                         .collect(toList())
         );
         choiceBoxAllergen.setItems(allergensLocalizedForChoiceBox);

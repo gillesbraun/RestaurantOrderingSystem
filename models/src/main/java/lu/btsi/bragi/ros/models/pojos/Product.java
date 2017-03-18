@@ -4,6 +4,7 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
+import java8.util.Optional;
 import java8.util.stream.StreamSupport;
 import org.jooq.types.UInteger;
 
@@ -116,7 +117,7 @@ public class Product implements Serializable {
 
     @Override
     public String toString() {
-        return "N\u00b0 " +id+", Price: "+price+"€";
+        return "N\u00b0 " +id;
     }
 
     public void setProductLocalized(List<ProductLocalized> productLocalized) {
@@ -146,7 +147,6 @@ public class Product implements Serializable {
     public ProductLocalized getProductInLanguage(Language language) {
         return StreamSupport.stream(productLocalized)
                 .filter(pL -> pL.getLanguageCode().equals(language.getCode()))
-                .findFirst()
-                .get();
+                .findFirst().get();
     }
 }

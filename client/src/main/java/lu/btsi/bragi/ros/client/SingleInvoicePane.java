@@ -69,12 +69,12 @@ public class SingleInvoicePane extends VBox {
                     setText(null);
                     return;
                 }
-                ProductLocalized localized = ppfo.getProductInLanguage(Config.getInstance().getLanguage());
+                ProductLocalized maybeLocalized = ppfo.getProductInLanguage(Config.getInstance().getLanguage());
                 double pricePer = ppfo.getPricePerProduct().doubleValue();
                 double priceTotal = ppfo.getTotalPriceOfProduct().doubleValue();
                 long quantity = ppfo.getQuantity().longValue();
                 String currency = Config.getInstance().getCurrency();
-                setText(String.format("%s %s \u00e0 %.2f%s = %.2f%s", quantity, localized, pricePer, currency, priceTotal, currency));
+                setText(String.format("%s %s \u00e0 %.2f%s = %.2f%s", quantity, maybeLocalized.getLabel(), pricePer, currency, priceTotal, currency));
             }
         });
 
