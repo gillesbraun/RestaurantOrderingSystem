@@ -91,6 +91,6 @@ public class Table implements Serializable {
 
     @Override
     public String toString() {
-        return "N° "+id;
+        return "N\u00b0 " +id;
     }
 }

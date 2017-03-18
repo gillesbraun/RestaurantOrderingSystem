@@ -13,4 +13,9 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile 'com.google.code.gson:gson:2.8.0'
     compile group: 'org.jooq', name: 'jooq', version: '3.9.1'
+    compile 'net.sourceforge.streamsupport:streamsupport:1.5.3'
+    compile 'net.sourceforge.streamsupport:streamsupport-cfuture:1.5.3'
+    compile 'net.sourceforge.streamsupport:streamsupport-atomic:1.5.3'
+    compile 'net.sourceforge.streamsupport:streamsupport-flow:1.5.3'
+    compile 'net.sourceforge.streamsupport:streamsupport-literal:1.5.3'
 }

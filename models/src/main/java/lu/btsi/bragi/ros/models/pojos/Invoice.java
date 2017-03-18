@@ -4,16 +4,16 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
+import java8.util.stream.Collectors;
+import java8.util.stream.StreamSupport;
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -114,7 +114,7 @@ public class Invoice implements Serializable {
     public String getWaiters() {
         if(getOrders() == null)
             return "";
-        return getOrders().stream().map(Order::getWaiter).map(Waiter::getName).collect(Collectors.joining(", "));
+        return StreamSupport.stream(getOrders()).map(Order::getWaiter).map(Waiter::getName).distinct().collect(Collectors.joining(", "));
     }
 
     public UInteger getTable() {
@@ -126,68 +126,42 @@ public class Invoice implements Serializable {
                 .orElse(null);
     }
 
-    public List<InvoiceEntry> getProductListInvoice(String languageCode, String currency) {
+    public List<InvoiceEntry> getProductListInvoice(Language language, String currency) {
         if(getOrders() == null)
             return new ArrayList<>();
 
-        List<ProductPriceForOrder> productPriceForOrderList = getOrders().stream()
-                .flatMap(order -> order.getProductPriceForOrder()
-                        .stream()).collect(toList());
-
-        List<InvoiceEntry> invoiceEntryList = new ArrayList<>();
-
-        // Iterate through product localized in given language
-        productPriceForOrderList.stream()
-                .map(ProductPriceForOrder::getProduct)
-                .flatMap(product ->
-                        product.getProductLocalized()
-                                .stream()
-                                .filter(pL ->
-                                        pL.getLanguageCode()
-                                                .equals(languageCode))
-                ).forEach(productLocalized -> {
-            // Get product info (quantity, price of product in order
-            productPriceForOrderList.stream()
-                .filter(ppfo -> ppfo.getProductId().equals(productLocalized.getProductId()))
-                .findFirst()
-                .ifPresent(productInfo -> {
-
-                    String totalPriceOfProduct = String.format("%.2f " + currency,
-                            Math.round(
-                                    productInfo.getQuantity().longValue() * productInfo.getPricePerProduct() * 100D
-                            ) / 100D);
-                    invoiceEntryList.add(
-                            new InvoiceEntry(
-                                productInfo.getQuantity() + "x " + productLocalized.getLabel(),
-                                String.format("%.2f " + currency, productInfo.getPricePerProduct()),
-                                totalPriceOfProduct
-                            )
-                    );
-
-                });
-        });
+        List<InvoiceEntry> invoiceEntryList = StreamSupport.stream(orders)
+                .flatMap(order ->
+                        StreamSupport.stream(order.getProductPriceForOrder())
+                        .map(ppfo ->
+                                new InvoiceEntry(
+                                        ppfo.getQuantity(),
+                                        ppfo.getProductInLanguage(language).getLabel(),
+                                        String.format("%.2f", ppfo.getPricePerProduct().doubleValue()),
+                                        String.format("%.2f", ppfo.getTotalPriceOfProduct().doubleValue())
+                                )
+                        )
+                )
+                .collect(Collectors.toList());
         return invoiceEntryList;
     }
 
     public String getTotalPrice(String currency) {
         if(getOrders() == null)
             return "";
-
-        List<ProductPriceForOrder> productPriceForOrderList = getOrders().stream()
-                .flatMap(order -> order.getProductPriceForOrder()
-                        .stream()).collect(toList());
-
-        double total = productPriceForOrderList.stream()
-                .mapToDouble(ppfo -> ppfo.getPricePerProduct() * ppfo.getQuantity().longValue())
-                .sum();
-        total = Math.round(total * 100D) / 100D;
-        return String.format("%.2f " + currency, total);
+        BigDecimal total = StreamSupport.stream(orders)
+                .map(Order::getTotalPriceOfOrder)
+                .reduce(BigDecimal::add)
+                .get();
+        return String.format("%.2f " + currency, total.doubleValue());
     }
 
     public static class InvoiceEntry {
         public final String productName, productPrice, productPriceTotal;
+        private final UInteger quantity;
 
-        public InvoiceEntry(String productName, String productPrice, String productPriceTotal) {
+        public InvoiceEntry(UInteger quantity, String productName, String productPrice, String productPriceTotal) {
+            this.quantity = quantity;
             this.productName = productName;
             this.productPrice = productPrice;
             this.productPriceTotal = productPriceTotal;

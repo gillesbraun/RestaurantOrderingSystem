@@ -76,7 +76,7 @@ public class Allergen implements Serializable {
 
     @Override
     public String toString() {
-        return "N° " + id;
+        return "N\u00b0 " + id;
     }
 
     public void setAllergenLocalized(List<AllergenLocalized> allergenLocalized) {

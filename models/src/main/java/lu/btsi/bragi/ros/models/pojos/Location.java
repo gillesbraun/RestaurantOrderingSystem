@@ -86,6 +86,6 @@ public class Location implements Serializable {
 
     @Override
     public String toString() {
-        return "N° " + id + ": " + description;
+        return "N\u00b0 " + id + ": " + description;
     }
 }

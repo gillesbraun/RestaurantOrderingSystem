@@ -4,12 +4,14 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
+import java8.util.stream.StreamSupport;
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -131,5 +133,13 @@ public class ProductPriceForOrder implements Serializable {
 
     public Product getProduct() {
         return product;
+    }
+
+    public BigDecimal getTotalPriceOfProduct() {
+        return pricePerProduct.multiply(BigDecimal.valueOf(quantity.longValue()));
+    }
+
+    public ProductLocalized getProductInLanguage(Language language) {
+        return product.getProductInLanguage(language);
     }
 }

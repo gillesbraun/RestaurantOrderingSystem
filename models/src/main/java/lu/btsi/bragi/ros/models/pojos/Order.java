@@ -4,10 +4,13 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
+import java8.util.stream.Collectors;
+import java8.util.stream.StreamSupport;
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.List;
 
@@ -175,5 +178,18 @@ public class Order implements Serializable {
 
         sb.append(")");
         return sb.toString();
+    }
+
+    public BigDecimal getTotalPriceOfOrder() {
+        return StreamSupport.stream(productPriceForOrder)
+                .map(ProductPriceForOrder::getTotalPriceOfProduct)
+                .reduce(BigDecimal::add)
+                .get();
+    }
+
+    public List<ProductLocalized> getProductsLocalized(Language language) {
+        return StreamSupport.stream(productPriceForOrder)
+                .map(ppfo -> ppfo.getProductInLanguage(language))
+                .collect(Collectors.toList());
     }
 }

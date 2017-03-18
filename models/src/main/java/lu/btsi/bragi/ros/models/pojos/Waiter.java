@@ -86,6 +86,6 @@ public class Waiter implements Serializable {
 
     @Override
     public String toString() {
-        return "N° "+id+": "+name;
+        return "N\u00b0 " +id+": "+name;
     }
 }

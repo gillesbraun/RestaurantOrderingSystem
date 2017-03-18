@@ -33,7 +33,6 @@ import static java.util.stream.Collectors.toList;
  */
 public class SingleOrderPanel extends VBox {
 
-    private static final String LANGUAGE = "en";
     private Client client;
     private Order order;
 
@@ -124,11 +123,7 @@ public class SingleOrderPanel extends VBox {
         productsPriceForOrder = order.getProductPriceForOrder();
         productsLocalizedForList = FXCollections.observableList(
                 order.getProductPriceForOrder().stream()
-                        .flatMap(
-                                productPriceForOrder ->
-                                productPriceForOrder.getProduct().getProductLocalized().stream()
-                                .filter(pL -> pL.getLanguageCode().equals(LANGUAGE))
-                        )
+                        .map(ppfo -> ppfo.getProductInLanguage(Config.getInstance().getLanguage()))
                 .collect(toList())
         );
         listViewProducts.prefHeightProperty().bind(Bindings.size(productsLocalizedForList).multiply(28));

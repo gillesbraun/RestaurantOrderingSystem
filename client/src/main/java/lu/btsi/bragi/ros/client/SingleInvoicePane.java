@@ -23,8 +23,13 @@ import org.jooq.types.UInteger;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -33,13 +38,12 @@ import static java.util.stream.Collectors.toList;
  */
 public class SingleInvoicePane extends VBox {
 
-    @FXML private ListView<ProductLocalized> listViewProducts;
+    @FXML private ListView<ProductPriceForOrder> listViewProducts;
     @FXML private Label labelTable, lableInvoice, labelTotalPrice, labelPaid;
     @FXML private Button buttonPay;
 
-    private ObservableList<ProductLocalized> listProducts = FXCollections.observableArrayList();
+    private ObservableList<ProductPriceForOrder> listProducts = FXCollections.observableArrayList();
 
-    private static final String LANGUAGE = "en";
     private List<ProductPriceForOrder> produtsPriceForOrder;
     private Table table;
     private List<Order> orders;
@@ -57,23 +61,20 @@ public class SingleInvoicePane extends VBox {
         getChildren().setAll(root);
 
         listViewProducts.setItems(listProducts);
-        listViewProducts.setCellFactory(param -> new ListCell<ProductLocalized>(){
+        listViewProducts.setCellFactory(param -> new ListCell<ProductPriceForOrder>(){
             @Override
-            protected void updateItem(ProductLocalized item, boolean empty) {
-                super.updateItem(item, empty);
-                if(item == null) {
+            protected void updateItem(ProductPriceForOrder ppfo, boolean empty) {
+                super.updateItem(ppfo, empty);
+                if(ppfo == null) {
                     setText(null);
                     return;
                 }
-                Optional<UInteger> quantity = produtsPriceForOrder.stream()
-                        .filter(ppfo -> ppfo.getProductId().equals(item.getProductId()))
-                        .map(ProductPriceForOrder::getQuantity)
-                        .findFirst();
-                Optional<Double> price = produtsPriceForOrder.stream()
-                        .filter(ppfo -> ppfo.getProductId().equals(item.getProductId()))
-                        .map(ProductPriceForOrder::getPricePerProduct)
-                        .findFirst();
-                quantity.ifPresent(qty -> setText(qty + " " + item.getLabel() + " " + price.orElse(0.0) + "\u20ac"));
+                ProductLocalized localized = ppfo.getProductInLanguage(Config.getInstance().getLanguage());
+                double pricePer = ppfo.getPricePerProduct().doubleValue();
+                double priceTotal = ppfo.getTotalPriceOfProduct().doubleValue();
+                long quantity = ppfo.getQuantity().longValue();
+                String currency = Config.getInstance().getCurrency();
+                setText(String.format("%s %s \u00e0 %.2f%s = %.2f%s", quantity, localized, pricePer, currency, priceTotal, currency));
             }
         });
 
@@ -87,22 +88,16 @@ public class SingleInvoicePane extends VBox {
 
     private void setTotalPrice() {
         Optional<BigDecimal> sumOptional = orders.stream()
-                .flatMap(order -> order.getProductPriceForOrder().stream())
-                .map(value -> BigDecimal.valueOf(value.getPricePerProduct()).multiply(new BigDecimal(value.getQuantity().toBigInteger())))
+                .map(Order::getTotalPriceOfOrder)
                 .reduce(BigDecimal::add);
-        sumOptional.ifPresent(sum -> labelTotalPrice.setText(sum + " \u20ac"));
+        sumOptional.ifPresent(sum -> labelTotalPrice.setText(String.format("%.2f%s", sum.doubleValue(), Config.getInstance().getCurrency())));
     }
 
     private void fillList() {
         produtsPriceForOrder = orders.stream().flatMap(o -> o.getProductPriceForOrder().stream()).collect(toList());
         listProducts.setAll(
                 orders.stream()
-                        .flatMap(o -> o.getProductPriceForOrder().stream())
-                        .map(ProductPriceForOrder::getProduct)
-                .flatMap(product ->
-                                product.getProductLocalized().stream()
-                                .filter(pL -> pL.getLanguageCode().equals(LANGUAGE))
-                )
+                .flatMap(o -> o.getProductPriceForOrder().stream())
                 .collect(toList())
         );
 
@@ -117,7 +112,7 @@ public class SingleInvoicePane extends VBox {
             Printer printer = Printer.getDefaultPrinter();
             PrinterJob printerJob = PrinterJob.createPrinterJob(printer);
             printerJob.showPrintDialog(null);
-            VBox node = new PrintableInvoice(invoice, LANGUAGE).getNode();
+            VBox node = new PrintableInvoice(invoice).getNode();
             node.setStyle("-fx-font-family: \"Arial\";");
             printerJob.printPage(node);
             printerJob.endJob();

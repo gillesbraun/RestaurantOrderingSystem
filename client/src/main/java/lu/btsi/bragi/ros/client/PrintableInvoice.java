@@ -24,7 +24,7 @@ class PrintableInvoice extends Invoice {
             labelWaiter, labelTaxNumber, labelTelephone, labelEmail, labelTotalPrice;
     @FXML private VBox containerProductName, containerProductA, containerProductPrice, containerProductPriceTotal;
 
-    PrintableInvoice(Invoice value, String language) {
+    PrintableInvoice(Invoice value) {
         super(value);
         setOrders(value.getOrders());
         setPaid(value.getPaid());
@@ -49,13 +49,13 @@ class PrintableInvoice extends Invoice {
         String datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy / HH:mm"));
         labelDateTime.setText(datetime);
         labelTable.setText(getTable() + "");
-        getProductListInvoice(language, CURRENCY).forEach(invoiceEntry -> {
+        getProductListInvoice(Config.getInstance().getLanguage(), Config.getInstance().getCurrency()).forEach(invoiceEntry -> {
             containerProductName.getChildren().add(new Label(invoiceEntry.productName));
             containerProductA.getChildren().add(new Label(Character.toString((char) 0x00e1)));
             containerProductPrice.getChildren().add(new Label(invoiceEntry.productPrice));
             containerProductPriceTotal.getChildren().add(new Label(invoiceEntry.productPriceTotal));
         });
-        labelTotalPrice.setText(getTotalPrice(CURRENCY));
+        labelTotalPrice.setText(getTotalPrice(Config.getInstance().getCurrency()));
 
         labelWaiter.setText(getWaiters());
         labelTaxNumber.setText(TAX_NUM);
