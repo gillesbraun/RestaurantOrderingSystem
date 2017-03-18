@@ -6,6 +6,7 @@ import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.ProductCategoryRecord;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by gillesbraun on 01/03/2017.
@@ -21,7 +22,9 @@ public class ProductCategoryController extends Controller<ProductCategory> {
 
     @Override
     protected List<ProductCategory> handleGet() throws Exception {
-        return context.fetch(dbTable).into(pojo);
+        List<ProductCategory> categories = context.fetch(dbTable).into(pojo);
+        categories = categories.stream().map(this::fetchReferences).collect(Collectors.toList());
+        return categories;
     }
 
     @Override
@@ -46,15 +49,20 @@ public class ProductCategoryController extends Controller<ProductCategory> {
         context.executeDelete(productCategoryRecord);
     }
 
+    private ProductCategory fetchReferences(ProductCategory productCategory) {
+        productCategory.setProductCategoryLocalized(
+                getController(ProductCategoryLocalizedController.class).getProductCategoryLocalized(productCategory)
+        );
+        return productCategory;
+    }
+
     ProductCategory getProductCategory(Product product) {
         ProductCategory productCategory = context.select()
                 .from(dbTable)
                 .where(dbTable.ID.eq(product.getProductCategoryId()))
                 .fetchOne()
                 .into(pojo);
-        productCategory.setProductCategoryLocalized(
-            getController(ProductCategoryLocalizedController.class).getProductCategoryLocalized(productCategory)
-        );
+        productCategory = fetchReferences(productCategory);
         return productCategory;
     }
 }

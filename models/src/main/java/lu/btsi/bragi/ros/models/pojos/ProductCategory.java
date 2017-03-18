@@ -4,11 +4,14 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
+import java8.util.stream.StreamSupport;
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
 import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -32,7 +35,6 @@ public class ProductCategory implements Serializable {
     private UInteger  locationId;
     private Timestamp createdAt;
     private Timestamp updatedAt;
-    private List<ProductCategoryLocalized> productCategoryLocalizedList;
     private List<ProductCategoryLocalized> productCategoryLocalized;
 
     public ProductCategory() {}
@@ -101,7 +103,7 @@ public class ProductCategory implements Serializable {
 
     @Override
     public String toString() {
-        return "N° "+id;
+        return "N\u00b0 " +id;
     }
 
     public void setProductCategoryLocalized(List<ProductCategoryLocalized> productCategoryLocalized) {
@@ -110,5 +112,12 @@ public class ProductCategory implements Serializable {
 
     public List<ProductCategoryLocalized> getProductCategoryLocalized() {
         return productCategoryLocalized;
+    }
+
+    public ProductCategoryLocalized getProductCategoryTranslation(Language language) {
+        return StreamSupport.stream(productCategoryLocalized)
+                .filter(pcl -> pcl.getLanguageCode().equals(language.getCode()))
+                .findFirst()
+                .get();
     }
 }
