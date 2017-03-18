@@ -158,7 +158,7 @@ public class Invoice implements Serializable {
 
     public static class InvoiceEntry {
         public final String productName, productPrice, productPriceTotal;
-        private final UInteger quantity;
+        public final UInteger quantity;
 
         public InvoiceEntry(UInteger quantity, String productName, String productPrice, String productPriceTotal) {
             this.quantity = quantity;
