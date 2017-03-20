@@ -10,8 +10,10 @@ import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
 import org.jooq.types.UInteger;
 
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 
+import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -24,7 +26,8 @@ public class OrderController extends Controller<Order> {
 
     public OrderController() {
         super(pojo);
-        registerCustomQueryHandler(QueryType.Unpaid_Orders, handleOpenOrders);
+        registerCustomQueryHandler(QueryType.Open_Orders, handleOpenOrders);
+        registerCustomQueryHandler(QueryType.Open_Orders_For_Location, handleOpenOrdersForLocation);
     }
 
     Function<UInteger, List<Order>> handleOpenOrders = (ignore) -> {
@@ -33,6 +36,22 @@ public class OrderController extends Controller<Order> {
                 .where(dbTable.INVOICE_ID.isNull())
                 .and(dbTable.PROCESSING_DONE.eq((byte)0))
                 .orderBy(dbTable.CREATED_AT.desc())
+                .fetchInto(pojo);
+        orders = orders.stream().map(this::fetchReferences).collect(toList());
+        return orders;
+    };
+
+    Function<UInteger, List<Order>> handleOpenOrdersForLocation = (locationID) -> {
+        List<Order> orders = context.select()
+                .from(dbTable)
+                .join(Tables.PRODUCT_PRICE_FOR_ORDER)
+                    .on(dbTable.ID.eq(Tables.PRODUCT_PRICE_FOR_ORDER.ORDER_ID))
+                .join(Tables.PRODUCT)
+                    .on(Tables.PRODUCT.ID.eq(Tables.PRODUCT_PRICE_FOR_ORDER.PRODUCT_ID))
+                .join(Tables.PRODUCT_CATEGORY)
+                    .on(Tables.PRODUCT_CATEGORY.ID.eq(Tables.PRODUCT.PRODUCT_CATEGORY_ID))
+                .where(Tables.PRODUCT.LOCATION_ID.eq(locationID))
+                .or(Tables.PRODUCT_CATEGORY.LOCATION_ID.eq(locationID))
                 .fetchInto(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;
@@ -55,17 +74,29 @@ public class OrderController extends Controller<Order> {
 
     @Override
     protected void handleCreate(Order obj, Message<Order> originalMessage) throws Exception {
-        OrderRecord record = new OrderRecord();
-        record.from(obj);
-        OrderRecord newId = context.insertInto(dbTable)
-                .set(dbTable.TABLE_ID, obj.getTable().getId())
-                .set(dbTable.WAITER_ID, obj.getWaiter().getId())
-                .returning(dbTable.ID)
-                .fetchOne();
+        // Grouping the added products by location ID
+        Map<UInteger, List<ProductPriceForOrder>> perLocation = obj.getProductPriceForOrder().stream()
+                .collect(groupingBy(
+                        ppfo ->
+                                ppfo.getProduct().getLocationId() == null
+                                        ? ppfo.getProduct().getProductCategory().getLocationId()
+                                        : ppfo.getProduct().getLocationId()
+                ));
+        // Create an order for each location
+        for (Map.Entry<UInteger, List<ProductPriceForOrder>> entry : perLocation.entrySet()) {
+            List<ProductPriceForOrder> productsForLocation = entry.getValue();
+            OrderRecord record = new OrderRecord();
+            record.from(obj);
+            OrderRecord newId = context.insertInto(dbTable)
+                    .set(dbTable.TABLE_ID, obj.getTable().getId())
+                    .set(dbTable.WAITER_ID, obj.getWaiter().getId())
+                    .returning(dbTable.ID)
+                    .fetchOne();
 
-        for (ProductPriceForOrder productPriceForOrder : obj.getProductPriceForOrder()) {
-            productPriceForOrder.setOrderId(newId.getId());
-            getController(ProductPriceForOrderController.class).handleCreate(productPriceForOrder);
+            for (ProductPriceForOrder productPriceForOrder : productsForLocation) {
+                productPriceForOrder.setOrderId(newId.getId());
+                getController(ProductPriceForOrderController.class).handleCreate(productPriceForOrder);
+            }
         }
     }
 

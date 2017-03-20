@@ -45,7 +45,7 @@ public class OrdersPanel extends ScrollPane {
     private void refreshOrders(ActionEvent event) {
         if(client == null)
             return;
-        client.sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Unpaid_Orders)), m -> {
+        client.sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Open_Orders)), m -> {
             try {
                 List<Order> ordersToday = new Message<Order>(m).getPayload();
                 vbox.getChildren().clear();
