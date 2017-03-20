@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <center>
+      <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+        <tabs>
+          <Tab text="General Settings">
+               <content>
+                  <VBox spacing="14.0">
+                     <padding>
+                        <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+                     </padding>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="Currency Symbol:" />
+                              <TextField fx:id="textFieldCurrency" text="€" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="Interface Language:" />
+                              <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <ChoiceBox fx:id="choiceBoxLanguage" prefWidth="150.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </content>
+          </Tab>
+          <Tab text="Invoice Settings">
+               <content>
+                  <VBox spacing="14.0">
+                     <padding>
+                        <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+                     </padding>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="Title:" />
+                              <TextField fx:id="textFieldInvoiceTitle" text="Restaurant chez BTSi" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="Address:" />
+                              <TextField fx:id="textFieldInvoiceAddress1" text="19, rue Guillaume Schneider" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="Address line 2:" />
+                              <TextField fx:id="textFieldInvoiceAddress2" text="L-2522 Luxembourg" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="Tax Number:" />
+                              <TextField fx:id="textFieldInvoiceTax" text="123456" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="Telephone Number:" />
+                              <TextField fx:id="textFieldInvoiceTelephone" text="12345678" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="E-Mail: " />
+                              <TextField fx:id="textFieldInvoiceEmail" text="info@example.com" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+   </center>
+   <bottom>
+      <HBox alignment="CENTER_RIGHT" spacing="14.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button mnemonicParsing="false" onAction="#buttonCancelPressed" text="Cancel" />
+            <Button mnemonicParsing="false" onAction="#buttonSavePressed" text="Save" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+         <padding>
+            <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+         </padding>
+      </HBox>
+   </bottom>
+</BorderPane>

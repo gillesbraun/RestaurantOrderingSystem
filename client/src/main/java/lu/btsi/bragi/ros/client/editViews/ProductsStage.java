@@ -18,8 +18,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import lu.btsi.bragi.ros.client.Config;
 import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
@@ -102,7 +102,7 @@ public class ProductsStage extends Stage {
                         }
                         String str = String.format("N\u00b0: %s, Price: %.2f", item.getId(), item.getPrice().doubleValue());
                         try {
-                            ProductLocalized productInLanguage = item.getProductInLanguage(Config.getInstance().getLanguage());
+                            ProductLocalized productInLanguage = item.getProductInLanguage(Config.getInstance().generalSettings.getLanguage());
                             str = str + " " + productInLanguage.getLabel();
                         } catch (Exception e) {}
                         setText(str);
@@ -152,7 +152,7 @@ public class ProductsStage extends Stage {
                     allProductCategoriesLocalized = new Message<ProductCategoryLocalized>(message).getPayload();
                     productCategoriesForChoiceBox.setAll(
                             allProductCategoriesLocalized.stream()
-                            .filter(pcl -> pcl.getLanguageCode().equals(Config.getInstance().getLanguage().getCode()))
+                            .filter(pcl -> pcl.getLanguageCode().equals(Config.getInstance().generalSettings.getLanguage().getCode()))
                             .collect(toList())
                     );
                     choiceBoxProductCategory.setItems(productCategoriesForChoiceBox);
@@ -169,7 +169,7 @@ public class ProductsStage extends Stage {
                     allAllergenesLocalized = messageAllergensLocalized.getPayload();
                     List<AllergenLocalized> l_AllergensLocalized = messageAllergensLocalized.getPayload()
                             .stream()
-                            .filter(all -> all.getLanguageCode().equals(Config.getInstance().getLanguage().getCode()))
+                            .filter(all -> all.getLanguageCode().equals(Config.getInstance().generalSettings.getLanguage().getCode()))
                             .collect(toList());
                     allergensLocalizedForChoiceBox = FXCollections.observableList(l_AllergensLocalized);
                     choiceBoxAllergen.setItems(allergensLocalizedForChoiceBox);
@@ -207,7 +207,7 @@ public class ProductsStage extends Stage {
                         product.getProductAllergen().stream()
                         .map(ProductAllergen::getAllergen)
                         .flatMap(a -> a.getAllergenLocalized().stream()
-                                .filter(aL -> aL.getLanguageCode().equals(Config.getInstance().getLanguage().getCode())))
+                                .filter(aL -> aL.getLanguageCode().equals(Config.getInstance().generalSettings.getLanguage().getCode())))
                         .collect(toList())
                 );
                 listAllergens.setItems(allergeneLocalizedForList);
@@ -396,7 +396,7 @@ public class ProductsStage extends Stage {
         allergensLocalizedForChoiceBox = FXCollections.observableList(
                 allAllergenesLocalized.stream()
                         .filter(aL -> ! allergeneLocalizedForList.stream().map(AllergenLocalized::getAllergenId).collect(toList()).contains(aL.getAllergenId()))
-                        .filter(aL -> aL.getLanguageCode().equals(Config.getInstance().getLanguage().getCode()))
+                        .filter(aL -> aL.getLanguageCode().equals(Config.getInstance().generalSettings.getLanguage().getCode()))
                         .collect(toList())
         );
         choiceBoxAllergen.setItems(allergensLocalizedForChoiceBox);

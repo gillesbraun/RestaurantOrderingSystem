@@ -14,6 +14,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductLocalized;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
@@ -25,7 +26,6 @@ import org.jooq.types.UInteger;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -124,7 +124,7 @@ public class SingleOrderPanel extends VBox {
         productsPriceForOrder = order.getProductPriceForOrder();
         productsLocalizedForList = FXCollections.observableList(
                 order.getProductPriceForOrder().stream()
-                        .map(ppfo -> ppfo.getProductInLanguage(Config.getInstance().getLanguage()))
+                        .map(ppfo -> ppfo.getProductInLanguage(Config.getInstance().generalSettings.getLanguage()))
                 .collect(toList())
         );
         listViewProducts.prefHeightProperty().bind(Bindings.size(productsLocalizedForList).multiply(28));

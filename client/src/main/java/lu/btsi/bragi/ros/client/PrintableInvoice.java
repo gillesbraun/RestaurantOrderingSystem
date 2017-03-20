@@ -4,6 +4,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import lu.btsi.bragi.ros.client.settings.Config;
+import lu.btsi.bragi.ros.client.settings.InvoiceSettings;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 
 import java.io.IOException;
@@ -11,14 +13,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 class PrintableInvoice extends Invoice {
-    private static final String TAX_NUM = "123123";
-    private static final String EMAIL = "info@ltam.lu";
-    private static final String TELEPHONE = "+352 123456789";
-    private String language;
-
-    private String restaurantName = "Restaurant chez BTSi",
-        address = "19, rue Guillaume Schneider",
-        address2 = "L-2522 Luxembourg";
     @FXML private Label labelTitle, labelAddress1, labelAddress2, labelInvoice, labelDateTime, labelTable,
             labelWaiter, labelTaxNumber, labelTelephone, labelEmail, labelTotalPrice;
     @FXML private VBox containerProductName, containerProductA, containerProductPrice, containerProductPriceTotal;
@@ -27,7 +21,6 @@ class PrintableInvoice extends Invoice {
         super(value);
         setOrders(value.getOrders());
         setPaid(value.getPaid());
-        this.language = language;
     }
 
     VBox getNode() throws IOException {
@@ -40,26 +33,27 @@ class PrintableInvoice extends Invoice {
     }
 
     private void assignComponents() {
-        labelTitle.setText(restaurantName);
-        labelAddress1.setText(address);
-        labelAddress2.setText(address2);
+        InvoiceSettings invoiceSettings = Config.getInstance().invoiceSettings;
+        labelTitle.setText(invoiceSettings.getTitle());
+        labelAddress1.setText(invoiceSettings.getAddress());
+        labelAddress2.setText(invoiceSettings.getAddress2());
 
         labelInvoice.setText("ID");
         String datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy / HH:mm"));
         labelDateTime.setText(datetime);
         labelTable.setText(getTable() + "");
-        String currency = Config.getInstance().getCurrency();
-        getProductListInvoice(Config.getInstance().getLanguage(), Config.getInstance().getCurrency()).forEach(invoiceEntry -> {
+        String currency = Config.getInstance().generalSettings.getCurrency();
+        getProductListInvoice(Config.getInstance().generalSettings.getLanguage(), Config.getInstance().generalSettings.getCurrency()).forEach(invoiceEntry -> {
             containerProductName.getChildren().add(new Label(invoiceEntry.quantity + "x" + invoiceEntry.productName));
             containerProductA.getChildren().add(new Label(Character.toString((char) 0x00e0)));
             containerProductPrice.getChildren().add(new Label(invoiceEntry.productPrice + currency));
             containerProductPriceTotal.getChildren().add(new Label(invoiceEntry.productPriceTotal + currency));
         });
-        labelTotalPrice.setText(getTotalPrice(Config.getInstance().getCurrency()));
+        labelTotalPrice.setText(getTotalPrice(Config.getInstance().generalSettings.getCurrency()));
 
         labelWaiter.setText(getWaiters());
-        labelTaxNumber.setText(TAX_NUM);
-        labelTelephone.setText(TELEPHONE);
-        labelEmail.setText(EMAIL);
+        labelTaxNumber.setText(invoiceSettings.getTaxNumber());
+        labelTelephone.setText(invoiceSettings.getTelephone());
+        labelEmail.setText(invoiceSettings.getEmail());
     }
 }

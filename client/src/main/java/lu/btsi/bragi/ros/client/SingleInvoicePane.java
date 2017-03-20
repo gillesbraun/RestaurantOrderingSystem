@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
+import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.*;
@@ -63,11 +64,11 @@ public class SingleInvoicePane extends VBox {
                     setText(null);
                     return;
                 }
-                ProductLocalized maybeLocalized = ppfo.getProductInLanguage(Config.getInstance().getLanguage());
+                ProductLocalized maybeLocalized = ppfo.getProductInLanguage(Config.getInstance().generalSettings.getLanguage());
                 double pricePer = ppfo.getPricePerProduct().doubleValue();
                 double priceTotal = ppfo.getTotalPriceOfProduct().doubleValue();
                 long quantity = ppfo.getQuantity().longValue();
-                String currency = Config.getInstance().getCurrency();
+                String currency = Config.getInstance().generalSettings.getCurrency();
                 setText(String.format("%s %s \u00e0 %.2f%s = %.2f%s", quantity, maybeLocalized.getLabel(), pricePer, currency, priceTotal, currency));
             }
         });
@@ -84,7 +85,7 @@ public class SingleInvoicePane extends VBox {
         Optional<BigDecimal> sumOptional = orders.stream()
                 .map(Order::getTotalPriceOfOrder)
                 .reduce(BigDecimal::add);
-        sumOptional.ifPresent(sum -> labelTotalPrice.setText(String.format("%.2f%s", sum.doubleValue(), Config.getInstance().getCurrency())));
+        sumOptional.ifPresent(sum -> labelTotalPrice.setText(String.format("%.2f%s", sum.doubleValue(), Config.getInstance().generalSettings.getCurrency())));
     }
 
     private void fillList() {

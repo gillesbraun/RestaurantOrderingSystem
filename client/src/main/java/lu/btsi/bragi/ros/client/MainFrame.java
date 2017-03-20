@@ -29,6 +29,7 @@ import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.connection.UICallback;
 import lu.btsi.bragi.ros.client.editViews.*;
+import lu.btsi.bragi.ros.client.settings.Config;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -56,7 +57,7 @@ public class MainFrame extends Application implements UICallback {
 
     @FXML private Label labelOrdersTitle;
 
-    @FXML private MenuItem menuItemRefresh, menuItemQRCode;
+    @FXML private MenuItem menuItemRefresh, menuItemQRCode, menuItemSettings;
 
     private OrdersPanel ordersPane;
     private InvoicesContainerPane invoicesContainerPane;
@@ -72,6 +73,7 @@ public class MainFrame extends Application implements UICallback {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        Config.init();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainFrame.fxml"));
         loader.setController(this);
         Parent root = loader.load();
@@ -86,6 +88,8 @@ public class MainFrame extends Application implements UICallback {
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
         menuItemRefresh.setGraphic(fa.create(FontAwesome.Glyph.REFRESH));
         menuItemRefresh.getGraphic().setEffect(new Shadow(1, Color.BLACK));
+        menuItemSettings.setGraphic(fa.create(FontAwesome.Glyph.GEARS));
+        menuItemSettings.getGraphic().setEffect(new Shadow(1, Color.BLACK));
 
         connectionManager.newClient();
     }
@@ -229,6 +233,16 @@ public class MainFrame extends Application implements UICallback {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void menuItemSettingsPressed(ActionEvent event) {
+        try {
+            SettingsStage settingsStage = new SettingsStage();
+            settingsStage.initOwner(parent);
+            settingsStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

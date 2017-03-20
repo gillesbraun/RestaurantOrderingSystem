@@ -20,8 +20,8 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import lu.btsi.bragi.ros.client.Config;
 import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
@@ -103,7 +103,7 @@ public class ProductCategoriesStage extends Stage {
                 } else {
                     String label = productCategory.toString();
                     try {
-                        ProductCategoryLocalized translation = productCategory.getProductCategoryTranslation(Config.getInstance().getLanguage());
+                        ProductCategoryLocalized translation = productCategory.getProductCategoryTranslation(Config.getInstance().generalSettings.getLanguage());
                         label += ": " + translation.getLabel();
                     } catch (Exception ignored) {}
                     setText(label);
