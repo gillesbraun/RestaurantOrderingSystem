@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +53,13 @@ public class WebServerImages {
             File file = null;
             if(queryMap.get("category") != null) {
                 file = new File(queryMap.get("category") + ".png");
+                if(!file.exists()) {
+                    try {
+                        file = new File(getClass().getResource("/noimage.png").toURI());
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                }
             } else {
                 OutputStream os = t.getResponseBody();
                 String response = "<h1>please specify a category.</h1>";
