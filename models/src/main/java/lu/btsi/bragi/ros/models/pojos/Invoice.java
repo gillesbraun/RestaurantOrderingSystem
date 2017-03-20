@@ -130,9 +130,8 @@ public class Invoice implements Serializable {
         if(getOrders() == null)
             return new ArrayList<>();
 
-        List<InvoiceEntry> invoiceEntryList = StreamSupport.stream(orders)
-                .flatMap(order ->
-                        StreamSupport.stream(order.getProductPriceForOrder())
+        List<InvoiceEntry> invoiceEntryList =
+                        StreamSupport.stream(Order.combineOrders(orders))
                         .map(ppfo ->
                                 new InvoiceEntry(
                                         ppfo.getQuantity(),
@@ -141,7 +140,7 @@ public class Invoice implements Serializable {
                                         String.format("%.2f", ppfo.getTotalPriceOfProduct().doubleValue())
                                 )
                         )
-                )
+
                 .collect(Collectors.toList());
         return invoiceEntryList;
     }

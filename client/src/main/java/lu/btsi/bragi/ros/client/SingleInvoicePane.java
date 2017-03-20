@@ -19,17 +19,11 @@ import lu.btsi.bragi.ros.models.pojos.*;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.jooq.types.UInteger;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -96,9 +90,7 @@ public class SingleInvoicePane extends VBox {
     private void fillList() {
         produtsPriceForOrder = orders.stream().flatMap(o -> o.getProductPriceForOrder().stream()).collect(toList());
         listProducts.setAll(
-                orders.stream()
-                .flatMap(o -> o.getProductPriceForOrder().stream())
-                .collect(toList())
+                Order.combineOrders(orders)
         );
 
         listViewProducts.prefHeightProperty().bind(Bindings.size(listProducts).multiply(28));

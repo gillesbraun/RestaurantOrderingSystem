@@ -13,7 +13,9 @@ import javax.annotation.Generated;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -193,4 +195,59 @@ public class Order implements Serializable {
                 .map(ppfo -> ppfo.getProductInLanguage(language))
                 .collect(Collectors.toList());
     }
+
+    public static List<ProductPriceForOrder> combineOrders(List<Order> orders) {
+        Map<UInteger, List<ProductPriceForOrder>> collect = StreamSupport.stream(orders)
+                .flatMap(order ->
+                        StreamSupport.stream(order.getProductPriceForOrder()))
+                .collect(Collectors.groupingBy(
+                        ppfo -> ppfo.getProductId()
+                ));
+        List<ProductPriceForOrder> returning = new ArrayList<>();
+        for (Map.Entry<UInteger, List<ProductPriceForOrder>> entry : collect.entrySet()) {
+            UInteger product = entry.getKey();
+            List<ProductPriceForOrder> value = entry.getValue();
+            ProductPriceForOrder ppfo = new ProductPriceForOrder();
+
+            Optional<UInteger> quantity = StreamSupport.stream(value)
+                    .map(ProductPriceForOrder::getQuantity)
+                    .reduce((uInteger, uInteger2) -> UInteger.valueOf(uInteger.longValue() + uInteger2.longValue()));
+
+            if(quantity.isPresent()) {
+                ppfo.setQuantity(quantity.get());
+            }
+
+            if(value.size() > 0) {
+                ppfo.setPricePerProduct(value.get(0).getPricePerProduct());
+                ppfo.setProduct(value.get(0).getProduct());
+            }
+
+            returning.add(ppfo);
+        }
+        return returning;
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
