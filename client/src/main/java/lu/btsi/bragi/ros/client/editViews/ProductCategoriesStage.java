@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -50,10 +52,11 @@ public class ProductCategoriesStage extends Stage {
         buttonAddTranslation, buttonEditTranslation, buttonSaveImageURLPressed, buttonEditLocations, buttonChooseImage;
     @FXML private ListView<ProductCategory> listViewProductCategories;
     @FXML private ListView<ProductCategoryLocalized> listViewTranslations;
-    @FXML private TextField textFieldTranslation, textFieldURL;
+    @FXML private TextField textFieldTranslation;
     @FXML private ChoiceBox<Language> choiceBoxLanguage;
     @FXML private ChoiceBox<Location> choiceBoxLocation;
     @FXML private VBox detailPane;
+    @FXML private ImageView imageView;
 
     private ObservableList<ProductCategory> productsForList;
     private ObservableList<ProductCategoryLocalized> productCaterogiesLocalizedForList;
@@ -79,6 +82,9 @@ public class ProductCategoriesStage extends Stage {
         buttonEditLocations.setGraphic(fa.create(Glyph.PENCIL));
 
         detailPane.setDisable(true);
+
+        imageView.setPreserveRatio(true);
+        imageView.setFitWidth(150);
 
         textFieldTranslation.setOnKeyReleased(textFieldTranslationKeyReleased);
 
@@ -121,13 +127,13 @@ public class ProductCategoriesStage extends Stage {
             loadTranslations();
             if(selectedPC == null) {
                 productCaterogiesLocalizedForList.clear();
-                textFieldURL.clear();
                 languagesForChoiceBox.clear();
                 textFieldTranslation.clear();
                 labelID.setText("-");
+                imageView.setImage(new Image(getClass().getResource("/noimage.png").toString()));
             } else {
+                imageView.setImage(new Image("http://"+client.getRemoteIPAdress() + ":8888"  + selectedPC.getImageUrl()));
                 loadTranslations();
-                textFieldURL.setText(selectedPC.getImageUrl());
                 labelID.setText(selectedPC.getId()+"");
                 selectCurrentLocation();
             }
@@ -309,11 +315,9 @@ public class ProductCategoriesStage extends Stage {
         }
     }
 
-    public void buttonSaveImageURLPressed(ActionEvent evt) {
+    public void buttonSavePressed(ActionEvent evt) {
         ProductCategory selectedPC = listViewProductCategories.getSelectionModel().getSelectedItem();
         if(selectedPC != null) {
-            if(textFieldURL.getText() != null && textFieldURL.getText().trim().length() > 0)
-                selectedPC.setImageUrl(textFieldURL.getText());
             selectedPC.setLocationId(choiceBoxLocation.getValue().getId());
             client.send(new Message<>(Update, selectedPC, ProductCategory.class).toString());
             loadData();
