@@ -11,7 +11,7 @@
         <Menu mnemonicParsing="false" text="File">
           <items>
             <MenuItem fx:id="menuItemRefresh" mnemonicParsing="false" onAction="#menuItemRefreshPressed" text="Refresh" />
-            <MenuItem mnemonicParsing="false" onAction="#showQR" text="Connect Android client" />
+            <MenuItem fx:id="menuItemQRCode" disable="true" mnemonicParsing="false" onAction="#showQR" text="Connect Android client" />
             <MenuItem mnemonicParsing="false" onAction="#menuItemQuitPressed" text="Quit" />
           </items>
         </Menu>

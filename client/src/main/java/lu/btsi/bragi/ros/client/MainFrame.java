@@ -20,6 +20,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.Shadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -34,7 +35,6 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 /**
@@ -56,7 +56,7 @@ public class MainFrame extends Application implements UICallback {
 
     @FXML private Label labelOrdersTitle;
 
-    @FXML private MenuItem menuItemRefresh;
+    @FXML private MenuItem menuItemRefresh, menuItemQRCode;
 
     private OrdersPanel ordersPane;
     private InvoicesContainerPane invoicesContainerPane;
@@ -91,17 +91,22 @@ public class MainFrame extends Application implements UICallback {
     }
 
     public void showQR(ActionEvent evt) throws UnknownHostException, WriterException {
-        String connectingTo = InetAddress.getLocalHost().getHostAddress()+":8887";
+        if(client == null)
+            return;
+        String connectingTo = client.getRemoteIPAdress()+":8887";
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix encode = qrCodeWriter.encode(connectingTo, BarcodeFormat.QR_CODE, 500, 500);
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(encode);
 
-        VBox bla = new VBox();
+        Stage stage = new Stage();
         ImageView image = new ImageView();
         image.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
-        bla.getChildren().add(image);
-        Scene qrScene = new Scene(bla);
-        Stage stage = new Stage();
+
+        Pane pane = new Pane();
+        pane.getChildren().add(image);
+        pane.setCenterShape(true);
+
+        Scene qrScene = new Scene(pane);
         stage.setScene(qrScene);
         stage.initOwner(parent);
         stage.show();
@@ -123,6 +128,7 @@ public class MainFrame extends Application implements UICallback {
         invoicesContainerPane = new InvoicesContainerPane(client);
         Platform.runLater(() -> {
             menuEdit.setDisable(false);
+            menuItemQRCode.setDisable(false);
             panelOrdersContainer.getChildren().setAll(ordersPane);
             invoicesContainer.getChildren().setAll(invoicesContainerPane);
         });
