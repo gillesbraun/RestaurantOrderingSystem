@@ -296,6 +296,7 @@ public class ProductsStage extends Stage {
 
     public void buttonAddProductPressed(ActionEvent event) {
         Dialog<Pair<ProductCategoryLocalized, Double>> dialog = new Dialog<>();
+        dialog.initOwner(this);
         ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, addButtonType);
 

@@ -275,6 +275,7 @@ public class ProductCategoriesStage extends Stage {
         locationChoiceDialog.getItems().addAll(locationsForChoiceBox);
         locationChoiceDialog.setHeaderText("Specify production location");
         locationChoiceDialog.setContentText("Please specify the location where\n the products of this category are made.");
+        locationChoiceDialog.initOwner(this);
         Optional<Location> location = locationChoiceDialog.showAndWait();
 
         if(location.isPresent()) {

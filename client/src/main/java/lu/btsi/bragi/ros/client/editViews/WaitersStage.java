@@ -119,6 +119,7 @@ public class WaitersStage extends Stage {
 
     public void buttonCreatePressed(ActionEvent actionEvent) {
         TextInputDialog inputDialog = new TextInputDialog("");
+        inputDialog.initOwner(this);
         inputDialog.setTitle("Create a new Waiter");
         inputDialog.setHeaderText("Create a new Waiter");
         inputDialog.setContentText("Enter a name for the new Waiter: ");

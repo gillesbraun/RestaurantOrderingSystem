@@ -103,6 +103,7 @@ public class LanguagesStage extends Stage {;
 
     public void buttonAddLanguagePressed(ActionEvent evt) {
         Dialog<Pair<String,String>> addLangDialog = new Dialog<>();
+        addLangDialog.initOwner(this);
         ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
         addLangDialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, addButtonType);
 

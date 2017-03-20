@@ -100,6 +100,7 @@ public class LocationsStage extends Stage {
 
     public void buttonAddPressed(ActionEvent evt) {
         TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.initOwner(this);
         inputDialog.setHeaderText("Create a new Location");
         inputDialog.setContentText("Enter a short description for this Location. For example: Kitchen, Bar, ...");
         Optional<String> s = inputDialog.showAndWait();
