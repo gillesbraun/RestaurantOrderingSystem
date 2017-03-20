@@ -17,5 +17,6 @@ dependencies {
     compile group: 'org.controlsfx', name: 'controlsfx', version: '8.40.12'
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
     compile 'org.apache.httpcomponents:fluent-hc:4.5.3'
+    compile group: 'com.google.zxing', name: 'javase', version: '3.3.0'
     compile project(':models')
 }

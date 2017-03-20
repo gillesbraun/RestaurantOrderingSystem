@@ -1,7 +1,13 @@
 package lu.btsi.bragi.ros.client;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -13,6 +19,7 @@ import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.Shadow;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -25,7 +32,10 @@ import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * Created by gillesbraun on 14/02/2017.
@@ -78,6 +88,23 @@ public class MainFrame extends Application implements UICallback {
         menuItemRefresh.getGraphic().setEffect(new Shadow(1, Color.BLACK));
 
         connectionManager.newClient();
+    }
+
+    public void showQR(ActionEvent evt) throws UnknownHostException, WriterException {
+        String connectingTo = InetAddress.getLocalHost().getHostAddress()+":8887";
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+        BitMatrix encode = qrCodeWriter.encode(connectingTo, BarcodeFormat.QR_CODE, 500, 500);
+        BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(encode);
+
+        VBox bla = new VBox();
+        ImageView image = new ImageView();
+        image.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
+        bla.getChildren().add(image);
+        Scene qrScene = new Scene(bla);
+        Stage stage = new Stage();
+        stage.setScene(qrScene);
+        stage.initOwner(parent);
+        stage.show();
     }
 
     @Override
