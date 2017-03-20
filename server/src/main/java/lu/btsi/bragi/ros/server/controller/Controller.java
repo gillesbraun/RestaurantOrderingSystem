@@ -1,16 +1,16 @@
 package lu.btsi.bragi.ros.server.controller;
 
 import com.google.inject.Inject;
-import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageException;
-import lu.btsi.bragi.ros.models.message.MessageType;
+import lu.btsi.bragi.ros.models.message.*;
 import lu.btsi.bragi.ros.server.IMessageSender;
 import org.jooq.DSLContext;
+import org.jooq.types.UInteger;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -23,6 +23,8 @@ public abstract class Controller<T> {
 
     private static Map<Class<?>, Controller> registeredControllers = new HashMap<>();
     static IMessageSender messageSender;
+
+    private Map<QueryType, Function<UInteger, List<T>>> queryHandlers = new HashMap<>();
 
     public Controller(Class<T> type) {
         registeredControllers.put(type, this);
@@ -38,8 +40,11 @@ public abstract class Controller<T> {
         throw new ControllerNotFoundException("No Controller found for class "+clazz +". Available controllers: "+ controllers);
     }
 
-    protected abstract List<T> handleGet() throws Exception;
+    protected void registerCustomQueryHandler(QueryType queryType, Function<UInteger, List<T>> handler) {
+        queryHandlers.put(queryType, handler);
+    }
 
+    protected abstract List<T> handleGet() throws Exception;
 
     protected void handleCreate(T obj, Message<T> originalMessage) throws Exception {
         handleCreate(obj);
@@ -61,6 +66,9 @@ public abstract class Controller<T> {
 
     private Optional<Message> handle(String text) throws MessageException {
         Message<T> message = new Message<>(text);
+        if(message.getType().equals(MessageType.GetQuery)) {
+            return Optional.of(handleCustomQuery(message));
+        }
         List<T> payload = message.getPayload();
         try {
             if (message.getType() == MessageType.Get) {
@@ -80,6 +88,18 @@ public abstract class Controller<T> {
             return Optional.empty();
         } catch (Exception e) {
             return Optional.of(message.createAnswerException(e, e.getClass()));
+        }
+    }
+
+    private Message handleCustomQuery(Message<T> message) {
+        Query query = message.getQuery();
+        if(queryHandlers.containsKey(query.getQueryType())) {
+            Function<UInteger, List<T>> listFunction = queryHandlers.get(query.getQueryType());
+            List<T> list = listFunction.apply(query.getParam());
+            return message.createAnswer(list);
+        } else {
+            throw new ControllerNotFoundException(
+                    "Controller "+ getClass().getSimpleName() +" has not registered the custom query type: "+query.getQueryType());
         }
     }
 

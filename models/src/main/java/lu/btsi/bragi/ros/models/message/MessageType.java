@@ -7,7 +7,7 @@ import java.util.Map;
  * Created by gillesbraun on 15/02/2017.
  */
 public enum MessageType {
-    Get("get"), Update("update"), Delete("delete"), Create("create"), Answer("answer"), Error("error");
+    Get("get"), Update("update"), Delete("delete"), Create("create"), Answer("answer"), Error("error"), GetQuery("getquery");
 
     private final String name;
     private static final Map<String, MessageType> lookup = new HashMap<>();

@@ -13,15 +13,10 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import lu.btsi.bragi.ros.client.connection.Client;
-import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageException;
-import lu.btsi.bragi.ros.models.message.MessageGet;
+import lu.btsi.bragi.ros.models.message.*;
 import lu.btsi.bragi.ros.models.pojos.Order;
 
-import java.time.LocalDateTime;
 import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by gillesbraun on 08/03/2017.
@@ -50,15 +45,10 @@ public class OrdersPanel extends ScrollPane {
     private void refreshOrders(ActionEvent event) {
         if(client == null)
             return;
-        client.sendWithAction(new MessageGet<>(Order.class), m -> {
+        client.sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Unpaid_Orders)), m -> {
             try {
-                List<Order> payload = new Message<Order>(m).getPayload();
+                List<Order> ordersToday = new Message<Order>(m).getPayload();
                 vbox.getChildren().clear();
-                List<Order> ordersToday = payload.stream()
-                        .sorted((o1, o2) -> o2.getCreatedAt().toLocalDateTime().compareTo(o1.getCreatedAt().toLocalDateTime()))
-                        .filter(o -> o.getCreatedAt().toLocalDateTime().getDayOfMonth() == LocalDateTime.now().getDayOfMonth())
-                        .filter(o -> o.getInvoiceId() == null)
-                        .collect(toList());
                 ordersToday.forEach(order -> {
                     vbox.getChildren().add(new SingleOrderPanel(client, order));
                     // add separator if not last element

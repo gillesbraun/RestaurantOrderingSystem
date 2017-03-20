@@ -1,6 +1,7 @@
 package lu.btsi.bragi.ros.server.controller;
 
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.QueryType;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
@@ -9,6 +10,7 @@ import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
 import org.jooq.types.UInteger;
 
 import java.util.List;
+import java.util.function.Function;
 
 import static java.util.stream.Collectors.toList;
 
@@ -22,12 +24,24 @@ public class OrderController extends Controller<Order> {
 
     public OrderController() {
         super(pojo);
+        registerCustomQueryHandler(QueryType.Unpaid_Orders, handleOpenOrders);
     }
+
+    Function<UInteger, List<Order>> handleOpenOrders = (ignore) -> {
+        List<Order> orders = context.select()
+                .from(dbTable)
+                .where(dbTable.INVOICE_ID.isNull())
+                .and(dbTable.PROCESSING_DONE.eq((byte)0))
+                .orderBy(dbTable.CREATED_AT.desc())
+                .fetchInto(pojo);
+        orders = orders.stream().map(this::fetchReferences).collect(toList());
+        return orders;
+    };
 
     @Override
     protected List<Order> handleGet() throws Exception {
         List<Order> orders = context.fetch(dbTable).into(pojo);
-        orders.stream().map(this::fetchReferences).collect(toList());
+        orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;
     }
 

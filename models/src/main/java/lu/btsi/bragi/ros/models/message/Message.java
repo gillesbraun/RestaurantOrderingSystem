@@ -4,7 +4,6 @@ import com.google.gson.*;
 
 import java.lang.reflect.Type;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.util.*;
 
 /**
@@ -17,6 +16,7 @@ public class Message<T> {
     protected final Class<? extends T> clazz;
     protected final UUID messageID;
     protected final List<T> payload;
+    protected final Query query;
 
     private static final String SEPARATOR = ";;";
     private static final int POS_MESSAGETYPE = 0;
@@ -43,11 +43,17 @@ public class Message<T> {
             this.type = MessageType.get(split[POS_MESSAGETYPE]);
             this.clazz = (Class<T>) Class.forName(split[POS_CLASS]);
             this.messageID = UUID.fromString(split[POS_UUID]);
-            if(split.length == 4) {
-                ListOfType listWithType = new ListOfType<>(clazz);
-                this.payload = gson.fromJson(split[POS_PAYLOAD], listWithType);
-            } else {
+            if(type == MessageType.GetQuery) {
+                query = gson.fromJson(split[POS_PAYLOAD], Query.class);
                 this.payload = null;
+            } else {
+                this.query = null;
+                if(split.length == 4) {
+                    ListOfType listWithType = new ListOfType<>(clazz);
+                    this.payload = gson.fromJson(split[POS_PAYLOAD], listWithType);
+                } else {
+                    this.payload = null;
+                }
             }
             if(Exception.class.isAssignableFrom(clazz)) {
                 List<Throwable> throwables = (ArrayList<Throwable>)payload;
@@ -77,6 +83,7 @@ public class Message<T> {
         this.payload = content;
         this.clazz = clazz;
         this.messageID = UUID.randomUUID();
+        this.query = null;
     }
 
     /**
@@ -89,6 +96,7 @@ public class Message<T> {
         this.payload = new ArrayList<T>(Arrays.asList(item));
         this.clazz = clazz;
         this.messageID = UUID.randomUUID();
+        this.query = null;
     }
 
     /**
@@ -102,6 +110,22 @@ public class Message<T> {
         this.payload = null;
         this.clazz = clazz;
         this.messageID = UUID.randomUUID();
+        this.query = null;
+    }
+
+
+    /**
+     * Constructor used internally for specifying every aspect of the message.
+     * @param type <code>MessageType</code> of the message
+     * @param clazz The class representing the type of each element in the payload
+     * @param query <code>Query</code> which is used for executing a specific query on the server
+     */
+    protected Message(MessageType type, Class<? extends T> clazz, Query query) {
+        this.type = type;
+        this.payload = null;
+        this.clazz = clazz;
+        this.messageID = UUID.randomUUID();
+        this.query = query;
     }
 
     /**
@@ -116,6 +140,7 @@ public class Message<T> {
         this.clazz = clazz;
         this.messageID = messageID;
         this.payload = payload;
+        this.query = null;
     }
 
     /**
@@ -180,7 +205,7 @@ public class Message<T> {
     private static void isMessageValid(String str) throws MessageMalformedException {
         String[] split = str.split(SEPARATOR);
         if(split.length != 3 && split.length != 4) {
-            throw new MessageMalformedException("Message must consist of 2 or 3 parts. Action"+SEPARATOR+"Class["+SEPARATOR+"Json]");
+            throw new MessageMalformedException("Message must consist of 3 or 4 parts. Action"+SEPARATOR+"Class"+SEPARATOR+"UUID["+SEPARATOR+"Json]");
         }
 
         MessageType messageType = MessageType.get(split[POS_MESSAGETYPE]);
@@ -193,6 +218,9 @@ public class Message<T> {
     public String toString() {
         if(payload != null) {
             String json = gson.toJson(payload, new ListOfType<>(clazz));
+            return type.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + messageID + SEPARATOR + json;
+        } else if(query != null) {
+            String json = gson.toJson(query, Query.class);
             return type.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + messageID + SEPARATOR + json;
         } else {
             return type.getName() + SEPARATOR + clazz.getCanonicalName() + SEPARATOR + messageID;
@@ -223,5 +251,9 @@ public class Message<T> {
         public Timestamp deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             return json == null ? null : new Timestamp(json.getAsLong());
         }
+    }
+
+    public Query getQuery() {
+        return query;
     }
 }
