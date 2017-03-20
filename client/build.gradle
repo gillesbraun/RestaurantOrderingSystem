@@ -18,5 +18,6 @@ dependencies {
     compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.3'
     compile 'org.apache.httpcomponents:fluent-hc:4.5.3'
     compile group: 'com.google.zxing', name: 'javase', version: '3.3.0'
+    compile group: 'net.coobird', name: 'thumbnailator', version: '0.4.8'
     compile project(':models')
 }

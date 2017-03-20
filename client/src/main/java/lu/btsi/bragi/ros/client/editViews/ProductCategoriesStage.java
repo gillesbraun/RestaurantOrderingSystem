@@ -4,6 +4,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -27,11 +29,14 @@ import lu.btsi.bragi.ros.models.pojos.Language;
 import lu.btsi.bragi.ros.models.pojos.Location;
 import lu.btsi.bragi.ros.models.pojos.ProductCategory;
 import lu.btsi.bragi.ros.models.pojos.ProductCategoryLocalized;
+import net.coobird.thumbnailator.Thumbnails;
 import org.apache.http.client.fluent.Request;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -343,13 +348,25 @@ public class ProductCategoriesStage extends Stage {
         File file = fc.showOpenDialog(this);
         if(file != null) {
             try {
-                String url = "http://"+client.getRemoteIPAdress()+":8888/?category="+selectedCategory.getId();
-                Request.Post(url)
-                        .bodyStream(new FileInputStream(file))
-                .execute();
-                selectedCategory.setImageUrl("/?category="+selectedCategory.getId());
-                client.send(new Message<>(Update, selectedCategory, ProductCategory.class));
-                loadData();
+                ImageCropperStage imageCropperStage = new ImageCropperStage(client, file);
+                imageCropperStage.initOwner(this);
+                imageCropperStage.showAndWait();
+                System.err.println("If there were errors above (IllegalArgumentException), that is normal. Bug in controlsFX");
+                WritableImage image = imageCropperStage.getImage();
+                if(image != null) {
+                    File rostemp = File.createTempFile("rostemp", ".png");
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+                    bufferedImage = Thumbnails.of(bufferedImage).size(500, 500).asBufferedImage();
+                    ImageIO.write(bufferedImage, "png", rostemp);
+                    String url = "http://" + client.getRemoteIPAdress() + ":8888/?category=" + selectedCategory.getId();
+                    Request.Post(url)
+                            .bodyStream(new FileInputStream(rostemp))
+                            .execute();
+                    rostemp.delete();
+                    selectedCategory.setImageUrl("/?category=" + selectedCategory.getId());
+                    client.send(new Message<>(Update, selectedCategory, ProductCategory.class));
+                    loadData();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
