@@ -12,9 +12,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
 import lu.btsi.bragi.ros.client.connection.Client;
-import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageException;
-import lu.btsi.bragi.ros.models.message.MessageGet;
+import lu.btsi.bragi.ros.models.message.*;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.Table;
 
@@ -54,14 +52,10 @@ class InvoicesContainerPane extends ScrollPane {
     void loadInvoices() {
         content.getChildren().clear();
         content.getChildren().add(progressLoading);
-        client.sendWithAction(new MessageGet<>(Order.class), message -> {
+        client.sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Open_Invoices)), message -> {
             try {
                 List<Order> payload = new Message<Order>(message).getPayload();
                 Map<Table, List<Order>> unpaidOrders = payload.stream()
-                        .filter(order -> order.getInvoiceId() == null)
-                        .sorted((o1, o2) ->
-                            o2.getCreatedAt().toLocalDateTime().compareTo(o1.getCreatedAt().toLocalDateTime())
-                        )
                         .collect(Collectors.groupingBy(
                                 Order::getTable, Collectors.toList()
                         ));

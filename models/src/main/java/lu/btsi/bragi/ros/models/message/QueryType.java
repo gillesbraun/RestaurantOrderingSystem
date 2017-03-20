@@ -6,6 +6,6 @@ package lu.btsi.bragi.ros.models.message;
 public enum QueryType {
     Open_Orders_For_Location,
     Open_Orders,
-    ;
+    Open_Invoices;
 
 }

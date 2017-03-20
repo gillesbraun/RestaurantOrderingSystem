@@ -28,6 +28,7 @@ public class OrderController extends Controller<Order> {
         super(pojo);
         registerCustomQueryHandler(QueryType.Open_Orders, handleOpenOrders);
         registerCustomQueryHandler(QueryType.Open_Orders_For_Location, handleOpenOrdersForLocation);
+        registerCustomQueryHandler(QueryType.Open_Invoices, handleOpenInvoices);
     }
 
     Function<UInteger, List<Order>> handleOpenOrders = (ignore) -> {
@@ -52,6 +53,16 @@ public class OrderController extends Controller<Order> {
                     .on(Tables.PRODUCT_CATEGORY.ID.eq(Tables.PRODUCT.PRODUCT_CATEGORY_ID))
                 .where(Tables.PRODUCT.LOCATION_ID.eq(locationID))
                 .or(Tables.PRODUCT_CATEGORY.LOCATION_ID.eq(locationID))
+                .fetchInto(pojo);
+        orders = orders.stream().map(this::fetchReferences).collect(toList());
+        return orders;
+    };
+
+    private final Function<UInteger, List<Order>> handleOpenInvoices = ignore -> {
+        List<Order> orders = context.select()
+                .from(dbTable)
+                .where(dbTable.INVOICE_ID.isNull())
+                .orderBy(dbTable.CREATED_AT.desc())
                 .fetchInto(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;
