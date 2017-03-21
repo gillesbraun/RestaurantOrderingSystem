@@ -26,6 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionCallback;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.connection.UICallback;
 import lu.btsi.bragi.ros.client.editViews.*;
@@ -41,7 +42,7 @@ import java.net.UnknownHostException;
 /**
  * Created by gillesbraun on 14/02/2017.
  */
-public class MainFrame extends Application implements UICallback {
+public class MainFrame extends Application implements UICallback, ConnectionCallback {
     @FXML
     private TextArea statusTextArea;
 
@@ -75,6 +76,7 @@ public class MainFrame extends Application implements UICallback {
         loader.setController(this);
         Parent root = loader.load();
 
+        setContentDisabled(true);
         primaryStage.setOnCloseRequest(onClose);
         primaryStage.setTitle("ROS Client");
         Scene scene = new Scene(root, 800, 500);
@@ -102,6 +104,8 @@ public class MainFrame extends Application implements UICallback {
         ImageView image = new ImageView();
         image.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
 
+        ConnectionManager.getInstance().addConnectionCallback(this);
+
         Pane pane = new Pane();
         pane.getChildren().add(image);
         pane.setCenterShape(true);
@@ -118,6 +122,13 @@ public class MainFrame extends Application implements UICallback {
         loadContent();
     }
 
+    private void setContentDisabled(boolean en) {
+        menuEdit.setDisable(en);
+        menuItemQRCode.setDisable(en);
+        panelOrdersContainer.setDisable(en);
+        invoicesContainer.setDisable(en);
+    }
+
     public void menuItemRefreshPressed(ActionEvent event) {
         loadContent();
     }
@@ -126,8 +137,7 @@ public class MainFrame extends Application implements UICallback {
         ordersPane = new OrdersPanel();
         invoicesContainerPane = new InvoicesContainerPane();
         Platform.runLater(() -> {
-            menuEdit.setDisable(false);
-            menuItemQRCode.setDisable(false);
+            setContentDisabled(false);
             panelOrdersContainer.getChildren().setAll(ordersPane);
             invoicesContainer.getChildren().setAll(invoicesContainerPane);
         });
@@ -222,5 +232,15 @@ public class MainFrame extends Application implements UICallback {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void connectionClosed(String reason) {
+        setContentDisabled(true);
+    }
+
+    @Override
+    public void connectionOpened(String message) {
+        setContentDisabled(false);
     }
 }
