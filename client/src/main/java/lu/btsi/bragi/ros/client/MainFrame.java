@@ -55,7 +55,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     private Label labelOrdersTitle;
 
     @FXML
-    private MenuItem menuItemRefresh, menuItemQRCode, menuItemSettings;
+    private MenuItem menuItemRefresh, menuItemQRCode, menuItemSettings, menuItemQuit;
 
     private OrdersPanel ordersContainerPane;
     private InvoicesContainerPane invoicesContainerPane;
@@ -93,8 +93,12 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
         menuItemRefresh.setGraphic(fa.create(FontAwesome.Glyph.REFRESH));
         menuItemRefresh.getGraphic().setEffect(new Shadow(1, Color.BLACK));
+        menuItemQRCode.setGraphic(fa.create(FontAwesome.Glyph.ANDROID));
+        menuItemQRCode.getGraphic().setEffect(new Shadow(1, Color.BLACK));
         menuItemSettings.setGraphic(fa.create(FontAwesome.Glyph.GEARS));
         menuItemSettings.getGraphic().setEffect(new Shadow(1, Color.BLACK));
+        menuItemQuit.setGraphic(fa.create(FontAwesome.Glyph.SIGN_OUT));
+        menuItemQuit.getGraphic().setEffect(new Shadow(1, Color.BLACK));
 
         ordersContainerPane = new OrdersPanel();
         invoicesContainerPane = new InvoicesContainerPane();
