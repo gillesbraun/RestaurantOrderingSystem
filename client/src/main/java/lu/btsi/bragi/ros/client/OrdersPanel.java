@@ -3,7 +3,6 @@ package lu.btsi.bragi.ros.client;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Label;
@@ -22,7 +21,7 @@ import java.util.List;
  * Created by gillesbraun on 08/03/2017.
  */
 public class OrdersPanel extends ScrollPane {
-    private Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, this::refreshOrders), new KeyFrame(Duration.seconds(15)));
+    private Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, e -> refreshOrders()), new KeyFrame(Duration.seconds(15)));
 
     private ProgressIndicator progressOrders = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
 
@@ -39,7 +38,7 @@ public class OrdersPanel extends ScrollPane {
         setContent(progressOrders);
     }
 
-    private void refreshOrders(ActionEvent event) {
+    void refreshOrders() {
         if(!ConnectionManager.isConnected())
             return;
         ConnectionManager.getInstance().sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Open_Orders)), m -> {

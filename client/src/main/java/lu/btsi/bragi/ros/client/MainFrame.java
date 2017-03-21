@@ -49,7 +49,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     private Menu menuEdit;
 
     @FXML
-    private VBox panelOrdersContainer, invoicesContainer;
+    private VBox vboxOrdersContainer, vboxInvoicesContainer;
 
     @FXML
     private Label labelOrdersTitle;
@@ -57,7 +57,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     @FXML
     private MenuItem menuItemRefresh, menuItemQRCode, menuItemSettings;
 
-    private OrdersPanel ordersPane;
+    private OrdersPanel ordersContainerPane;
     private InvoicesContainerPane invoicesContainerPane;
 
     private EventHandler<WindowEvent> onClose = event -> {
@@ -78,12 +78,10 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     @Override
     public void start(Stage primaryStage) throws Exception {
         Config.init();
-        ConnectionManager.init(this);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainFrame.fxml"));
         loader.setController(this);
         Parent root = loader.load();
 
-        setContentDisabled(true);
         primaryStage.setOnCloseRequest(onClose);
         primaryStage.setTitle("ROS Client");
         Scene scene = new Scene(root, 800, 500);
@@ -98,6 +96,13 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         menuItemSettings.setGraphic(fa.create(FontAwesome.Glyph.GEARS));
         menuItemSettings.getGraphic().setEffect(new Shadow(1, Color.BLACK));
 
+        ordersContainerPane = new OrdersPanel();
+        invoicesContainerPane = new InvoicesContainerPane();
+        vboxOrdersContainer.getChildren().setAll(ordersContainerPane);
+        vboxInvoicesContainer.getChildren().setAll(invoicesContainerPane);
+
+        setContentDisabled(true);
+        ConnectionManager.init(this);
         ConnectionManager.getInstance().addBroadcastCallback(this);
     }
 
@@ -129,13 +134,14 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     public void connectionOpened(String message, Client client) {
         displayMessage(message);
         loadContent();
+        setContentDisabled(false);
     }
 
     private void setContentDisabled(boolean en) {
         menuEdit.setDisable(en);
         menuItemQRCode.setDisable(en);
-        panelOrdersContainer.setDisable(en);
-        invoicesContainer.setDisable(en);
+        vboxOrdersContainer.setDisable(en);
+        vboxInvoicesContainer.setDisable(en);
     }
 
     public void menuItemRefreshPressed(ActionEvent event) {
@@ -143,13 +149,8 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     }
 
     private void loadContent() {
-        ordersPane = new OrdersPanel();
-        invoicesContainerPane = new InvoicesContainerPane();
-        Platform.runLater(() -> {
-            setContentDisabled(false);
-            panelOrdersContainer.getChildren().setAll(ordersPane);
-            invoicesContainer.getChildren().setAll(invoicesContainerPane);
-        });
+        ordersContainerPane.refreshOrders();
+        invoicesContainerPane.refreshInvoices();
     }
 
     @Override

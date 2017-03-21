@@ -112,6 +112,6 @@ public class SingleInvoicePane extends VBox {
         }
 
         ConnectionManager.getInstance().send(new Message<>(MessageType.Create, invoice, Invoice.class));
-        parent.loadInvoices();
+        parent.refreshInvoices();
     }
 }

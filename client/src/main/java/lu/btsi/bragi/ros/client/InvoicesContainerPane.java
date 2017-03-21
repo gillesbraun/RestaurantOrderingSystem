@@ -29,7 +29,7 @@ class InvoicesContainerPane extends ScrollPane {
     private ProgressIndicator progressLoading = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
 
     private Timeline refreshTimer = new Timeline(
-            new KeyFrame(Duration.ZERO, e -> loadInvoices()),
+            new KeyFrame(Duration.ZERO, e -> refreshInvoices()),
             new KeyFrame(Duration.seconds(15)));
 
     InvoicesContainerPane() {
@@ -43,9 +43,9 @@ class InvoicesContainerPane extends ScrollPane {
         setContent(content);
     }
 
-    void loadInvoices() {
-        content.getChildren().clear();
-        content.getChildren().add(progressLoading);
+    void refreshInvoices() {
+        if(!ConnectionManager.isConnected())
+            return;
         ConnectionManager.getInstance().sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Open_Invoices)), message -> {
             try {
                 List<Order> payload = new Message<Order>(message).getPayload();
@@ -54,7 +54,7 @@ class InvoicesContainerPane extends ScrollPane {
                                 Order::getTable, Collectors.toList()
                         ));
                 Platform.runLater(() -> {
-                    content.getChildren().remove(progressLoading);
+                    content.getChildren().clear();
                     unpaidOrders.forEach((table, orders) -> {
                         try {
                             content.getChildren().add(new SingleInvoicePane(table, orders, this));
