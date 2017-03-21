@@ -20,6 +20,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.effect.Shadow;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -65,7 +67,15 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         ConnectionManager.getInstance().close();
         System.exit(0);
     };
+
     private Stage parent;
+
+    private EventHandler<? super KeyEvent> keyListener = event -> {
+        KeyCode code = event.getCode();
+        if(code.equals(KeyCode.F5)) {
+            loadContent();
+        }
+    };
 
 
     @Override
@@ -80,6 +90,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         primaryStage.setOnCloseRequest(onClose);
         primaryStage.setTitle("ROS Client");
         Scene scene = new Scene(root, 800, 500);
+        scene.setOnKeyPressed(keyListener);
         primaryStage.setScene(scene);
         primaryStage.show();
         this.parent = primaryStage;

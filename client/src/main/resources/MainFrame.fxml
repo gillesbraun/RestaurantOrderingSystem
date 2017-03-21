@@ -72,7 +72,7 @@
             </SplitPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="137.0" prefWidth="668.0" SplitPane.resizableWithParent="false">
                <children>
-                  <TextArea fx:id="statusTextArea" editable="false" prefHeight="200.0" prefWidth="640.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+                  <TextArea fx:id="statusTextArea" focusTraversable="false" editable="false" prefHeight="200.0" prefWidth="640.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
                      <font>
                         <Font name="Courier New" size="13.0" />
                      </font></TextArea>
