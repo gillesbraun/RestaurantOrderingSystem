@@ -27,10 +27,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import lu.btsi.bragi.ros.client.connection.Client;
-import lu.btsi.bragi.ros.client.connection.ConnectionCallback;
-import lu.btsi.bragi.ros.client.connection.ConnectionManager;
-import lu.btsi.bragi.ros.client.connection.UICallback;
+import lu.btsi.bragi.ros.client.connection.*;
 import lu.btsi.bragi.ros.client.editViews.*;
 import lu.btsi.bragi.ros.client.settings.Config;
 import org.controlsfx.glyphfont.FontAwesome;
@@ -44,7 +41,7 @@ import java.net.UnknownHostException;
 /**
  * Created by gillesbraun on 14/02/2017.
  */
-public class MainFrame extends Application implements UICallback, ConnectionCallback {
+public class MainFrame extends Application implements UICallback, ConnectionCallback, BroadcastCallback {
     @FXML
     private TextArea statusTextArea;
 
@@ -101,6 +98,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         menuItemSettings.setGraphic(fa.create(FontAwesome.Glyph.GEARS));
         menuItemSettings.getGraphic().setEffect(new Shadow(1, Color.BLACK));
 
+        ConnectionManager.getInstance().addBroadcastCallback(this);
     }
 
     public void showQR(ActionEvent evt) throws UnknownHostException, WriterException {
@@ -253,5 +251,10 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     @Override
     public void connectionOpened(String message) {
         setContentDisabled(false);
+    }
+
+    @Override
+    public void handleBroadCast() {
+        loadContent();
     }
 }

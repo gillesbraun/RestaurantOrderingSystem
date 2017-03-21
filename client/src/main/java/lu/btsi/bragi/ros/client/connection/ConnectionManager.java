@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class ConnectionManager implements ServiceListener, ConnectionCallback, MessageCallback {
     private final List<ConnectionCallback> connectionCallbacks = new ArrayList<>();
+    private final List<BroadcastCallback> broadcastCallbacks = new ArrayList<>();
     private final Map<UUID, MessageCallback> callbackMap = new HashMap<>();
     private final UICallback uiCallback;
     private Client client;
@@ -205,6 +206,10 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
         }
     }
 
+    public void addBroadcastCallback(BroadcastCallback broadcastCallback) {
+        broadcastCallbacks.add(broadcastCallback);
+    }
+
     @Override
     public void handleAnswer(String message) {
         boolean isError = Message.messageType(message).equals(MessageType.Error);
@@ -215,7 +220,9 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
             callbackMap.remove(messageUUID);
         } else {
             if(!isError) {
-
+                if(Message.messageType(message).equals(MessageType.Broadcast)) {
+                    broadcastCallbacks.forEach(BroadcastCallback::handleBroadCast);
+                }
             } else {
                 try {
                     new Message(message);

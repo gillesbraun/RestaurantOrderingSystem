@@ -1,6 +1,7 @@
 package lu.btsi.bragi.ros.server.controller;
 
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.message.QueryType;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
@@ -9,6 +10,7 @@ import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
 import org.jooq.types.UInteger;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -109,6 +111,7 @@ public class OrderController extends Controller<Order> {
                 getController(ProductPriceForOrderController.class).handleCreate(productPriceForOrder);
             }
         }
+        messageSender.broadcast(new Message<>(MessageType.Broadcast, Collections.emptyList(), Order.class));
     }
 
     @Override
