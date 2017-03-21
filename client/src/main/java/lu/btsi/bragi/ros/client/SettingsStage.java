@@ -90,7 +90,11 @@ public class SettingsStage extends Stage implements ConnectionCallback {
             try {
                 listLanguages.setAll(new Message<Language>(t).getPayload());
                 choiceBoxLanguage.setDisable(false);
-                choiceBoxLanguage.getSelectionModel().select(Config.getInstance().generalSettings.getLanguage());
+                String needle = Config.getInstance().generalSettings.getLanguage().getCode();
+                listLanguages.stream()
+                        .filter(l -> l.getCode().equals(needle))
+                        .findFirst()
+                        .ifPresent(l -> choiceBoxLanguage.getSelectionModel().select(l));
             } catch (MessageException e) {
                 ExceptionDialog exceptionDialog = new ExceptionDialog(e);
                 exceptionDialog.initOwner(this);
