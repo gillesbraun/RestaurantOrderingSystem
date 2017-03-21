@@ -5,7 +5,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-<SplitPane dividerPositions="0.2658662092624357" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="384.0" prefWidth="585.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<SplitPane dividerPositions="0.2658662092624357" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="384.0" prefWidth="585.0" xmlns="http://javafx.com/javafx/8.0.112" xmlns:fx="http://javafx.com/fxml/1">
    <items>
       <VBox spacing="14.0">
          <children>
@@ -74,9 +74,9 @@
                   <HBox spacing="7.0">
                      <children>
                         <TextField fx:id="textFieldTranslation" HBox.hgrow="ALWAYS" />
-                        <ChoiceBox fx:id="choiceBoxLanguage" prefWidth="75.0" />
-                        <Button fx:id="buttonAddTranslation" minWidth="-Infinity" mnemonicParsing="false" onAction="#buttonAddTranslationPressed" />
-                        <Button fx:id="buttonEditTranslation" minWidth="-Infinity" mnemonicParsing="false" onAction="#buttonEditTranslationPressed" />
+                        <ChoiceBox fx:id="choiceBoxLanguage" disable="true" prefWidth="75.0" />
+                        <Button fx:id="buttonAddTranslation" disable="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#buttonAddTranslationPressed" />
+                        <Button fx:id="buttonEditTranslation" disable="true" minWidth="-Infinity" mnemonicParsing="false" onAction="#buttonEditTranslationPressed" />
                      </children>
                   </HBox>
                </children>
