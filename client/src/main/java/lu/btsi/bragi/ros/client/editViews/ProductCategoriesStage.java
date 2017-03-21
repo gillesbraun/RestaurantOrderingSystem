@@ -87,6 +87,7 @@ public class ProductCategoriesStage extends Stage {
 
         imageView.setPreserveRatio(true);
         imageView.setFitWidth(150);
+        imageView.setVisible(false);
 
         textFieldTranslation.setOnKeyReleased(textFieldTranslationKeyReleased);
 
@@ -127,17 +128,21 @@ public class ProductCategoriesStage extends Stage {
         public void changed(ObservableValue<? extends ProductCategory> observable, ProductCategory oldValue, ProductCategory selectedPC) {
             detailPane.setDisable(selectedPC == null);
             loadTranslations();
-            if(selectedPC == null) {
+            if (selectedPC != null) {
+                imageView.setVisible(true);
+                if(selectedPC.getImageUrl() != null)
+                    imageView.setImage(new Image("http://"+ConnectionManager.getInstance().getRemoteIPAdress() + ":8888"  + selectedPC.getImageUrl()));
+                else
+                    imageView.setImage(new Image(getClass().getResource("/noimage.png").toString()));
+                loadTranslations();
+                labelID.setText(selectedPC.getId()+"");
+                selectCurrentLocation();
+            } else {
                 productCaterogiesLocalizedForList.clear();
                 languagesForChoiceBox.clear();
                 textFieldTranslation.clear();
                 labelID.setText("-");
-                imageView.setImage(new Image(getClass().getResource("/noimage.png").toString()));
-            } else {
-                imageView.setImage(new Image("http://"+ConnectionManager.getInstance().getRemoteIPAdress() + ":8888"  + selectedPC.getImageUrl()));
-                loadTranslations();
-                labelID.setText(selectedPC.getId()+"");
-                selectCurrentLocation();
+                imageView.setVisible(false);
             }
         }
     };
