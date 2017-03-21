@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<VBox spacing="7.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <HBox alignment="CENTER">
+         <children>
+            <Label text="Restaurant Ordering System">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER">
+         <children>
+            <Label text="v1 - 2017-03-31">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <HBox alignment="CENTER">
+         <children>
+            <Label text="© Gilles Braun" />
+         </children>
+      </HBox>
+      <HBox alignment="CENTER">
+         <children>
+            <Label text="Used Software">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+         </children>
+         <VBox.margin>
+            <Insets top="7.0" />
+         </VBox.margin>
+      </HBox>
+      <HBox spacing="7.0">
+         <children>
+            <VBox alignment="CENTER" spacing="7.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Java-WebSocket" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+                  <Label text="JmDNS" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+                  <Label text="ControlsFX" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+                  <Label text="Apache HTTP Client" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+                  <Label text="Google ZXing" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+                  <Label text="Thumbnailator" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+               </children>
+            </VBox>
+            <VBox alignment="CENTER" spacing="7.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Label text="Gson" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+                  <Label text="JOOQ" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+                  <Label text="StreamSupport" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+                  <Label text="MySQL JDBC" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+                  <Label text="Guice" textFill="#4f60f7">
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Label>
+               </children>
+            </VBox>
+         </children>
+      </HBox>
+   </children>
+   <padding>
+      <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+   </padding>
+</VBox>

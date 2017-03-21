@@ -29,12 +29,12 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About MyHelloApp" />
+            <MenuItem mnemonicParsing="false" text="About ROS" onAction="#menuItemAboutPressed" />
           </items>
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="0.8563685636856369" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="1" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
         <items>
             <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
               <items>

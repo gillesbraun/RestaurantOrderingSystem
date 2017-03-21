@@ -244,6 +244,16 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         }
     }
 
+    public void menuItemAboutPressed(ActionEvent event) {
+        try {
+            AboutStage aboutStage = new AboutStage();
+            aboutStage.initOwner(parent);
+            aboutStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void connectionClosed(String reason) {
         setContentDisabled(true);
