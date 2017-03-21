@@ -13,7 +13,6 @@ import javafx.scene.control.ListView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import lu.btsi.bragi.ros.client.connection.Client;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductLocalized;
@@ -33,8 +32,6 @@ import static java.util.stream.Collectors.toList;
  * Created by gillesbraun on 07/03/2017.
  */
 public class SingleOrderPanel extends VBox {
-
-    private Client client;
     private Order order;
 
     private ListView<ProductLocalized> listViewProducts = new ListView<>();
@@ -61,8 +58,7 @@ public class SingleOrderPanel extends VBox {
         }
     };
 
-    SingleOrderPanel(Client client, Order order) {
-        this.client = client;
+    SingleOrderPanel(Order order) {
         this.order = order;
         setSpacing(7);
         setPadding(new Insets(14));

@@ -11,7 +11,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.models.message.*;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.Table;
@@ -25,7 +25,6 @@ import java.util.stream.Collectors;
  * Created by gillesbraun on 09/03/2017.
  */
 class InvoicesContainerPane extends ScrollPane {
-    private Client client;
     private VBox content = new VBox();
     private ProgressIndicator progressLoading = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
 
@@ -33,8 +32,7 @@ class InvoicesContainerPane extends ScrollPane {
             new KeyFrame(Duration.ZERO, e -> loadInvoices()),
             new KeyFrame(Duration.seconds(15)));
 
-    InvoicesContainerPane(Client client) {
-        this.client = client;
+    InvoicesContainerPane() {
         setHbarPolicy(ScrollBarPolicy.NEVER);
         setStyle("-fx-background-color:transparent;");
         content.setFillWidth(true);
@@ -45,14 +43,10 @@ class InvoicesContainerPane extends ScrollPane {
         setContent(content);
     }
 
-    void send(Message m) {
-        client.send(m);
-    }
-
     void loadInvoices() {
         content.getChildren().clear();
         content.getChildren().add(progressLoading);
-        client.sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Open_Invoices)), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Open_Invoices)), message -> {
             try {
                 List<Order> payload = new Message<Order>(message).getPayload();
                 Map<Table, List<Order>> unpaidOrders = payload.stream()

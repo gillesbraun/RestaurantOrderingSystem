@@ -13,7 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
@@ -33,16 +33,13 @@ import java.time.format.DateTimeFormatter;
  * Created by gillesbraun on 27/02/2017.
  */
 public class TablesStage extends Stage {
-    private Client client;
-
     @FXML private ListView<Table> listTables;
 
     @FXML private Button buttonDelete, buttonCreate, buttonRefresh;
 
     @FXML private Label tableID, labelUpdated, labelCreated;
 
-    public TablesStage(Client client) throws IOException {
-        this.client = client;
+    public TablesStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/TablesStage.fxml"));
         loader.setController(this);
         Parent root = loader.load();
@@ -76,7 +73,7 @@ public class TablesStage extends Stage {
     }
 
     private void loadData() {
-        client.sendWithAction(new MessageGet<>(Table.class), (text) -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Table.class), (text) -> {
             Message<Table> tables = null;
             try {
                 tables = new Message<>(text);
@@ -95,7 +92,7 @@ public class TablesStage extends Stage {
     public void deleteButtonPressed(ActionEvent actionEvent) {
         Table selectedItem = listTables.getSelectionModel().getSelectedItem();
         Message<Table> update = new Message<>(MessageType.Delete, selectedItem, Table.class);
-        client.send(update.toString());
+        ConnectionManager.getInstance().send(update);
         loadData();
     }
 
@@ -103,7 +100,7 @@ public class TablesStage extends Stage {
         Table table = new Table();
         table.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
         Message<Table> message = new Message<>(MessageType.Create, table, Table.class);
-        client.send(message.toString());
+        ConnectionManager.getInstance().send(message);
         loadData();
     }
 

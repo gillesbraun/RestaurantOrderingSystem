@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
@@ -30,8 +30,6 @@ import java.util.Optional;
  * Created by gillesbraun on 17/02/2017.
  */
 public class WaitersStage extends Stage {
-    private Client client;
-
     @FXML
     private ListView<Waiter> listWaiters;
 
@@ -44,8 +42,7 @@ public class WaitersStage extends Stage {
     @FXML
     private TextField waiterName;
 
-    public WaitersStage(Client client) throws IOException {
-        this.client = client;
+    public WaitersStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/WaitersStage.fxml"));
         loader.setController(this);
         Parent root = loader.load();
@@ -86,7 +83,7 @@ public class WaitersStage extends Stage {
     }
 
     private void loadWaiters() {
-        client.sendWithAction(new MessageGet<>(Waiter.class), (String m) -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Waiter.class), (String m) -> {
             Message<Waiter> mess = null;
             try {
                 mess = new Message<>(m);
@@ -103,7 +100,7 @@ public class WaitersStage extends Stage {
     public void deleteButtonPressed(ActionEvent actionEvent) {
         ObservableList<Waiter> selectedItems = listWaiters.getSelectionModel().getSelectedItems();
         Message<Waiter> waiterMessage = new Message<>(MessageType.Delete, selectedItems, Waiter.class);
-        client.send(waiterMessage.toString());
+        ConnectionManager.getInstance().send(waiterMessage);
         loadWaiters();
     }
 
@@ -112,7 +109,7 @@ public class WaitersStage extends Stage {
             Waiter waiter = listWaiters.getSelectionModel().getSelectedItem();
             waiter.setName(waiterName.getText());
             Message<Waiter> message = new Message<>(MessageType.Update, waiter, Waiter.class);
-            client.send(message.toString());
+            ConnectionManager.getInstance().send(message);
             loadWaiters();
         }
     }
@@ -128,7 +125,7 @@ public class WaitersStage extends Stage {
             Waiter waiter = new Waiter();
             waiter.setName(enteredName.get());
             Message<Waiter> message = new Message<>(MessageType.Create, waiter, Waiter.class);
-            client.send(message.toString());
+            ConnectionManager.getInstance().send(message);
             loadWaiters();
         }
     }

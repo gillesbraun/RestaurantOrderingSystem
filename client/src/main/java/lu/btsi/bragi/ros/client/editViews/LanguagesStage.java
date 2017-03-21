@@ -16,7 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
@@ -35,9 +35,7 @@ import java.util.Optional;
 /**
  * Created by gillesbraun on 03/03/2017.
  */
-public class LanguagesStage extends Stage {;
-    private Client client;
-
+public class LanguagesStage extends Stage {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd MMM yyyy H:mm");
 
     @FXML private Label labelUpdatedAt, labelCreatedAt;
@@ -48,8 +46,7 @@ public class LanguagesStage extends Stage {;
 
     private ObservableList<Language> languagesForList;
 
-    public LanguagesStage(Client client) throws IOException {
-        this.client = client;
+    public LanguagesStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LanguagesStage.fxml"));
         loader.setController(this);
         Parent root = loader.load();
@@ -67,7 +64,7 @@ public class LanguagesStage extends Stage {;
     }
 
     private void loadData() {
-        client.sendWithAction(new MessageGet<>(Language.class), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Language.class), message -> {
             try {
                 List<Language> languages = new Message<Language>(message).getPayload();
                 languagesForList = FXCollections.observableList(languages);
@@ -136,7 +133,7 @@ public class LanguagesStage extends Stage {;
             Language language = new Language();
             language.setCode(codeAndName.getKey());
             language.setName(codeAndName.getValue());
-            client.sendWithAction(new Message<>(MessageType.Create, language, Language.class), message -> {
+            ConnectionManager.getInstance().sendWithAction(new Message<>(MessageType.Create, language, Language.class), message -> {
                 try {
                     new Message<Language>(message);
                 } catch (MessageException e) {
@@ -159,7 +156,7 @@ public class LanguagesStage extends Stage {;
     public void buttonDeleteLanguagePressed(ActionEvent evt) {
         Language selectedItem = listViewLanguages.getSelectionModel().getSelectedItem();
         if(selectedItem != null) {
-            client.send(new Message<>(MessageType.Delete, selectedItem, Language.class).toString());
+            ConnectionManager.getInstance().send(new Message<>(MessageType.Delete, selectedItem, Language.class));
             loadData();
         }
     }
@@ -169,7 +166,7 @@ public class LanguagesStage extends Stage {;
         if(selectedItem != null) {
             selectedItem.setCode(textFieldLanguageCode.getText());
             selectedItem.setName(textFieldLanguageName.getText());
-            client.send(new Message<>(MessageType.Update, selectedItem, Language.class).toString());
+            ConnectionManager.getInstance().send(new Message<>(MessageType.Update, selectedItem, Language.class));
             loadData();
         }
     }

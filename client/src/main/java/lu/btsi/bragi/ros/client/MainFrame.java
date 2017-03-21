@@ -42,10 +42,6 @@ import java.net.UnknownHostException;
  * Created by gillesbraun on 14/02/2017.
  */
 public class MainFrame extends Application implements UICallback {
-    private Client client;
-
-    private ConnectionManager connectionManager = new ConnectionManager(this);
-
     @FXML
     private TextArea statusTextArea;
 
@@ -55,17 +51,17 @@ public class MainFrame extends Application implements UICallback {
     @FXML
     private VBox panelOrdersContainer, invoicesContainer;
 
-    @FXML private Label labelOrdersTitle;
+    @FXML
+    private Label labelOrdersTitle;
 
-    @FXML private MenuItem menuItemRefresh, menuItemQRCode, menuItemSettings;
+    @FXML
+    private MenuItem menuItemRefresh, menuItemQRCode, menuItemSettings;
 
     private OrdersPanel ordersPane;
     private InvoicesContainerPane invoicesContainerPane;
 
     private EventHandler<WindowEvent> onClose = event -> {
-        if(client != null) {
-            client.close();
-        }
+        ConnectionManager.getInstance().close();
         System.exit(0);
     };
     private Stage parent;
@@ -74,6 +70,7 @@ public class MainFrame extends Application implements UICallback {
     @Override
     public void start(Stage primaryStage) throws Exception {
         Config.init();
+        ConnectionManager.init(this);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/MainFrame.fxml"));
         loader.setController(this);
         Parent root = loader.load();
@@ -91,13 +88,12 @@ public class MainFrame extends Application implements UICallback {
         menuItemSettings.setGraphic(fa.create(FontAwesome.Glyph.GEARS));
         menuItemSettings.getGraphic().setEffect(new Shadow(1, Color.BLACK));
 
-        connectionManager.newClient();
     }
 
     public void showQR(ActionEvent evt) throws UnknownHostException, WriterException {
-        if(client == null)
+        if (!ConnectionManager.isConnected())
             return;
-        String connectingTo = client.getRemoteIPAdress()+":8887";
+        String connectingTo = ConnectionManager.getInstance().getRemoteIPAdress() + ":8887";
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix encode = qrCodeWriter.encode(connectingTo, BarcodeFormat.QR_CODE, 500, 500);
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(encode);
@@ -118,7 +114,6 @@ public class MainFrame extends Application implements UICallback {
 
     @Override
     public void connectionOpened(String message, Client client) {
-        this.client = client;
         displayMessage(message);
         loadContent();
     }
@@ -128,8 +123,8 @@ public class MainFrame extends Application implements UICallback {
     }
 
     private void loadContent() {
-        ordersPane = new OrdersPanel(client);
-        invoicesContainerPane = new InvoicesContainerPane(client);
+        ordersPane = new OrdersPanel();
+        invoicesContainerPane = new InvoicesContainerPane();
         Platform.runLater(() -> {
             menuEdit.setDisable(false);
             menuItemQRCode.setDisable(false);
@@ -146,19 +141,14 @@ public class MainFrame extends Application implements UICallback {
     }
 
     public void menuItemQuitPressed(ActionEvent actionEvent) {
-        if(client != null) {
-            client.close();
-        }
-        System.exit(0);
+        onClose.handle(null);
     }
 
     public void menuItemWaitersPressed(ActionEvent actionEvent) {
         try {
-            if(client != null) {
-                WaitersStage waitersStage = new WaitersStage(client);
-                waitersStage.initOwner(parent);
-                waitersStage.show();
-            }
+            WaitersStage waitersStage = new WaitersStage();
+            waitersStage.initOwner(parent);
+            waitersStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -166,73 +156,61 @@ public class MainFrame extends Application implements UICallback {
 
     public void menuItemTablesPressed(ActionEvent actionEvent) {
         try {
-            if(client != null) {
-                TablesStage tablesStage = new TablesStage(client);
-                tablesStage.initOwner(parent);
-                tablesStage.show();
-            }
+            TablesStage tablesStage = new TablesStage();
+            tablesStage.initOwner(parent);
+            tablesStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void menuItemProductsPressed(ActionEvent event) {
-        if(client != null) {
-            try {
-                ProductsStage productsStage = new ProductsStage(client);
-                productsStage.initOwner(parent);
-                productsStage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            ProductsStage productsStage = new ProductsStage();
+            productsStage.initOwner(parent);
+            productsStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public void menuItemLanguagesPressed(ActionEvent evt) {
-        if(client != null) {
-            try {
-                LanguagesStage languagesStage = new LanguagesStage(client);
-                languagesStage.initOwner(parent);
-                languagesStage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            LanguagesStage languagesStage = new LanguagesStage();
+            languagesStage.initOwner(parent);
+            languagesStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public void menuItemProductCategoriesPressed(ActionEvent evt) {
-        if(client != null) {
-            try {
-                ProductCategoriesStage productCategoriesStage = new ProductCategoriesStage(client);
-                productCategoriesStage.initOwner(parent);
-                productCategoriesStage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            ProductCategoriesStage productCategoriesStage = new ProductCategoriesStage();
+            productCategoriesStage.initOwner(parent);
+            productCategoriesStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public void menuItemAllergensPressed(ActionEvent evt) {
-        if(client != null) {
-            try {
-                AllergensStage allergensStage = new AllergensStage(client);
-                allergensStage.initOwner(parent);
-                allergensStage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            AllergensStage allergensStage = new AllergensStage();
+            allergensStage.initOwner(parent);
+            allergensStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     public void menuItemLocationsPressed(ActionEvent evt) {
-        if(client != null) {
-            try {
-                LocationsStage locationsStage = new LocationsStage(client);
-                locationsStage.initOwner(parent);
-                locationsStage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        try {
+            LocationsStage locationsStage = new LocationsStage();
+            locationsStage.initOwner(parent);
+            locationsStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

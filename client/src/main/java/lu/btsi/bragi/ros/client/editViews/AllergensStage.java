@@ -12,7 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
@@ -36,8 +36,6 @@ import static lu.btsi.bragi.ros.models.message.MessageType.Delete;
  * Created by gillesbraun on 03/03/2017.
  */
 public class AllergensStage extends Stage {
-    private Client client;
-
     @FXML private Label labelID;
     @FXML private Button buttonRefreshAllergen, buttonAddAllergen, buttonDeleteAllergen, buttonAddTranslation,
                          buttonEditTranslation;
@@ -53,8 +51,7 @@ public class AllergensStage extends Stage {
     private ObservableList<AllergenLocalized> allergensLocalizedForList;
     private ObservableList<Language> languagesForChoiceBox;
 
-    public AllergensStage(Client client) throws IOException {
-        this.client = client;
+    public AllergensStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/AllergensStage.fxml"));
         loader.setController(this);
         Parent root = loader.load();
@@ -115,7 +112,7 @@ public class AllergensStage extends Stage {
 
     private void loadData() {
         // Get allergens
-        client.sendWithAction(new MessageGet<>(Allergen.class), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Allergen.class), message -> {
             try {
                 List<Allergen> payload = new Message<Allergen>(message).getPayload();
                 allergensForList = FXCollections.observableList(payload);
@@ -129,7 +126,7 @@ public class AllergensStage extends Stage {
     private void loadTranslations() {
         if(selectedAllergen == null)
             return;
-        client.sendWithAction(new MessageGet<>(AllergenLocalized.class), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(AllergenLocalized.class), message -> {
             try {
                 List<AllergenLocalized> payload = new Message<AllergenLocalized>(message).getPayload();
                 allergensLocalizedForList = FXCollections.observableList(
@@ -149,7 +146,7 @@ public class AllergensStage extends Stage {
         if(selectedAllergen == null)
             return;
 
-        client.sendWithAction(new MessageGet<>(Language.class), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Language.class), message -> {
             try {
                 List<Language> payload = new Message<Language>(message).getPayload();
                 // Gather already translated languages
@@ -180,13 +177,13 @@ public class AllergensStage extends Stage {
     public void buttonAddAllergenPressed(ActionEvent evt) {
         Allergen allergen = new Allergen();
         allergen.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
-        client.send(new Message<>(Create, allergen, Allergen.class));
+        ConnectionManager.getInstance().send(new Message<>(Create, allergen, Allergen.class));
         loadData();
     }
 
     public void buttonDeleteAllergenPressed(ActionEvent evt) {
         if(selectedAllergen != null) {
-            client.send(new Message<>(Delete, selectedAllergen, Allergen.class));
+            ConnectionManager.getInstance().send(new Message<>(Delete, selectedAllergen, Allergen.class));
             loadData();
         }
     }
@@ -198,7 +195,7 @@ public class AllergensStage extends Stage {
         allergenLocalized.setAllergenId(selectedAllergen.getId());
         allergenLocalized.setLanguageCode(choiceBoxLanguage.getValue().getCode());
         allergenLocalized.setLabel(textFieldTranslation.getText());
-        client.send(new Message<>(Create, allergenLocalized, AllergenLocalized.class));
+        ConnectionManager.getInstance().send(new Message<>(Create, allergenLocalized, AllergenLocalized.class));
         textFieldTranslation.clear();
         loadTranslations();
     }

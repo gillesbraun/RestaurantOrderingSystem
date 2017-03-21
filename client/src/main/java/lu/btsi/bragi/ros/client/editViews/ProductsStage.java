@@ -18,7 +18,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Pair;
-import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
@@ -41,9 +41,6 @@ import static lu.btsi.bragi.ros.models.message.MessageType.*;
  * Created by gillesbraun on 27/02/2017.
  */
 public class ProductsStage extends Stage {
-    private Client client;
-
-
     @FXML private TextField textFieldPrice, textFieldTranslation;
     @FXML private Button buttonProductCategoryEdit, buttonDelete, buttonRefresh, buttonAddAllergen, buttonEditAllergen,
                          buttonAddTranslation, buttonEditLanguages, buttonAddProduct, buttonEditTranslation,
@@ -66,8 +63,7 @@ public class ProductsStage extends Stage {
     private List<Language> allLanguages;
     private List<ProductCategoryLocalized> allProductCategoriesLocalized;
 
-    public ProductsStage(Client client) throws IOException {
-        this.client = client;
+    public ProductsStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProductsStage.fxml"));
         loader.setController(this);
         Parent root = loader.load();
@@ -103,7 +99,7 @@ public class ProductsStage extends Stage {
                         String str = String.format("N\u00b0: %s, Price: %.2f", item.getId(), item.getPrice().doubleValue());
                         try {
                             ProductLocalized productInLanguage = item.getProductInLanguage(Config.getInstance().generalSettings.getLanguage());
-                            str = str + " " + productInLanguage.getLabel();
+                            str = str + ", " + productInLanguage.getLabel();
                         } catch (Exception e) {}
                         setText(str);
                     }
@@ -127,7 +123,7 @@ public class ProductsStage extends Stage {
     private void loadData() {
         Platform.runLater(() -> {
             // Get all Products for left listView
-            client.sendWithAction(new MessageGet<>(Product.class), message -> {
+            ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Product.class), message -> {
                 try {
                     Product previousSelected = listProducts.getSelectionModel().getSelectedItem();
                     Message<Product> decoded = new Message<>(message);
@@ -147,7 +143,7 @@ public class ProductsStage extends Stage {
             });
 
             // Get Product Categories for display in choicebox
-            client.sendWithAction(new MessageGet<>(ProductCategoryLocalized.class), message -> {
+            ConnectionManager.getInstance().sendWithAction(new MessageGet<>(ProductCategoryLocalized.class), message -> {
                 try {
                     allProductCategoriesLocalized = new Message<ProductCategoryLocalized>(message).getPayload();
                     productCategoriesForChoiceBox.setAll(
@@ -163,7 +159,7 @@ public class ProductsStage extends Stage {
             });
 
             // Get Localized Allergens for display in choicebox
-            client.sendWithAction(new MessageGet<>(AllergenLocalized.class), message -> {
+            ConnectionManager.getInstance().sendWithAction(new MessageGet<>(AllergenLocalized.class), message -> {
                 try {
                     Message<AllergenLocalized> messageAllergensLocalized = new Message<>(message);
                     allAllergenesLocalized = messageAllergensLocalized.getPayload();
@@ -181,7 +177,7 @@ public class ProductsStage extends Stage {
             });
 
             // Get all languages
-            client.sendWithAction(new MessageGet<>(Language.class), message -> {
+            ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Language.class), message -> {
                 try {
                     allLanguages = new Message<Language>(message).getPayload();
                 } catch (MessageException e) {
@@ -270,7 +266,7 @@ public class ProductsStage extends Stage {
             textFieldTranslation.setText("");
             textFieldTranslation.requestFocus();
 
-            client.send(new Message<>(Update, selectedItem, ProductLocalized.class));
+            ConnectionManager.getInstance().send(new Message<>(Update, selectedItem, ProductLocalized.class));
             buttonEditTranslation.setDisable(true);
         }
     }
@@ -285,7 +281,7 @@ public class ProductsStage extends Stage {
 
             Message<ProductAllergen> deleteProdAllerg =
                     new Message<>(Delete, productAllergen, ProductAllergen.class);
-            client.send(deleteProdAllerg.toString());
+            ConnectionManager.getInstance().send(deleteProdAllerg);
             loadData();
         }
     }
@@ -333,7 +329,7 @@ public class ProductsStage extends Stage {
             product.setPrice(BigDecimal.valueOf(result.get().getValue()));
             product.setProductCategoryId(result.get().getKey().getProductCategoryId());
             Message<Product> createMsg = new Message<>(Create, product, Product.class);
-            client.send(createMsg.toString());
+            ConnectionManager.getInstance().send(createMsg);
             loadData();
         }
     }
@@ -347,7 +343,7 @@ public class ProductsStage extends Stage {
         ProductAllergen productAllergen = new ProductAllergen();
         productAllergen.setAllergenId(allergenLocalized.getAllergenId());
         productAllergen.setProductId(selectedProduct.getId());
-        client.send(new Message<>(Create, productAllergen, ProductAllergen.class));
+        ConnectionManager.getInstance().send(new Message<>(Create, productAllergen, ProductAllergen.class));
         allergeneLocalizedForList.add(allergenLocalized);
         loadData();
         updateAllergensChoiceBox();
@@ -363,7 +359,7 @@ public class ProductsStage extends Stage {
             product.setProductCategoryId(choiceBoxProductCategory.getValue().getProductCategoryId());
 
             Message<Product> productMessage = new Message<>(Update, product, Product.class);
-            client.send(productMessage);
+            ConnectionManager.getInstance().send(productMessage);
         }
     }
 
@@ -371,7 +367,7 @@ public class ProductsStage extends Stage {
         Product p;
         if((p = listProducts.getSelectionModel().getSelectedItem()) != null) {
             Message<Product> productMessage = new Message<>(Delete, p, Product.class);
-            client.send(productMessage.toString());
+            ConnectionManager.getInstance().send(productMessage);
             loadData();
         }
     }
@@ -385,7 +381,7 @@ public class ProductsStage extends Stage {
         productLocalized.setProductId(listProducts.getSelectionModel().getSelectedItem().getId());
         productLocalized.setLanguageCode(choiceBoxLanguage.getValue().getCode());
         productLocalizedForListView.add(productLocalized);
-        client.send(new Message<>(Create, productLocalized, ProductLocalized.class));
+        ConnectionManager.getInstance().send(new Message<>(Create, productLocalized, ProductLocalized.class));
         textFieldTranslation.setText("");
         textFieldTranslation.requestFocus();
 
@@ -420,7 +416,7 @@ public class ProductsStage extends Stage {
 
     public void buttonEditLanguagesPressed(ActionEvent event) {
         try {
-            LanguagesStage languagesStage = new LanguagesStage(client);
+            LanguagesStage languagesStage = new LanguagesStage();
             languagesStage.initOwner(getOwner());
             languagesStage.show();
         } catch (IOException e) {
@@ -430,7 +426,7 @@ public class ProductsStage extends Stage {
 
     public void buttonProductCategoryEditPressed(ActionEvent event) {
         try {
-            ProductCategoriesStage productCategoriesStage = new ProductCategoriesStage(client);
+            ProductCategoriesStage productCategoriesStage = new ProductCategoriesStage();
             productCategoriesStage.initOwner(getOwner());
             productCategoriesStage.show();
         } catch (IOException e) {
@@ -440,7 +436,7 @@ public class ProductsStage extends Stage {
 
     public void buttonEditAllergenPressed(ActionEvent event) {
         try {
-            AllergensStage allergensStage = new AllergensStage(client);
+            AllergensStage allergensStage = new AllergensStage();
             allergensStage.initOwner(getOwner());
             allergensStage.show();
         } catch (IOException e) {

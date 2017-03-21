@@ -12,7 +12,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
-import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.models.message.*;
 import lu.btsi.bragi.ros.models.pojos.Order;
 
@@ -22,16 +22,13 @@ import java.util.List;
  * Created by gillesbraun on 08/03/2017.
  */
 public class OrdersPanel extends ScrollPane {
-    private Client client;
-
     private Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, this::refreshOrders), new KeyFrame(Duration.seconds(15)));
 
     private ProgressIndicator progressOrders = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
 
     private VBox vbox = new VBox(7);
 
-    OrdersPanel(Client client) {
-        this.client = client;
+    OrdersPanel() {
         setMinWidth(vbox.getPrefWidth());
         setHbarPolicy(ScrollBarPolicy.NEVER);
 
@@ -43,14 +40,14 @@ public class OrdersPanel extends ScrollPane {
     }
 
     private void refreshOrders(ActionEvent event) {
-        if(client == null)
+        if(!ConnectionManager.isConnected())
             return;
-        client.sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Open_Orders)), m -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGetQuery<>(Order.class, new Query(QueryType.Open_Orders)), m -> {
             try {
                 List<Order> ordersToday = new Message<Order>(m).getPayload();
                 vbox.getChildren().clear();
                 ordersToday.forEach(order -> {
-                    vbox.getChildren().add(new SingleOrderPanel(client, order));
+                    vbox.getChildren().add(new SingleOrderPanel(order));
                     // add separator if not last element
                     if(ordersToday.indexOf(order) != ordersToday.size() - 1)
                         vbox.getChildren().add(new Separator(Orientation.HORIZONTAL));

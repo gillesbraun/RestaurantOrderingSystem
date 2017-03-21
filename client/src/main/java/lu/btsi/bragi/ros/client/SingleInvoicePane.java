@@ -13,6 +13,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageType;
@@ -32,7 +33,6 @@ import static java.util.stream.Collectors.toList;
  * Created by gillesbraun on 09/03/2017.
  */
 public class SingleInvoicePane extends VBox {
-
     @FXML private ListView<ProductPriceForOrder> listViewProducts;
     @FXML private Label labelTable, lableInvoice, labelTotalPrice, labelPaid;
     @FXML private Button buttonPay;
@@ -40,12 +40,10 @@ public class SingleInvoicePane extends VBox {
     private ObservableList<ProductPriceForOrder> listProducts = FXCollections.observableArrayList();
 
     private List<ProductPriceForOrder> produtsPriceForOrder;
-    private Table table;
     private List<Order> orders;
     private InvoicesContainerPane parent;
 
     SingleInvoicePane(Table table, List<Order> orders, InvoicesContainerPane invoicesContainerPane) throws IOException {
-        this.table = table;
         this.orders = orders;
         parent = invoicesContainerPane;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SingleInvoicePanel.fxml"));
@@ -113,7 +111,7 @@ public class SingleInvoicePane extends VBox {
             e.printStackTrace();
         }
 
-        parent.send(new Message<>(MessageType.Create, invoice, Invoice.class));
+        ConnectionManager.getInstance().send(new Message<>(MessageType.Create, invoice, Invoice.class));
         parent.loadInvoices();
     }
 }

@@ -11,7 +11,6 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import lu.btsi.bragi.ros.client.connection.Client;
 import org.controlsfx.control.SnapshotView;
 
 import javax.imageio.ImageIO;
@@ -22,7 +21,6 @@ import java.io.IOException;
  * Created by gillesbraun on 20/03/2017.
  */
 public class ImageCropperStage extends Stage {
-    private Client client;
     private VBox vBox = new VBox(7);
     private HBox hBox = new HBox(7);
     private Button
@@ -33,9 +31,8 @@ public class ImageCropperStage extends Stage {
 
     private WritableImage image;
 
-    ImageCropperStage(Client client, File file) throws IOException {
+    ImageCropperStage(File file) throws IOException {
         super();
-        this.client = client;
         imageView = new ImageView(SwingFXUtils.toFXImage(ImageIO.read(file), null));
         snapshowView = new SnapshotView(imageView);
         snapshowView.setFixedSelectionRatio(1);

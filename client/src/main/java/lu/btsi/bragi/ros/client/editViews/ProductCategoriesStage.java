@@ -20,7 +20,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
-import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
@@ -50,8 +50,6 @@ import static lu.btsi.bragi.ros.models.message.MessageType.*;
  * Created by gillesbraun on 03/03/2017.
  */
 public class ProductCategoriesStage extends Stage {
-    private Client client;
-
     @FXML private Label labelID;
     @FXML private Button buttonRefreshProductCategories, buttonAddProductCategories, buttonDeleteProductCategories,
         buttonAddTranslation, buttonEditTranslation, buttonSaveImageURLPressed, buttonEditLocations, buttonChooseImage;
@@ -68,8 +66,7 @@ public class ProductCategoriesStage extends Stage {
     private ObservableList<Language> languagesForChoiceBox;
     private ObservableList<Location> locationsForChoiceBox;
 
-    public ProductCategoriesStage(Client client) throws IOException {
-        this.client = client;
+    public ProductCategoriesStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/ProductCategoriesStage.fxml"));
         loader.setController(this);
         Parent root = loader.load();
@@ -137,7 +134,7 @@ public class ProductCategoriesStage extends Stage {
                 labelID.setText("-");
                 imageView.setImage(new Image(getClass().getResource("/noimage.png").toString()));
             } else {
-                imageView.setImage(new Image("http://"+client.getRemoteIPAdress() + ":8888"  + selectedPC.getImageUrl()));
+                imageView.setImage(new Image("http://"+ConnectionManager.getInstance().getRemoteIPAdress() + ":8888"  + selectedPC.getImageUrl()));
                 loadTranslations();
                 labelID.setText(selectedPC.getId()+"");
                 selectCurrentLocation();
@@ -174,7 +171,7 @@ public class ProductCategoriesStage extends Stage {
 
     private void loadData() {
         // Get Categories
-        client.sendWithAction(new MessageGet<>(ProductCategory.class), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(ProductCategory.class), message -> {
             try {
                 // Get previously selected
                 ProductCategory prevItem = listViewProductCategories.getSelectionModel().getSelectedItem();
@@ -205,7 +202,7 @@ public class ProductCategoriesStage extends Stage {
         if(selectedPC == null)
             return;
         // Load translations for selected ProductCategory
-        client.sendWithAction(new MessageGet<>(ProductCategoryLocalized.class), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(ProductCategoryLocalized.class), message -> {
             try {
                 List<ProductCategoryLocalized> allProductCaterogiesLocalized = new Message<ProductCategoryLocalized>(message).getPayload();
                 productCaterogiesLocalizedForList = FXCollections.observableList(allProductCaterogiesLocalized);
@@ -227,7 +224,7 @@ public class ProductCategoriesStage extends Stage {
         if(selectedProductCategory == null)
             return;
 
-        client.sendWithAction(new MessageGet<>(Language.class), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Language.class), message -> {
             try {
                 List<Language> languages = new Message<Language>(message).getPayload();
 
@@ -253,7 +250,7 @@ public class ProductCategoriesStage extends Stage {
     }
 
     private void loadLocations() {
-        client.sendWithAction(new MessageGet<>(Location.class), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Location.class), message -> {
             List<Location> payload = null;
             try {
                 payload = new Message<Location>(message).getPayload();
@@ -281,7 +278,7 @@ public class ProductCategoriesStage extends Stage {
         if(location.isPresent()) {
             ProductCategory productCategory = new ProductCategory();
             productCategory.setLocationId(location.get().getId());
-            client.send(new Message<>(Create, productCategory, ProductCategory.class).toString());
+            ConnectionManager.getInstance().send(new Message<>(Create, productCategory, ProductCategory.class));
             loadData();
         }
     }
@@ -289,7 +286,7 @@ public class ProductCategoriesStage extends Stage {
     public void buttonDeleteProductCategoriesPressed(ActionEvent evt) {
         ProductCategory selectedPC = listViewProductCategories.getSelectionModel().getSelectedItem();
         if(selectedPC != null) {
-            client.send(new Message<>(Delete, selectedPC, ProductCategory.class).toString());
+            ConnectionManager.getInstance().send(new Message<>(Delete, selectedPC, ProductCategory.class));
             loadData();
         }
     }
@@ -304,7 +301,7 @@ public class ProductCategoriesStage extends Stage {
         pcl.setProductCategoryId(selectedPC.getId());
         pcl.setLanguageCode(choiceBoxLanguage.getValue().getCode());
         pcl.setLabel(textFieldTranslation.getText());
-        client.send(new Message<>(Create, pcl, ProductCategoryLocalized.class).toString());
+        ConnectionManager.getInstance().send(new Message<>(Create, pcl, ProductCategoryLocalized.class));
         productCaterogiesLocalizedForList.add(pcl);
         textFieldTranslation.clear();
         loadTranslations();
@@ -316,7 +313,7 @@ public class ProductCategoriesStage extends Stage {
             selectedPCL.setLabel(textFieldTranslation.getText());
             textFieldTranslation.clear();
             listViewTranslations.refresh();
-            client.send(new Message<>(Update, selectedPCL, ProductCategoryLocalized.class).toString());
+            ConnectionManager.getInstance().send(new Message<>(Update, selectedPCL, ProductCategoryLocalized.class));
             loadTranslations();
         }
     }
@@ -325,14 +322,14 @@ public class ProductCategoriesStage extends Stage {
         ProductCategory selectedPC = listViewProductCategories.getSelectionModel().getSelectedItem();
         if(selectedPC != null) {
             selectedPC.setLocationId(choiceBoxLocation.getValue().getId());
-            client.send(new Message<>(Update, selectedPC, ProductCategory.class).toString());
+            ConnectionManager.getInstance().send(new Message<>(Update, selectedPC, ProductCategory.class));
             loadData();
         }
     }
 
     public void buttonEditLocationsPressed(ActionEvent evt) {
         try {
-            LocationsStage locationsStage = new LocationsStage(client);
+            LocationsStage locationsStage = new LocationsStage();
             locationsStage.initOwner(this);
             locationsStage.show();
         } catch (IOException e) {
@@ -349,7 +346,7 @@ public class ProductCategoriesStage extends Stage {
         File file = fc.showOpenDialog(this);
         if(file != null) {
             try {
-                ImageCropperStage imageCropperStage = new ImageCropperStage(client, file);
+                ImageCropperStage imageCropperStage = new ImageCropperStage(file);
                 imageCropperStage.initOwner(this);
                 imageCropperStage.showAndWait();
                 System.err.println("If there were errors above (IllegalArgumentException), that is normal. Bug in controlsFX");
@@ -359,13 +356,13 @@ public class ProductCategoriesStage extends Stage {
                     BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
                     bufferedImage = Thumbnails.of(bufferedImage).size(500, 500).asBufferedImage();
                     ImageIO.write(bufferedImage, "png", rostemp);
-                    String url = "http://" + client.getRemoteIPAdress() + ":8888/?category=" + selectedCategory.getId();
+                    String url = "http://" + ConnectionManager.getInstance().getRemoteIPAdress() + ":8888/?category=" + selectedCategory.getId();
                     Request.Post(url)
                             .bodyStream(new FileInputStream(rostemp))
                             .execute();
                     rostemp.delete();
                     selectedCategory.setImageUrl("/?category=" + selectedCategory.getId());
-                    client.send(new Message<>(Update, selectedCategory, ProductCategory.class));
+                    ConnectionManager.getInstance().send(new Message<>(Update, selectedCategory, ProductCategory.class));
                     loadData();
                 }
             } catch (IOException e) {

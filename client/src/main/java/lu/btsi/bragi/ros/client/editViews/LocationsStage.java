@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import lu.btsi.bragi.ros.client.connection.Client;
+import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
@@ -31,8 +31,6 @@ import static lu.btsi.bragi.ros.models.message.MessageType.*;
  * Created by gillesbraun on 06/03/2017.
  */
 public class LocationsStage extends Stage {
-    private final Client client;
-
     @FXML private Button buttonAdd, buttonDelete, buttonRefresh, buttonSave;
     @FXML private ListView<Location> listViewLocations;
     @FXML private VBox detailPane;
@@ -44,8 +42,7 @@ public class LocationsStage extends Stage {
     private Location selectedLocation;
     private ObservableList<Location> locationsForList;
 
-    public LocationsStage(Client client) throws IOException {
-        this.client = client;
+    public LocationsStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LocationsStage.fxml"));
         loader.setController(this);
         Parent root = loader.load();
@@ -64,7 +61,7 @@ public class LocationsStage extends Stage {
     }
 
     private void loadData() {
-        client.sendWithAction(new MessageGet<>(Location.class), message -> {
+        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Location.class), message -> {
             try {
                 Location previous = selectedLocation;
                 List<Location> payload = new Message<Location>(message).getPayload();
@@ -107,14 +104,14 @@ public class LocationsStage extends Stage {
         if(s.isPresent() && s.get().trim().length() > 0) {
             Location location = new Location();
             location.setDescription(s.get());
-            client.send(new Message<>(Create, location, Location.class));
+            ConnectionManager.getInstance().send(new Message<>(Create, location, Location.class));
             loadData();
         }
     }
 
     public void buttonDeletePressed(ActionEvent evt) {
         if(selectedLocation != null) {
-            client.send(new Message<>(Delete, selectedLocation, Location.class));
+            ConnectionManager.getInstance().send(new Message<>(Delete, selectedLocation, Location.class));
             loadData();
         }
     }
@@ -122,7 +119,7 @@ public class LocationsStage extends Stage {
     public void buttonSavePressed(ActionEvent evt) {
         if(selectedLocation != null && textFieldDescription.getText().trim().length() > 0) {
             selectedLocation.setDescription(textFieldDescription.getText());
-            client.send(new Message<>(Update, selectedLocation, Location.class));
+            ConnectionManager.getInstance().send(new Message<>(Update, selectedLocation, Location.class));
             loadData();
         }
     }

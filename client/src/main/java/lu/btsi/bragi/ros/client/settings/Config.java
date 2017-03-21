@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Created by Gilles Braun on 18.03.2017.
@@ -37,7 +38,7 @@ public class Config {
 
     public static void save() throws IOException {
         String settings = new GsonBuilder().setPrettyPrinting().create().toJson(ourInstance, Config.class);
-        try(PrintWriter pw = new PrintWriter("settings.json")) {
+        try(PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream("settings.json"), StandardCharsets.UTF_8), true)) {
             pw.print(settings);
         }
     }
