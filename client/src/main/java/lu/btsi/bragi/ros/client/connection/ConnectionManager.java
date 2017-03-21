@@ -2,6 +2,8 @@ package lu.btsi.bragi.ros.client.connection;
 
 import javafx.application.Platform;
 import lu.btsi.bragi.ros.client.MessageCallback;
+import lu.btsi.bragi.ros.client.settings.Config;
+import lu.btsi.bragi.ros.client.settings.ConnectionSettings;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageType;
@@ -48,6 +50,19 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
     }
 
     public void newClient() {
+        ConnectionSettings connectionSettings = Config.getInstance().connectionSettings;
+        if(!connectionSettings.isFirstConnection() && !connectionSettings.isAutoDiscovery()) {
+            newClientIP(connectionSettings.getHostAddress());
+            return;
+        }
+        if(connectionSettings.isAutoDiscovery()) {
+            newClientAutoDiscover();
+        } else {
+            newClientIP(connectionSettings.getHostAddress());
+        }
+    }
+
+    private void newClientAutoDiscover() {
         try {
             JmDNS jmDNS = JmDNS.create(InetAddress.getLocalHost());
             jmDNS.addServiceListener("_ws._tcp.local.", this);
@@ -55,6 +70,13 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void newClientIP(String ip) {
+        client = new Client(URI.create("ws://"+ip+":8887"));
+        client.setConnectionCallback(this);
+        client.setMessageCallback(this);
+        client.connect();
     }
 
     public void send(Message message) {
@@ -129,6 +151,14 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
         isConnected = true;
         uiCallback.connectionOpened(message, client);
         connectionCallbacks.forEach(c -> c.connectionOpened(message));
+        ConnectionSettings connectionSettings = Config.getInstance().connectionSettings;
+        connectionSettings.setFirstConnection(false);
+        connectionSettings.setHostAddress(getRemoteIPAdress());
+        try {
+            Config.save();
+        } catch (IOException e) {
+            System.err.println("Error saving settings: "+e.getMessage());
+        }
     }
 
     @Override

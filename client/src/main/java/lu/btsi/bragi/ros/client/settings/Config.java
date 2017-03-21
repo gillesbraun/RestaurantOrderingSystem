@@ -14,6 +14,7 @@ public class Config {
 
     public InvoiceSettings invoiceSettings;
     public GeneralSettings generalSettings;
+    public ConnectionSettings connectionSettings;
 
     public static Config getInstance() {
         return ourInstance;
@@ -30,6 +31,7 @@ public class Config {
                 ourInstance = new Config();
                 ourInstance.invoiceSettings = new InvoiceSettings();
                 ourInstance.generalSettings = new GeneralSettings();
+                ourInstance.connectionSettings = new ConnectionSettings();
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();

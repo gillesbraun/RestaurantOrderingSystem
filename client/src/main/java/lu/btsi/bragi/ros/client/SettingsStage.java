@@ -8,6 +8,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -29,8 +30,9 @@ public class SettingsStage extends Stage implements ConnectionCallback {
     @FXML private Button buttonSave, buttonCancel;
     @FXML private TextField
             textFieldCurrency, textFieldInvoiceTitle, textFieldInvoiceAddress1, textFieldInvoiceAddress2, textFieldInvoiceTax,
-            textFieldInvoiceTelephone, textFieldInvoiceEmail;
+            textFieldInvoiceTelephone, textFieldInvoiceEmail, textFieldHostAddress;
     @FXML private ChoiceBox<Language> choiceBoxLanguage;
+    @FXML private CheckBox checkBoxAutoDisover;
     private ObservableList<Language> listLanguages = FXCollections.observableArrayList();
 
     SettingsStage() throws IOException {
@@ -55,9 +57,12 @@ public class SettingsStage extends Stage implements ConnectionCallback {
         textFieldInvoiceTax.setText(config.invoiceSettings.getTaxNumber());
         textFieldInvoiceTelephone.setText(config.invoiceSettings.getTelephone());
         textFieldInvoiceEmail.setText(config.invoiceSettings.getEmail());
+
+        textFieldHostAddress.setText(config.connectionSettings.getHostAddress());
+        checkBoxAutoDisover.setSelected(config.connectionSettings.isAutoDiscovery());
     }
 
-    public void buttonSavePressed(ActionEvent evt) {
+    private void saveConfig() {
         Config config = Config.getInstance();
         config.generalSettings.setCurrency(textFieldCurrency.getText());
         config.invoiceSettings.setTitle(textFieldInvoiceTitle.getText());
@@ -66,6 +71,7 @@ public class SettingsStage extends Stage implements ConnectionCallback {
         config.invoiceSettings.setTaxNumber(textFieldInvoiceTax.getText());
         config.invoiceSettings.setTelephone(textFieldInvoiceTelephone.getText());
         config.invoiceSettings.setEmail(textFieldInvoiceEmail.getText());
+        config.connectionSettings.setAutoDiscovery(checkBoxAutoDisover.isSelected());
         if(choiceBoxLanguage.getValue() != null)
             config.generalSettings.setLanguage(choiceBoxLanguage.getValue());
         try {
@@ -73,11 +79,23 @@ public class SettingsStage extends Stage implements ConnectionCallback {
         } catch (IOException e) {
             new ExceptionDialog(e).show();
         }
+    }
+
+    public void buttonSavePressed(ActionEvent evt) {
+        saveConfig();
         close();
     }
 
     public void buttonCancelPressed(ActionEvent evt) {
         close();
+    }
+
+    public void buttonReconnectPressed(ActionEvent evt) {
+        ConnectionManager.getInstance().newClient();
+    }
+
+    public void buttonApplyPressed(ActionEvent evt) {
+        saveConfig();
     }
 
     @Override

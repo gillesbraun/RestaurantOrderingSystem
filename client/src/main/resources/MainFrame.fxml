@@ -34,7 +34,7 @@
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="0.7588075880758808" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="0.8563685636856369" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
         <items>
             <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
               <items>
@@ -72,7 +72,7 @@
             </SplitPane>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="137.0" prefWidth="668.0" SplitPane.resizableWithParent="false">
                <children>
-                  <TextArea fx:id="statusTextArea" focusTraversable="false" editable="false" prefHeight="200.0" prefWidth="640.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
+                  <TextArea fx:id="statusTextArea" editable="false" focusTraversable="false" layoutY="48.0" prefHeight="29.0" prefWidth="622.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="8.0" AnchorPane.rightAnchor="8.0" AnchorPane.topAnchor="8.0">
                      <font>
                         <Font name="Courier New" size="13.0" />
                      </font></TextArea>

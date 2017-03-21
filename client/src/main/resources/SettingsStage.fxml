@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <BorderPane xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <TabPane tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
         <tabs>
-          <Tab text="General Settings">
+          <Tab text="General">
                <content>
                   <VBox spacing="14.0">
                      <padding>
@@ -34,7 +34,30 @@
                   </VBox>
                </content>
           </Tab>
-          <Tab text="Invoice Settings">
+            <Tab text="Connection">
+               <content>
+                  <VBox spacing="14.0">
+                     <padding>
+                        <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+                     </padding>
+                     <children>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="Server Address:" />
+                              <TextField fx:id="textFieldHostAddress" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <CheckBox fx:id="checkBoxAutoDisover" mnemonicParsing="false" text="Use Auto Discover" />
+                           </children>
+                        </HBox>
+                        <Button mnemonicParsing="false" onAction="#buttonReconnectPressed" text="Reconnect Client" />
+                     </children>
+                  </VBox>
+               </content>
+            </Tab>
+          <Tab text="Invoice">
                <content>
                   <VBox spacing="14.0">
                      <padding>
@@ -88,7 +111,8 @@
       <HBox alignment="CENTER_RIGHT" spacing="14.0" BorderPane.alignment="CENTER">
          <children>
             <Button mnemonicParsing="false" onAction="#buttonCancelPressed" text="Cancel" />
-            <Button mnemonicParsing="false" onAction="#buttonSavePressed" text="Save" />
+            <Button mnemonicParsing="false" onAction="#buttonSavePressed" text="Ok" />
+            <Button mnemonicParsing="false" onAction="#buttonApplyPressed" text="Apply" />
          </children>
          <BorderPane.margin>
             <Insets />
