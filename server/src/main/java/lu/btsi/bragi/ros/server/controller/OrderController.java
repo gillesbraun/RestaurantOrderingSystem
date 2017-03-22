@@ -8,6 +8,7 @@ import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
+import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 
 import java.util.Collections;
@@ -38,6 +39,7 @@ public class OrderController extends Controller<Order> {
                 .from(dbTable)
                 .where(dbTable.INVOICE_ID.isNull())
                 .and(dbTable.PROCESSING_DONE.eq((byte)0))
+                .and(DSL.date(dbTable.CREATED_AT).eq(DSL.currentDate()))
                 .orderBy(dbTable.CREATED_AT.desc())
                 .fetchInto(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());

@@ -24,6 +24,7 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,7 +35,7 @@ import static java.util.stream.Collectors.toList;
  */
 public class SingleInvoicePane extends VBox {
     @FXML private ListView<ProductPriceForOrder> listViewProducts;
-    @FXML private Label labelTable, lableInvoice, labelTotalPrice, labelPaid;
+    @FXML private Label labelTable, labelTime, labelTotalPrice, labelPaid;
     @FXML private Button buttonPay;
 
     private ObservableList<ProductPriceForOrder> listProducts = FXCollections.observableArrayList();
@@ -75,6 +76,10 @@ public class SingleInvoicePane extends VBox {
         fillList();
         setTotalPrice();
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm");
+        orders.stream().map(Order::getCreatedAt).sorted().findFirst().ifPresent(
+                timestamp -> labelTime.setText(dateFormat.format(timestamp.toLocalDateTime()))
+        );
         labelPaid.setGraphic(fa.create(FontAwesome.Glyph.CIRCLE_THIN));
         labelPaid.setText("");
     }

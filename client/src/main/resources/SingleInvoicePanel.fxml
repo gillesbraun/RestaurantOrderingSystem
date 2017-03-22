@@ -23,8 +23,8 @@
          <right>
             <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
                <children>
-                  <Label text="Invoice N°:" />
-                  <Label fx:id="labelInvoice" text="-" />
+                  <Label text="Time Placed:" />
+                  <Label fx:id="labelTime" text="-" />
                </children>
             </HBox>
          </right>
