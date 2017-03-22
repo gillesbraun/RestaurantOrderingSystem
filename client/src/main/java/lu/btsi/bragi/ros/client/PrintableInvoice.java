@@ -10,7 +10,6 @@ import lu.btsi.bragi.ros.models.pojos.Invoice;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 class PrintableInvoice extends Invoice {
     @FXML private Label labelTitle, labelAddress1, labelAddress2, labelInvoice, labelDateTime, labelTable,
@@ -39,17 +38,17 @@ class PrintableInvoice extends Invoice {
         labelAddress2.setText(invoiceSettings.getAddress2());
 
         labelInvoice.setText("ID");
-        String datetime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy / HH:mm"));
+        String datetime = Config.getInstance().getDateTimeFormatter().format(LocalDateTime.now());
         labelDateTime.setText(datetime);
         labelTable.setText(getTable() + "");
-        String currency = Config.getInstance().generalSettings.getCurrency();
-        getProductListInvoice(Config.getInstance().generalSettings.getLanguage(), Config.getInstance().generalSettings.getCurrency()).forEach(invoiceEntry -> {
+        Config config = Config.getInstance();
+        getProductListInvoice(Config.getInstance().generalSettings.getLanguage()).forEach(invoiceEntry -> {
             containerProductName.getChildren().add(new Label(invoiceEntry.quantity + "x" + invoiceEntry.productName));
             containerProductA.getChildren().add(new Label(Character.toString((char) 0x00e0)));
-            containerProductPrice.getChildren().add(new Label(invoiceEntry.productPrice + currency));
-            containerProductPriceTotal.getChildren().add(new Label(invoiceEntry.productPriceTotal + currency));
+            containerProductPrice.getChildren().add(new Label(config.formatCurrency(invoiceEntry.productPrice)));
+            containerProductPriceTotal.getChildren().add(new Label(config.formatCurrency(invoiceEntry.productPriceTotal)));
         });
-        labelTotalPrice.setText(getTotalPrice(Config.getInstance().generalSettings.getCurrency()));
+        labelTotalPrice.setText(config.formatCurrency(getTotalPrice().doubleValue()));
 
         labelWaiter.setText(getWaiters());
         labelTaxNumber.setText(invoiceSettings.getTaxNumber());

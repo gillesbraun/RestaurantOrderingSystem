@@ -67,8 +67,9 @@ public class SingleInvoicePane extends VBox {
                 double pricePer = ppfo.getPricePerProduct().doubleValue();
                 double priceTotal = ppfo.getTotalPriceOfProduct().doubleValue();
                 long quantity = ppfo.getQuantity().longValue();
-                String currency = Config.getInstance().generalSettings.getCurrency();
-                setText(String.format("%s %s \u00e0 %.2f%s = %.2f%s", quantity, maybeLocalized.getLabel(), pricePer, currency, priceTotal, currency));
+                String pricePerStr = Config.getInstance().formatCurrency(pricePer);
+                String priceTotalStr = Config.getInstance().formatCurrency(priceTotal);
+                setText(String.format("%s %s \u00e0 %s = %s", quantity, maybeLocalized.getLabel(), pricePerStr, priceTotalStr));
             }
         });
 
@@ -76,7 +77,7 @@ public class SingleInvoicePane extends VBox {
         fillList();
         setTotalPrice();
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("H:mm");
+        DateTimeFormatter dateFormat = Config.getInstance().getTimeFormatter();
         orders.stream().map(Order::getCreatedAt).sorted().findFirst().ifPresent(
                 timestamp -> labelTime.setText(dateFormat.format(timestamp.toLocalDateTime()))
         );
@@ -88,7 +89,7 @@ public class SingleInvoicePane extends VBox {
         Optional<BigDecimal> sumOptional = orders.stream()
                 .map(Order::getTotalPriceOfOrder)
                 .reduce(BigDecimal::add);
-        sumOptional.ifPresent(sum -> labelTotalPrice.setText(String.format("%.2f%s", sum.doubleValue(), Config.getInstance().generalSettings.getCurrency())));
+        sumOptional.ifPresent(sum -> labelTotalPrice.setText(Config.getInstance().formatCurrency(sum.doubleValue())));
     }
 
     private void fillList() {

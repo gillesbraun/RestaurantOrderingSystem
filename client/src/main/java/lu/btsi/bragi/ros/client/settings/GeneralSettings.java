@@ -8,21 +8,11 @@ import java.util.Locale;
  * Created by gillesbraun on 20/03/2017.
  */
 public class GeneralSettings {
-
-    private String currency = "$"; // euro sign
     private Language language = new Language("en", "English", null, null);
     private Locale locale = Locale.US;
 
     public GeneralSettings() {
         Locale.setDefault(locale);
-    }
-
-    public String getCurrency() {
-        return currency;
-    }
-
-    public void setCurrency(String currency) {
-        this.currency = currency;
     }
 
     public Language getLanguage() {

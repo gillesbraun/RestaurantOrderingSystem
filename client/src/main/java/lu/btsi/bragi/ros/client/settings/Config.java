@@ -39,6 +39,10 @@ public class Config {
         return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
     }
 
+    public DateTimeFormatter getTimeFormatter() {
+        return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
+    }
+
     public static void init() {
         try {
             if(new File("settings.json").exists()) {

@@ -7,10 +7,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import lu.btsi.bragi.ros.client.connection.ConnectionCallback;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
@@ -33,9 +30,10 @@ import static java.util.stream.Collectors.toList;
  * Created by gillesbraun on 20/03/2017.
  */
 public class SettingsStage extends Stage implements ConnectionCallback {
+    @FXML private Label labelCurrency;
     @FXML private Button buttonSave, buttonCancel;
     @FXML private TextField
-            textFieldCurrency, textFieldInvoiceTitle, textFieldInvoiceAddress1, textFieldInvoiceAddress2, textFieldInvoiceTax,
+            textFieldInvoiceTitle, textFieldInvoiceAddress1, textFieldInvoiceAddress2, textFieldInvoiceTax,
             textFieldInvoiceTelephone, textFieldInvoiceEmail, textFieldHostAddress;
     @FXML private ChoiceBox<Language> choiceBoxLanguage;
     @FXML private ChoiceBox<Locale> choiceBoxLocale;
@@ -62,7 +60,7 @@ public class SettingsStage extends Stage implements ConnectionCallback {
         choiceBoxLocale.setItems(listLocales);
         choiceBoxLocale.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedLocale) -> {
             if(selectedLocale != null)
-                textFieldCurrency.setText(Currency.getInstance(selectedLocale).getSymbol(selectedLocale));
+                labelCurrency.setText(Currency.getInstance(selectedLocale).getSymbol(selectedLocale));
         });
 
         updateSettings();
@@ -71,7 +69,6 @@ public class SettingsStage extends Stage implements ConnectionCallback {
 
     private void updateSettings() {
         Config config = Config.getInstance();
-        textFieldCurrency.setText(config.generalSettings.getCurrency());
         textFieldInvoiceTitle.setText(config.invoiceSettings.getTitle());
         textFieldInvoiceAddress1.setText(config.invoiceSettings.getAddress());
         textFieldInvoiceAddress2.setText(config.invoiceSettings.getAddress2());
@@ -90,7 +87,6 @@ public class SettingsStage extends Stage implements ConnectionCallback {
 
     private void saveConfig() {
         Config config = Config.getInstance();
-        config.generalSettings.setCurrency(textFieldCurrency.getText());
         config.invoiceSettings.setTitle(textFieldInvoiceTitle.getText());
         config.invoiceSettings.setAddress(textFieldInvoiceAddress1.getText());
         config.invoiceSettings.setAddress2(textFieldInvoiceAddress2.getText());
