@@ -125,6 +125,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         pane.setCenterShape(true);
 
         Scene qrScene = new Scene(pane);
+        stage.setTitle("Connect an Android Client");
         stage.setScene(qrScene);
         stage.initOwner(parent);
         stage.show();
