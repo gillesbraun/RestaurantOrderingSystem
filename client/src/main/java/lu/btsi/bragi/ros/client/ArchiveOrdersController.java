@@ -3,14 +3,16 @@ package lu.btsi.bragi.ros.client;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.*;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.util.converter.LocalDateStringConverter;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
-import lu.btsi.bragi.ros.models.pojos.Language;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 
@@ -26,7 +28,7 @@ public class ArchiveOrdersController {
     public TableColumn<Order, String> tableColumnID, tableColumnTable, tableColumnWaiter, tableColumnDateTime;
     public DatePicker datePickerUntil, datePickerFrom;
     public Label labelOrderID;
-    public ListView<ProductPriceForOrder> listViewProducts;
+    public TableViewProducts tableViewProducts;
     private ObservableList<ProductPriceForOrder> listPPFO;
 
     public void initialize() {
@@ -37,28 +39,11 @@ public class ArchiveOrdersController {
         datePickerFrom.setValue(LocalDate.now().minusDays(7));
         datePickerUntil.setValue(LocalDate.now());
 
-        listViewProducts.setCellFactory(param -> new ListCell<ProductPriceForOrder>(){
-            @Override
-            protected void updateItem(ProductPriceForOrder ppfo, boolean empty) {
-                if(ppfo == null) {
-                    setText(null);
-                } else {
-                    Language language = Config.getInstance().generalSettings.getLanguage();
-                    String qty = ppfo.getQuantity().toString();
-                    String product = ppfo.getProduct().getProductInLanguage(language).getLabel();
-                    String pricePer = Config.getInstance().formatCurrency(ppfo.getPricePerProduct().doubleValue());
-                    String priceTotal = Config.getInstance().formatCurrency(ppfo.getPricePerProduct().doubleValue());
-
-                    setText(String.format("%s x %s  \u00e0 %s = %s", qty, product, pricePer, priceTotal));
-                }
-            }
-        });
-
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedOrder) -> {
             if(selectedOrder != null) {
                 labelOrderID.setText(selectedOrder.getId().toString());
                 listPPFO = FXCollections.observableList(selectedOrder.getProductPriceForOrder());
-                listViewProducts.setItems(listPPFO);
+                tableViewProducts.setItems(listPPFO);
             } else {
                 listPPFO.clear();
                 labelOrderID.setText("");

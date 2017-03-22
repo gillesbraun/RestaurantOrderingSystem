@@ -10,14 +10,15 @@ import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageType;
-import lu.btsi.bragi.ros.models.pojos.*;
+import lu.btsi.bragi.ros.models.pojos.Invoice;
+import lu.btsi.bragi.ros.models.pojos.Order;
+import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
+import lu.btsi.bragi.ros.models.pojos.Table;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -34,7 +35,7 @@ import static java.util.stream.Collectors.toList;
  * Created by gillesbraun on 09/03/2017.
  */
 public class SingleInvoicePane extends VBox {
-    @FXML private ListView<ProductPriceForOrder> listViewProducts;
+    @FXML private TableViewProducts listViewProducts;
     @FXML private Label labelTable, labelTime, labelTotalPrice, labelPaid;
     @FXML private Button buttonPay;
 
@@ -55,7 +56,7 @@ public class SingleInvoicePane extends VBox {
         getChildren().setAll(root);
 
         listViewProducts.setItems(listProducts);
-        listViewProducts.setCellFactory(param -> new ListCell<ProductPriceForOrder>(){
+        /*listViewProducts.setCellFactory(param -> new ListCell<ProductPriceForOrder>(){
             @Override
             protected void updateItem(ProductPriceForOrder ppfo, boolean empty) {
                 super.updateItem(ppfo, empty);
@@ -71,7 +72,7 @@ public class SingleInvoicePane extends VBox {
                 String priceTotalStr = Config.getInstance().formatCurrency(priceTotal);
                 setText(String.format("%s %s \u00e0 %s = %s", quantity, maybeLocalized.getLabel(), pricePerStr, priceTotalStr));
             }
-        });
+        });*/
 
         labelTable.setText(table.toString());
         fillList();
@@ -98,7 +99,7 @@ public class SingleInvoicePane extends VBox {
                 Order.combineOrders(orders)
         );
 
-        listViewProducts.prefHeightProperty().bind(Bindings.size(listProducts).multiply(28));
+        listViewProducts.prefHeightProperty().bind(Bindings.size(listProducts).multiply(28).add(30));
     }
 
     public void buttonPayPressed(ActionEvent event) {
