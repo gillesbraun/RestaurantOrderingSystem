@@ -254,6 +254,19 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         }
     }
 
+    public void menuItemArchiveOrders(ActionEvent evt) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/ArchiveOrdersStage.fxml"));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.initOwner(parent);
+            stage.setTitle("Orders Archive");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void connectionClosed(String reason) {
         setContentDisabled(true);

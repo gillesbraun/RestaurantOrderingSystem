@@ -16,6 +16,11 @@
             <MenuItem mnemonicParsing="false" onAction="#menuItemQuitPressed" text="Quit" />
           </items>
         </Menu>
+        <Menu text="View">
+            <items>
+                <MenuItem fx:id="menuItemArchiveOrders" text="Orders Archive" onAction="#menuItemArchiveOrders" />
+            </items>
+        </Menu>
         <Menu fx:id="menuEdit" disable="true" mnemonicParsing="false" text="Edit">
           <items>
             <MenuItem mnemonicParsing="false" onAction="#menuItemTablesPressed" text="Tables" />
