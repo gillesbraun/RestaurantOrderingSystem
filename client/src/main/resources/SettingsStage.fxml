@@ -22,6 +22,16 @@
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="14.0">
                            <children>
+                              <Label text="Default Locale:" />
+                              <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <ChoiceBox fx:id="choiceBoxLocale" prefWidth="150.0" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
                               <Label text="Interface Language:" />
                               <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
                                  <children>

@@ -22,6 +22,12 @@ import lu.btsi.bragi.ros.models.pojos.Language;
 import org.controlsfx.dialog.ExceptionDialog;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Currency;
+import java.util.Locale;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * Created by gillesbraun on 20/03/2017.
@@ -32,7 +38,9 @@ public class SettingsStage extends Stage implements ConnectionCallback {
             textFieldCurrency, textFieldInvoiceTitle, textFieldInvoiceAddress1, textFieldInvoiceAddress2, textFieldInvoiceTax,
             textFieldInvoiceTelephone, textFieldInvoiceEmail, textFieldHostAddress;
     @FXML private ChoiceBox<Language> choiceBoxLanguage;
+    @FXML private ChoiceBox<Locale> choiceBoxLocale;
     @FXML private CheckBox checkBoxAutoDisover;
+    private final ObservableList<Locale> listLocales;
     private ObservableList<Language> listLanguages = FXCollections.observableArrayList();
 
     SettingsStage() throws IOException {
@@ -40,11 +48,24 @@ public class SettingsStage extends Stage implements ConnectionCallback {
         loader.setController(this);
         Parent root = loader.load();
 
-        updateSettings();
         setTitle("Settings");
         setScene(new Scene(root));
         choiceBoxLanguage.setDisable(true);
         choiceBoxLanguage.setItems(listLanguages);
+
+        listLocales = FXCollections.observableList(Arrays.stream(Locale.getAvailableLocales())
+                .filter(l -> l.getCountry().length() == 2)
+                .sorted(
+                Comparator.comparing(Locale::toString)
+        ).collect(toList()));
+
+        choiceBoxLocale.setItems(listLocales);
+        choiceBoxLocale.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedLocale) -> {
+            if(selectedLocale != null)
+                textFieldCurrency.setText(Currency.getInstance(selectedLocale).getSymbol(selectedLocale));
+        });
+
+        updateSettings();
         ConnectionManager.getInstance().addConnectionCallback(this);
     }
 
@@ -60,6 +81,11 @@ public class SettingsStage extends Stage implements ConnectionCallback {
 
         textFieldHostAddress.setText(config.connectionSettings.getHostAddress());
         checkBoxAutoDisover.setSelected(config.connectionSettings.isAutoDiscovery());
+
+        listLocales.stream()
+                .filter(l -> l.equals(config.generalSettings.getLocale()))
+                .findFirst()
+                .ifPresent(l -> choiceBoxLocale.getSelectionModel().select(l));
     }
 
     private void saveConfig() {
@@ -74,6 +100,9 @@ public class SettingsStage extends Stage implements ConnectionCallback {
         config.connectionSettings.setAutoDiscovery(checkBoxAutoDisover.isSelected());
         if(choiceBoxLanguage.getValue() != null)
             config.generalSettings.setLanguage(choiceBoxLanguage.getValue());
+        if(choiceBoxLocale.getValue() != null) {
+            config.generalSettings.setLocale(choiceBoxLocale.getValue());
+        }
         try {
             Config.save();
         } catch (IOException e) {

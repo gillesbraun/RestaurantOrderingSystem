@@ -16,9 +16,7 @@ import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by gillesbraun on 22/03/2017.
@@ -32,9 +30,7 @@ public class ArchiveOrdersController {
     private ObservableList<ProductPriceForOrder> listPPFO;
 
     public void initialize() {
-        Locale.setDefault(Locale.GERMANY);
-
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+        DateTimeFormatter dateFormat = Config.getInstance().getDateFormatter();
 
         datePickerFrom.setConverter(new LocalDateStringConverter(dateFormat, dateFormat));
         datePickerUntil.setConverter(new LocalDateStringConverter(dateFormat, dateFormat));
@@ -50,11 +46,10 @@ public class ArchiveOrdersController {
                     Language language = Config.getInstance().generalSettings.getLanguage();
                     String qty = ppfo.getQuantity().toString();
                     String product = ppfo.getProduct().getProductInLanguage(language).getLabel();
-                    String pricePer = String.format("%.2f", ppfo.getPricePerProduct().doubleValue());
-                    String priceTotal = String.format("%.2f", ppfo.getPricePerProduct().doubleValue());
-                    String currency = Config.getInstance().generalSettings.getCurrency();
+                    String pricePer = Config.getInstance().formatCurrency(ppfo.getPricePerProduct().doubleValue());
+                    String priceTotal = Config.getInstance().formatCurrency(ppfo.getPricePerProduct().doubleValue());
 
-                    setText(String.format("%s x %s  \u00e0 %s = %s%s", qty, product, pricePer, priceTotal, currency));
+                    setText(String.format("%s x %s  \u00e0 %s = %s", qty, product, pricePer, priceTotal));
                 }
             }
         });
@@ -74,7 +69,7 @@ public class ArchiveOrdersController {
     }
 
     private void loadData() {
-        DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+        DateTimeFormatter dateTimeFormat = Config.getInstance().getDateTimeFormatter();
         ConnectionManager conn = ConnectionManager.getInstance();
         conn.sendWithAction(new MessageGet<>(Order.class), t -> {
             try {
