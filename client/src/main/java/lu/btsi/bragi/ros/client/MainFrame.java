@@ -57,8 +57,8 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     @FXML
     private MenuItem menuItemRefresh, menuItemQRCode, menuItemSettings;
 
-    private OrdersPanel ordersContainerPane;
-    private InvoicesContainerPane invoicesContainerPane;
+    private ContainerPaneOrders ordersContainerPane;
+    private ContainerPaneInvoices invoicesContainerPane;
 
     private EventHandler<WindowEvent> onClose = event -> {
         ConnectionManager.getInstance().close();
@@ -96,8 +96,8 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         menuItemSettings.setGraphic(fa.create(FontAwesome.Glyph.GEARS));
         menuItemSettings.getGraphic().setEffect(new Shadow(1, Color.BLACK));
 
-        ordersContainerPane = new OrdersPanel();
-        invoicesContainerPane = new InvoicesContainerPane();
+        ordersContainerPane = new ContainerPaneOrders();
+        invoicesContainerPane = new ContainerPaneInvoices();
         vboxOrdersContainer.getChildren().setAll(ordersContainerPane);
         vboxInvoicesContainer.getChildren().setAll(invoicesContainerPane);
 

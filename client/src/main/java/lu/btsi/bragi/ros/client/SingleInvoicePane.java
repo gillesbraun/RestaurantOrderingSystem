@@ -43,9 +43,9 @@ public class SingleInvoicePane extends VBox {
 
     private List<ProductPriceForOrder> produtsPriceForOrder;
     private List<Order> orders;
-    private InvoicesContainerPane parent;
+    private ContainerPaneInvoices parent;
 
-    SingleInvoicePane(Table table, List<Order> orders, InvoicesContainerPane invoicesContainerPane) throws IOException {
+    SingleInvoicePane(Table table, List<Order> orders, ContainerPaneInvoices invoicesContainerPane) throws IOException {
         this.orders = orders;
         parent = invoicesContainerPane;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SingleInvoicePanel.fxml"));

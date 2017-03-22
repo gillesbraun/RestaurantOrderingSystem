@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 /**
  * Created by gillesbraun on 09/03/2017.
  */
-class InvoicesContainerPane extends ScrollPane {
+class ContainerPaneInvoices extends ScrollPane {
     private VBox content = new VBox();
     private ProgressIndicator progressLoading = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
 
@@ -32,7 +32,7 @@ class InvoicesContainerPane extends ScrollPane {
             new KeyFrame(Duration.ZERO, e -> refreshInvoices()),
             new KeyFrame(Duration.seconds(15)));
 
-    InvoicesContainerPane() {
+    ContainerPaneInvoices() {
         setHbarPolicy(ScrollBarPolicy.NEVER);
         setStyle("-fx-background-color:transparent;");
         content.setFillWidth(true);
