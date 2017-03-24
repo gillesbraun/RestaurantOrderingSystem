@@ -30,9 +30,6 @@ public class SingleOrderPanel extends VBox {
 
     private ObservableList<ProductPriceForOrder> productsLocalizedForTable;
 
-    private final Background bgYellow = new Background(new BackgroundFill(Color.LIGHTYELLOW, null, null));
-    private final Background bgNormal = Background.EMPTY;
-
     private Animation backgroundFlasher = new Transition() {
         {
             setDelay(Duration.millis(1000));
