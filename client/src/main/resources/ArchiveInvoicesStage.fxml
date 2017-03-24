@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import lu.btsi.bragi.ros.client.TableViewProducts?>
+<SplitPane fx:controller="lu.btsi.bragi.ros.client.ArchiveInvoicesController" dividerPositions="0.45"
+           maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
+           prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+    <items>
+        <VBox spacing="14.0">
+            <children>
+                <TableView fx:id="tableViewInvoice" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="tableColumnID" prefWidth="50.0" text="N°"/>
+                        <TableColumn fx:id="tableColumnTable" prefWidth="50.0" text="Table"/>
+                        <TableColumn fx:id="tableColumnPrice" prefWidth="75.0" text="Price"/>
+                        <TableColumn fx:id="tableColumnPaid" prefWidth="40.0" text="Paid"/>
+                    </columns>
+                </TableView>
+                <HBox spacing="14.0">
+                    <children>
+                        <VBox spacing="7.0">
+                            <children>
+                                <Label text="From" />
+                                <DatePicker fx:id="datePickerFrom" onAction="#datePickerFromAction" />
+                            </children>
+                        </VBox>
+                        <VBox spacing="7.0">
+                            <children>
+                                <Label text="Until" />
+                                <DatePicker fx:id="datePickerUntil" onAction="#datePickerUntilAction" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="14.0" left="14.0" right="14.0" top="14.0"/>
+            </padding>
+        </VBox>
+        <VBox disable="true" fx:id="vboxDetail" spacing="7.0">
+            <children>
+                <HBox>
+                    <children>
+                        <Label text="Invoice: ">
+                            <font>
+                                <Font size="18.0"/>
+                            </font>
+                        </Label>
+                        <Label fx:id="labelInvoiceID" text="-">
+                            <font>
+                                <Font size="18.0"/>
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <BorderPane>
+                    <left>
+                        <HBox BorderPane.alignment="CENTER">
+                            <children>
+                                <Label text="Table: "/>
+                                <Label fx:id="labelTableID" text="-"/>
+                            </children>
+                            <BorderPane.margin>
+                                <Insets right="14.0"/>
+                            </BorderPane.margin>
+                        </HBox>
+                    </left>
+                    <right>
+                        <HBox BorderPane.alignment="CENTER">
+                            <children>
+                                <Label text="Paid: "/>
+                                <Label fx:id="labelPaid"/>
+                            </children>
+                        </HBox>
+                    </right>
+                </BorderPane>
+                <HBox minWidth="-Infinity">
+                    <children>
+                        <Label text="Served By: "/>
+                        <Label fx:id="labelWaiter" text="-"/>
+                    </children>
+                </HBox>
+                <TableViewProducts fx:id="tableViewProducts"/>
+                <HBox spacing="7.0">
+                    <VBox.margin>
+                        <Insets top="7.0"/>
+                    </VBox.margin>
+                    <children>
+                        <Button mnemonicParsing="false" onAction="#buttonPrintInvoiceAction" text="Print Invoice"/>
+                    </children>
+                </HBox>
+            </children>
+            <padding>
+                <Insets bottom="14.0" left="14.0" right="14.0" top="14.0"/>
+            </padding>
+        </VBox>
+    </items>
+</SplitPane>

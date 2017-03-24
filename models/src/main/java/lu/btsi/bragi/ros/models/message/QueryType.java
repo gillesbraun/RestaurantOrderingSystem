@@ -7,6 +7,6 @@ public enum QueryType {
     Open_Orders_For_Location,
     Open_Orders,
     Open_Invoices,
-    Orders_Between_Dates
+    Invoices_Between_Dates, Orders_Between_Dates
 
 }
