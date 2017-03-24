@@ -55,7 +55,7 @@
                </children>
             </HBox>
             <Label text="Products in this Order:" />
-            <TableViewProducts fx:id="tableViewProducts"/>
+            <TableViewProducts VBox.vgrow="ALWAYS" fx:id="tableViewProducts"/>
          </children>
          <padding>
             <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
