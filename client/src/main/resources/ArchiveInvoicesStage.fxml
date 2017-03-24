@@ -5,9 +5,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import lu.btsi.bragi.ros.client.TableViewProducts?>
-<SplitPane fx:controller="lu.btsi.bragi.ros.client.ArchiveInvoicesController" dividerPositions="0.45"
+<SplitPane fx:controller="lu.btsi.bragi.ros.client.ArchiveInvoicesController" dividerPositions="0.535"
            maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0"
-           prefWidth="650.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+           prefWidth="780.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
     <items>
         <VBox spacing="14.0">
             <children>
@@ -17,6 +17,7 @@
                         <TableColumn fx:id="tableColumnTable" prefWidth="50.0" text="Table"/>
                         <TableColumn fx:id="tableColumnPrice" prefWidth="75.0" text="Price"/>
                         <TableColumn fx:id="tableColumnPaid" prefWidth="40.0" text="Paid"/>
+                        <TableColumn fx:id="tableColumnDateTime" prefWidth="170.0" text="DateTime"/>
                     </columns>
                 </TableView>
                 <HBox spacing="14.0">

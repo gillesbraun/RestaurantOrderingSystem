@@ -31,7 +31,7 @@ import java.time.format.DateTimeFormatter;
 public class ArchiveInvoicesController {
 
     public DatePicker datePickerFrom, datePickerUntil;
-    public TableColumn<Invoice, String> tableColumnPaid, tableColumnPrice, tableColumnID, tableColumnTable;
+    public TableColumn<Invoice, String> tableColumnPaid, tableColumnPrice, tableColumnID, tableColumnTable, tableColumnDateTime;
     public TableView<Invoice> tableViewInvoice;
     public TableViewProducts tableViewProducts;
     public Label labelWaiter, labelPaid, labelInvoiceID, labelTableID;
@@ -40,6 +40,7 @@ public class ArchiveInvoicesController {
 
     public void initialize() {
         DateTimeFormatter dateFormat = Config.getInstance().getDateFormatter();
+        DateTimeFormatter dateTimeFormat = Config.getInstance().getDateTimeFormatter();
 
         datePickerFrom.setConverter(new LocalDateStringConverter(dateFormat, dateFormat));
         datePickerUntil.setConverter(new LocalDateStringConverter(dateFormat, dateFormat));
@@ -57,6 +58,9 @@ public class ArchiveInvoicesController {
         );
         tableColumnPaid.setCellValueFactory(param ->
                 new ReadOnlyObjectWrapper<>(param.getValue().getPaid() == 0 ? "No" : "Yes")
+        );
+        tableColumnDateTime.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue().getCreatedAt().toLocalDateTime().format(dateTimeFormat))
         );
 
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
