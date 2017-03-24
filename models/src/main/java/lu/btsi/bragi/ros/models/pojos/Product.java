@@ -4,7 +4,6 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
-import java8.util.Optional;
 import java8.util.stream.StreamSupport;
 import org.jooq.types.UInteger;
 
@@ -39,6 +38,7 @@ public class Product implements Serializable {
     private List<ProductLocalized> productLocalized;
     private ProductCategory productCategory;
     private List<ProductAllergen> productAllergen;
+    private Location location;
 
     public Product() {}
 
@@ -122,6 +122,14 @@ public class Product implements Serializable {
 
     public void setProductLocalized(List<ProductLocalized> productLocalized) {
         this.productLocalized = productLocalized;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
     public List<ProductLocalized> getProductLocalized() {

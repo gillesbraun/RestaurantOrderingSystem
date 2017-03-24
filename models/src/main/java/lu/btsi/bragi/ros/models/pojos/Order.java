@@ -236,6 +236,15 @@ public class Order implements Serializable {
         subItems.add("Created at: " + createdAt.toLocalDateTime().format(dateFormat));
         return subItems;
     }
+
+    public Location getLocation() {
+        return StreamSupport.stream(productPriceForOrder)
+                .map(ProductPriceForOrder::getProduct)
+                .map(p -> p.getLocationId() == null
+                        ? p.getProductCategory().getLocation()
+                        : p.getLocation())
+                .findFirst().get();
+    }
 }
 
 

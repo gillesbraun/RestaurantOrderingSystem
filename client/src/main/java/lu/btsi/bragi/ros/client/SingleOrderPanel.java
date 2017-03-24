@@ -77,8 +77,10 @@ public class SingleOrderPanel extends VBox {
         } else {
             labelProcessingDone.setGraphic(fa.create(FontAwesome.Glyph.CHECK_CIRCLE));
         }
+        Label labelLocation = new Label(order.getLocation().getDescription());
         BorderPane info2 = new BorderPane();
         info2.setLeft(labelProcessing);
+        info2.setCenter(labelLocation);
         info2.setRight(labelProcessingDone);
         getChildren().addAll(info1, info2, labelTable, tableViewProducts);
         setFillWidth(true);
