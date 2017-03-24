@@ -55,6 +55,7 @@ public class ProductController extends Controller<Product> {
         product.setProductAllergen(getController(ProductAllergenController.class).getProductAllergen(product));
         product.setProductCategory(getController(ProductCategoryController.class).getProductCategory(product));
         product.setProductLocalized(getController(ProductLocalizedController.class).getProductsLocalized(product));
+        product.setLocation(getController(LocationController.class).getLocation(product));
         return product;
     }
 

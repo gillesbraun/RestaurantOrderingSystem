@@ -7,9 +7,10 @@ import java.util.Map;
  * Created by gillesbraun on 15/02/2017.
  */
 public enum MessageType {
-    Get("get"), Update("update"), Delete("delete"), Create("create"), Answer("answer"), Error("error"), GetQuery("getquery"), Broadcast("broadcast");
+    Get("get"), Update("update"), Delete("delete"), Create("create"), Answer("answer"), Error("error"), GetQuery("getquery", true), Broadcast("broadcast");
 
     private final String name;
+    private final boolean hasParams;
     private static final Map<String, MessageType> lookup = new HashMap<>();
 
     static {
@@ -20,6 +21,12 @@ public enum MessageType {
 
     MessageType(String name) {
         this.name = name;
+        hasParams = false;
+    }
+
+    MessageType(String name, boolean hasParams) {
+        this.name = name;
+        this.hasParams = hasParams;
     }
 
     public String getName() {
@@ -33,5 +40,9 @@ public enum MessageType {
     @Override
     public String toString() {
         return name;
+    }
+
+    public boolean hasParams() {
+        return hasParams;
     }
 }

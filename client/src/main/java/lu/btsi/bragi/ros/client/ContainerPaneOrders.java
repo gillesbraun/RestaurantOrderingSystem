@@ -20,14 +20,14 @@ import java.util.List;
 /**
  * Created by gillesbraun on 08/03/2017.
  */
-public class OrdersPanel extends ScrollPane {
+public class ContainerPaneOrders extends ScrollPane {
     private Timeline timeline = new Timeline(new KeyFrame(Duration.ZERO, e -> refreshOrders()), new KeyFrame(Duration.seconds(15)));
 
     private ProgressIndicator progressOrders = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
 
     private VBox vbox = new VBox(7);
 
-    OrdersPanel() {
+    ContainerPaneOrders() {
         setMinWidth(vbox.getPrefWidth());
         setHbarPolicy(ScrollBarPolicy.NEVER);
 

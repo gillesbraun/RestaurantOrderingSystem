@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import lu.btsi.bragi.ros.client.TableViewProducts?>
 <VBox spacing="14.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <BorderPane>
@@ -23,8 +24,8 @@
          <right>
             <HBox alignment="CENTER_LEFT" spacing="10.0" BorderPane.alignment="CENTER">
                <children>
-                  <Label text="Invoice N°:" />
-                  <Label fx:id="labelInvoice" text="-" />
+                  <Label text="Time Placed:" />
+                  <Label fx:id="labelTime" text="-" />
                </children>
             </HBox>
          </right>
@@ -48,7 +49,7 @@
          </right>
       </BorderPane>
       <Label text="Products Ordered:" />
-      <ListView fx:id="listViewProducts" />
+      <TableViewProducts fx:id="listViewProducts" />
    </children>
    <padding>
       <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />

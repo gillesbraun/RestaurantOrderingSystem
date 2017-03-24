@@ -10,20 +10,22 @@ import javafx.print.Printer;
 import javafx.print.PrinterJob;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.VBox;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageType;
-import lu.btsi.bragi.ros.models.pojos.*;
+import lu.btsi.bragi.ros.models.pojos.Invoice;
+import lu.btsi.bragi.ros.models.pojos.Order;
+import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
+import lu.btsi.bragi.ros.models.pojos.Table;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,17 +35,17 @@ import static java.util.stream.Collectors.toList;
  * Created by gillesbraun on 09/03/2017.
  */
 public class SingleInvoicePane extends VBox {
-    @FXML private ListView<ProductPriceForOrder> listViewProducts;
-    @FXML private Label labelTable, lableInvoice, labelTotalPrice, labelPaid;
+    @FXML private TableViewProducts listViewProducts;
+    @FXML private Label labelTable, labelTime, labelTotalPrice, labelPaid;
     @FXML private Button buttonPay;
 
     private ObservableList<ProductPriceForOrder> listProducts = FXCollections.observableArrayList();
 
     private List<ProductPriceForOrder> produtsPriceForOrder;
     private List<Order> orders;
-    private InvoicesContainerPane parent;
+    private ContainerPaneInvoices parent;
 
-    SingleInvoicePane(Table table, List<Order> orders, InvoicesContainerPane invoicesContainerPane) throws IOException {
+    SingleInvoicePane(Table table, List<Order> orders, ContainerPaneInvoices invoicesContainerPane) throws IOException {
         this.orders = orders;
         parent = invoicesContainerPane;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SingleInvoicePanel.fxml"));
@@ -54,7 +56,7 @@ public class SingleInvoicePane extends VBox {
         getChildren().setAll(root);
 
         listViewProducts.setItems(listProducts);
-        listViewProducts.setCellFactory(param -> new ListCell<ProductPriceForOrder>(){
+        /*listViewProducts.setCellFactory(param -> new ListCell<ProductPriceForOrder>(){
             @Override
             protected void updateItem(ProductPriceForOrder ppfo, boolean empty) {
                 super.updateItem(ppfo, empty);
@@ -66,15 +68,20 @@ public class SingleInvoicePane extends VBox {
                 double pricePer = ppfo.getPricePerProduct().doubleValue();
                 double priceTotal = ppfo.getTotalPriceOfProduct().doubleValue();
                 long quantity = ppfo.getQuantity().longValue();
-                String currency = Config.getInstance().generalSettings.getCurrency();
-                setText(String.format("%s %s \u00e0 %.2f%s = %.2f%s", quantity, maybeLocalized.getLabel(), pricePer, currency, priceTotal, currency));
+                String pricePerStr = Config.getInstance().formatCurrency(pricePer);
+                String priceTotalStr = Config.getInstance().formatCurrency(priceTotal);
+                setText(String.format("%s %s \u00e0 %s = %s", quantity, maybeLocalized.getLabel(), pricePerStr, priceTotalStr));
             }
-        });
+        });*/
 
         labelTable.setText(table.toString());
         fillList();
         setTotalPrice();
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
+        DateTimeFormatter dateFormat = Config.getInstance().getTimeFormatter();
+        orders.stream().map(Order::getCreatedAt).sorted().findFirst().ifPresent(
+                timestamp -> labelTime.setText(dateFormat.format(timestamp.toLocalDateTime()))
+        );
         labelPaid.setGraphic(fa.create(FontAwesome.Glyph.CIRCLE_THIN));
         labelPaid.setText("");
     }
@@ -83,7 +90,7 @@ public class SingleInvoicePane extends VBox {
         Optional<BigDecimal> sumOptional = orders.stream()
                 .map(Order::getTotalPriceOfOrder)
                 .reduce(BigDecimal::add);
-        sumOptional.ifPresent(sum -> labelTotalPrice.setText(String.format("%.2f%s", sum.doubleValue(), Config.getInstance().generalSettings.getCurrency())));
+        sumOptional.ifPresent(sum -> labelTotalPrice.setText(Config.getInstance().formatCurrency(sum.doubleValue())));
     }
 
     private void fillList() {
@@ -92,7 +99,7 @@ public class SingleInvoicePane extends VBox {
                 Order.combineOrders(orders)
         );
 
-        listViewProducts.prefHeightProperty().bind(Bindings.size(listProducts).multiply(28));
+        listViewProducts.prefHeightProperty().bind(Bindings.size(listProducts).multiply(28).add(30));
     }
 
     public void buttonPayPressed(ActionEvent event) {

@@ -57,8 +57,8 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     @FXML
     private MenuItem menuItemRefresh, menuItemQRCode, menuItemSettings, menuItemQuit;
 
-    private OrdersPanel ordersContainerPane;
-    private InvoicesContainerPane invoicesContainerPane;
+    private ContainerPaneOrders ordersContainerPane;
+    private ContainerPaneInvoices invoicesContainerPane;
 
     private EventHandler<WindowEvent> onClose = event -> {
         ConnectionManager.getInstance().close();
@@ -100,8 +100,8 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         menuItemQuit.setGraphic(fa.create(FontAwesome.Glyph.SIGN_OUT));
         menuItemQuit.getGraphic().setEffect(new Shadow(1, Color.BLACK));
 
-        ordersContainerPane = new OrdersPanel();
-        invoicesContainerPane = new InvoicesContainerPane();
+        ordersContainerPane = new ContainerPaneOrders();
+        invoicesContainerPane = new ContainerPaneInvoices();
         vboxOrdersContainer.getChildren().setAll(ordersContainerPane);
         vboxInvoicesContainer.getChildren().setAll(invoicesContainerPane);
 
@@ -129,6 +129,8 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         pane.setCenterShape(true);
 
         Scene qrScene = new Scene(pane);
+        stage.setResizable(false);
+        stage.setTitle("Connect an Android Client");
         stage.setScene(qrScene);
         stage.initOwner(parent);
         stage.show();
@@ -253,6 +255,32 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
             AboutStage aboutStage = new AboutStage();
             aboutStage.initOwner(parent);
             aboutStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void menuItemArchiveOrders(ActionEvent evt) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/ArchiveOrdersStage.fxml"));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.initOwner(parent);
+            stage.setTitle("Orders Archive");
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void menuItemArchiveInvoices(ActionEvent evt) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/ArchiveInvoicesStage.fxml"));
+            Stage stage = new Stage();
+            stage.setScene(new Scene(root));
+            stage.initOwner(parent);
+            stage.setTitle("Invoices Archive");
+            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }

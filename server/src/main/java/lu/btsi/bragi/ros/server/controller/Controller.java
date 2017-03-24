@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import lu.btsi.bragi.ros.models.message.*;
 import lu.btsi.bragi.ros.server.IMessageSender;
 import org.jooq.DSLContext;
-import org.jooq.types.UInteger;
 
 import java.util.HashMap;
 import java.util.List;
@@ -24,7 +23,7 @@ public abstract class Controller<T> {
     private static Map<Class<?>, Controller> registeredControllers = new HashMap<>();
     static IMessageSender messageSender;
 
-    private Map<QueryType, Function<UInteger, List<T>>> queryHandlers = new HashMap<>();
+    private Map<QueryType, Function<Query, List<T>>> queryHandlers = new HashMap<>();
 
     public Controller(Class<T> type) {
         registeredControllers.put(type, this);
@@ -40,7 +39,7 @@ public abstract class Controller<T> {
         throw new ControllerNotFoundException("No Controller found for class "+clazz +". Available controllers: "+ controllers);
     }
 
-    protected void registerCustomQueryHandler(QueryType queryType, Function<UInteger, List<T>> handler) {
+    protected void registerCustomQueryHandler(QueryType queryType, Function<Query, List<T>> handler) {
         queryHandlers.put(queryType, handler);
     }
 
@@ -94,8 +93,8 @@ public abstract class Controller<T> {
     private Message handleCustomQuery(Message<T> message) {
         Query query = message.getQuery();
         if(queryHandlers.containsKey(query.getQueryType())) {
-            Function<UInteger, List<T>> listFunction = queryHandlers.get(query.getQueryType());
-            List<T> list = listFunction.apply(query.getParam());
+            Function<Query, List<T>> listFunction = queryHandlers.get(query.getQueryType());
+            List<T> list = listFunction.apply(query);
             return message.createAnswer(list);
         } else {
             throw new ControllerNotFoundException(

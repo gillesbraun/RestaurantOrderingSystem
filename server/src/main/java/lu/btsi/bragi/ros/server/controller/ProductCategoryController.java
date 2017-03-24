@@ -53,6 +53,7 @@ public class ProductCategoryController extends Controller<ProductCategory> {
         productCategory.setProductCategoryLocalized(
                 getController(ProductCategoryLocalizedController.class).getProductCategoryLocalized(productCategory)
         );
+        productCategory.setLocation(getController(LocationController.class).getLocation(productCategory));
         return productCategory;
     }
 

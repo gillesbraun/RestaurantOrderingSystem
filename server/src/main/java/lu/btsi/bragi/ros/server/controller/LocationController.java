@@ -1,6 +1,8 @@
 package lu.btsi.bragi.ros.server.controller;
 
 import lu.btsi.bragi.ros.models.pojos.Location;
+import lu.btsi.bragi.ros.models.pojos.Product;
+import lu.btsi.bragi.ros.models.pojos.ProductCategory;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.LocationRecord;
 
@@ -43,5 +45,25 @@ public class LocationController extends Controller<Location> {
         LocationRecord locationRecord = new LocationRecord();
         locationRecord.from(obj);
         context.executeDelete(locationRecord);
+    }
+
+    Location getLocation(Product product) {
+        if(product.getLocationId() == null)
+            return null;
+        Location location = context.select()
+                .from(dbTable)
+                .where(dbTable.ID.eq(product.getLocationId()))
+                .fetchOne()
+                .into(pojo);
+        return location;
+    }
+
+    Location getLocation(ProductCategory productCategory) {
+        Location location = context.select()
+                .from(dbTable)
+                .where(dbTable.ID.eq(productCategory.getLocationId()))
+                .fetchOne()
+                .into(pojo);
+        return location;
     }
 }

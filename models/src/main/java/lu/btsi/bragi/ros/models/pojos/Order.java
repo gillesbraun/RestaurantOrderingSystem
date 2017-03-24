@@ -13,6 +13,7 @@ import javax.annotation.Generated;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -225,6 +226,24 @@ public class Order implements Serializable {
             returning.add(ppfo);
         }
         return returning;
+    }
+
+    public List<String> getSubItemsForTreeView() {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd.MM.yyyy H:mm");
+        ArrayList<String> subItems = new ArrayList<>();
+        subItems.add("Table: " + table.getId());
+        subItems.add("Waiter: " + waiter.getName());
+        subItems.add("Created at: " + createdAt.toLocalDateTime().format(dateFormat));
+        return subItems;
+    }
+
+    public Location getLocation() {
+        return StreamSupport.stream(productPriceForOrder)
+                .map(ProductPriceForOrder::getProduct)
+                .map(p -> p.getLocationId() == null
+                        ? p.getProductCategory().getLocation()
+                        : p.getLocation())
+                .findFirst().get();
     }
 }
 

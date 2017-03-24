@@ -2,14 +2,18 @@ package lu.btsi.bragi.ros.server.controller;
 
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageType;
+import lu.btsi.bragi.ros.models.message.Query;
 import lu.btsi.bragi.ros.models.message.QueryType;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 import lu.btsi.bragi.ros.server.database.Tables;
 import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
+import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,21 +35,24 @@ public class OrderController extends Controller<Order> {
         registerCustomQueryHandler(QueryType.Open_Orders, handleOpenOrders);
         registerCustomQueryHandler(QueryType.Open_Orders_For_Location, handleOpenOrdersForLocation);
         registerCustomQueryHandler(QueryType.Open_Invoices, handleOpenInvoices);
+        registerCustomQueryHandler(QueryType.Orders_Between_Dates, getOrdersBetweenDates);
     }
 
-    Function<UInteger, List<Order>> handleOpenOrders = (ignore) -> {
+    Function<Query, List<Order>> handleOpenOrders = (ignore) -> {
         List<Order> orders = context.select()
                 .from(dbTable)
                 .where(dbTable.INVOICE_ID.isNull())
                 .and(dbTable.PROCESSING_DONE.eq((byte)0))
+                .and(DSL.date(dbTable.CREATED_AT).eq(DSL.currentDate()))
                 .orderBy(dbTable.CREATED_AT.desc())
                 .fetchInto(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;
     };
 
-    Function<UInteger, List<Order>> handleOpenOrdersForLocation = (locationID) -> {
-        List<Order> orders = context.select()
+    Function<Query, List<Order>> handleOpenOrdersForLocation = (query) -> {
+        UInteger locationID = query.getParam("location", UInteger.class);
+        List<Order> orders = context.select(dbTable.fields())
                 .from(dbTable)
                 .join(Tables.PRODUCT_PRICE_FOR_ORDER)
                     .on(dbTable.ID.eq(Tables.PRODUCT_PRICE_FOR_ORDER.ORDER_ID))
@@ -55,16 +62,30 @@ public class OrderController extends Controller<Order> {
                     .on(Tables.PRODUCT_CATEGORY.ID.eq(Tables.PRODUCT.PRODUCT_CATEGORY_ID))
                 .where(Tables.PRODUCT.LOCATION_ID.eq(locationID))
                 .or(Tables.PRODUCT_CATEGORY.LOCATION_ID.eq(locationID))
+                .and(DSL.date(dbTable.CREATED_AT).eq(DSL.currentDate()))
+                .and(dbTable.PROCESSING_DONE.eq((byte)0))
+                .and(dbTable.INVOICE_ID.isNull())
                 .fetchInto(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;
     };
 
-    private final Function<UInteger, List<Order>> handleOpenInvoices = ignore -> {
+    private final Function<Query, List<Order>> handleOpenInvoices = ignore -> {
         List<Order> orders = context.select()
                 .from(dbTable)
                 .where(dbTable.INVOICE_ID.isNull())
                 .orderBy(dbTable.CREATED_AT.desc())
+                .fetchInto(pojo);
+        orders = orders.stream().map(this::fetchReferences).collect(toList());
+        return orders;
+    };
+
+    private final Function<Query, List<Order>> getOrdersBetweenDates = query -> {
+        Date from = Date.valueOf(query.getParam("from", LocalDate.class));
+        Date until = Date.valueOf(query.getParam("until", LocalDate.class));
+        List<Order> orders = context.select()
+                .from(dbTable)
+                .where(DSL.date(dbTable.CREATED_AT).between(from, until))
                 .fetchInto(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;

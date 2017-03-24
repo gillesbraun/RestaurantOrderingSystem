@@ -17,7 +17,27 @@
                         <HBox alignment="CENTER_LEFT" spacing="14.0">
                            <children>
                               <Label text="Currency Symbol:" />
-                              <TextField fx:id="textFieldCurrency" text="€" HBox.hgrow="ALWAYS" />
+                              <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <Label fx:id="labelCurrency" text="€" HBox.hgrow="ALWAYS" />
+                                 </children>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                                 <padding>
+                                    <Insets right="7.0" />
+                                 </padding>
+                              </HBox>
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER_LEFT" spacing="14.0">
+                           <children>
+                              <Label text="Default Locale:" />
+                              <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                                 <children>
+                                    <ChoiceBox fx:id="choiceBoxLocale" prefWidth="150.0" />
+                                 </children>
+                              </HBox>
                            </children>
                         </HBox>
                         <HBox alignment="CENTER_LEFT" spacing="14.0">

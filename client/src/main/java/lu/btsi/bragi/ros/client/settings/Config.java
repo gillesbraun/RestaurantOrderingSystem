@@ -5,6 +5,9 @@ import com.google.gson.GsonBuilder;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 
 /**
  * Created by Gilles Braun on 18.03.2017.
@@ -21,6 +24,23 @@ public class Config {
     }
 
     private Config() {
+    }
+
+    public String formatCurrency(double amount) {
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(generalSettings.getLocale());
+        return numberFormat.format(amount);
+    }
+
+    public DateTimeFormatter getDateTimeFormatter() {
+        return DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM);
+    }
+
+    public DateTimeFormatter getDateFormatter() {
+        return DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM);
+    }
+
+    public DateTimeFormatter getTimeFormatter() {
+        return DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT);
     }
 
     public static void init() {
