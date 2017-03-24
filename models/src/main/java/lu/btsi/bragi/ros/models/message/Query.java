@@ -37,7 +37,7 @@ public class Query {
                 .filter(qp -> qp.getName().equals(name))
                 .findFirst();
         if(value.isPresent())
-            return clazz.cast(value.get());
+            return clazz.cast(value.get().getValue());
         else
             throw new QueryParamNotFoundException("Could not find query parameter " + name);
     }
