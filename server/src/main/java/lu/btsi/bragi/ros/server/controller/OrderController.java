@@ -12,6 +12,8 @@ import lu.btsi.bragi.ros.server.database.tables.records.OrderRecord;
 import org.jooq.impl.DSL;
 import org.jooq.types.UInteger;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,7 @@ public class OrderController extends Controller<Order> {
         registerCustomQueryHandler(QueryType.Open_Orders, handleOpenOrders);
         registerCustomQueryHandler(QueryType.Open_Orders_For_Location, handleOpenOrdersForLocation);
         registerCustomQueryHandler(QueryType.Open_Invoices, handleOpenInvoices);
+        registerCustomQueryHandler(QueryType.Orders_Between_Dates, getOrdersBetweenDates);
     }
 
     Function<Query, List<Order>> handleOpenOrders = (ignore) -> {
@@ -72,6 +75,17 @@ public class OrderController extends Controller<Order> {
                 .from(dbTable)
                 .where(dbTable.INVOICE_ID.isNull())
                 .orderBy(dbTable.CREATED_AT.desc())
+                .fetchInto(pojo);
+        orders = orders.stream().map(this::fetchReferences).collect(toList());
+        return orders;
+    };
+
+    private final Function<Query, List<Order>> getOrdersBetweenDates = query -> {
+        Date from = Date.valueOf(query.getParam("from", LocalDate.class));
+        Date until = Date.valueOf(query.getParam("until", LocalDate.class));
+        List<Order> orders = context.select()
+                .from(dbTable)
+                .where(DSL.date(dbTable.CREATED_AT).between(from, until))
                 .fetchInto(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;

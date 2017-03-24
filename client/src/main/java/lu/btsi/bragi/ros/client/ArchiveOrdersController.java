@@ -10,9 +10,7 @@ import javafx.scene.control.TableView;
 import javafx.util.converter.LocalDateStringConverter;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
-import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageException;
-import lu.btsi.bragi.ros.models.message.MessageGet;
+import lu.btsi.bragi.ros.models.message.*;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 
@@ -56,7 +54,10 @@ public class ArchiveOrdersController {
     private void loadData() {
         DateTimeFormatter dateTimeFormat = Config.getInstance().getDateTimeFormatter();
         ConnectionManager conn = ConnectionManager.getInstance();
-        conn.sendWithAction(new MessageGet<>(Order.class), t -> {
+        conn.sendWithAction(new MessageGetQuery<>(Order.class,
+                new Query(QueryType.Orders_Between_Dates,
+                        new QueryParam("from", LocalDate.class, datePickerFrom.getValue()),
+                        new QueryParam("until", LocalDate.class, datePickerUntil.getValue()))), t -> {
             try {
                 List<Order> orders = new Message<Order>(t).getPayload();
                 tableView.setItems(FXCollections.observableList(orders));
@@ -82,6 +83,7 @@ public class ArchiveOrdersController {
         LocalDate from = datePickerFrom.getValue();
         if(datePickerUntil.getValue().minusDays(7).isAfter(from)) {
             datePickerUntil.setValue(from.plusDays(7));
+            loadData();
         }
     }
 
@@ -90,6 +92,7 @@ public class ArchiveOrdersController {
         LocalDate from = datePickerFrom.getValue();
         if(from.isAfter(until) || from.plusDays(7).isBefore(until)) {
             datePickerFrom.setValue(until.minusDays(7));
+            loadData();
         }
 
     }
