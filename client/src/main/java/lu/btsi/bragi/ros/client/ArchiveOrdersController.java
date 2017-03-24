@@ -7,6 +7,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.VBox;
 import javafx.util.converter.LocalDateStringConverter;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
@@ -27,10 +28,12 @@ public class ArchiveOrdersController {
     public DatePicker datePickerUntil, datePickerFrom;
     public Label labelOrderID;
     public TableViewProducts tableViewProducts;
+    public VBox vboxDetail;
     private ObservableList<ProductPriceForOrder> listPPFO;
 
     public void initialize() {
         DateTimeFormatter dateFormat = Config.getInstance().getDateFormatter();
+        DateTimeFormatter dateTimeFormat = Config.getInstance().getDateTimeFormatter();
 
         datePickerFrom.setConverter(new LocalDateStringConverter(dateFormat, dateFormat));
         datePickerUntil.setConverter(new LocalDateStringConverter(dateFormat, dateFormat));
@@ -42,17 +45,31 @@ public class ArchiveOrdersController {
                 labelOrderID.setText(selectedOrder.getId().toString());
                 listPPFO = FXCollections.observableList(selectedOrder.getProductPriceForOrder());
                 tableViewProducts.setItems(listPPFO);
+                vboxDetail.setDisable(false);
             } else {
+                vboxDetail.setDisable(true);
                 listPPFO.clear();
                 labelOrderID.setText("");
             }
         });
 
+        tableColumnID.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue().getId().toString())
+        );
+        tableColumnTable.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue().getTable().getId().toString())
+        );
+        tableColumnWaiter.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue().getWaiter().getName())
+        );
+        tableColumnDateTime.setCellValueFactory(param ->
+                new ReadOnlyObjectWrapper<>(param.getValue().getCreatedAt().toLocalDateTime().format(dateTimeFormat))
+        );
+
         loadData();
     }
 
     private void loadData() {
-        DateTimeFormatter dateTimeFormat = Config.getInstance().getDateTimeFormatter();
         ConnectionManager conn = ConnectionManager.getInstance();
         conn.sendWithAction(new MessageGetQuery<>(Order.class,
                 new Query(QueryType.Orders_Between_Dates,
@@ -61,18 +78,6 @@ public class ArchiveOrdersController {
             try {
                 List<Order> orders = new Message<Order>(t).getPayload();
                 tableView.setItems(FXCollections.observableList(orders));
-                tableColumnID.setCellValueFactory(param ->
-                        new ReadOnlyObjectWrapper<>(param.getValue().getId().toString())
-                );
-                tableColumnTable.setCellValueFactory(param ->
-                        new ReadOnlyObjectWrapper<>(param.getValue().getTable().getId().toString())
-                );
-                tableColumnWaiter.setCellValueFactory(param ->
-                        new ReadOnlyObjectWrapper<>(param.getValue().getWaiter().getName())
-                );
-                tableColumnDateTime.setCellValueFactory(param ->
-                        new ReadOnlyObjectWrapper<>(param.getValue().getCreatedAt().toLocalDateTime().format(dateTimeFormat))
-                );
             } catch (MessageException e) {
                 e.printStackTrace();
             }

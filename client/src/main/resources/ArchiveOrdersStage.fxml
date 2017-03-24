@@ -38,7 +38,7 @@
             </HBox>
          </children>
       </VBox>
-      <VBox prefHeight="200.0" prefWidth="100.0" spacing="7.0">
+      <VBox fx:id="vboxDetail" disable="true" prefHeight="200.0" prefWidth="100.0" spacing="7.0">
          <children>
             <HBox>
                <children>
@@ -47,7 +47,7 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Label fx:id="labelOrderID" text="0">
+                  <Label fx:id="labelOrderID" text="-">
                      <font>
                         <Font size="18.0" />
                      </font>
