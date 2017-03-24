@@ -1,8 +1,6 @@
 package lu.btsi.bragi.ros.server.controller;
 
-import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageType;
-import lu.btsi.bragi.ros.models.message.QueryType;
+import lu.btsi.bragi.ros.models.message.*;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
@@ -14,6 +12,7 @@ import org.jooq.types.UInteger;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static java.util.stream.Collectors.groupingBy;
@@ -34,7 +33,7 @@ public class OrderController extends Controller<Order> {
         registerCustomQueryHandler(QueryType.Open_Invoices, handleOpenInvoices);
     }
 
-    Function<UInteger, List<Order>> handleOpenOrders = (ignore) -> {
+    Function<Query, List<Order>> handleOpenOrders = (ignore) -> {
         List<Order> orders = context.select()
                 .from(dbTable)
                 .where(dbTable.INVOICE_ID.isNull())
@@ -46,23 +45,33 @@ public class OrderController extends Controller<Order> {
         return orders;
     };
 
-    Function<UInteger, List<Order>> handleOpenOrdersForLocation = (locationID) -> {
-        List<Order> orders = context.select()
-                .from(dbTable)
-                .join(Tables.PRODUCT_PRICE_FOR_ORDER)
-                    .on(dbTable.ID.eq(Tables.PRODUCT_PRICE_FOR_ORDER.ORDER_ID))
-                .join(Tables.PRODUCT)
-                    .on(Tables.PRODUCT.ID.eq(Tables.PRODUCT_PRICE_FOR_ORDER.PRODUCT_ID))
-                .join(Tables.PRODUCT_CATEGORY)
-                    .on(Tables.PRODUCT_CATEGORY.ID.eq(Tables.PRODUCT.PRODUCT_CATEGORY_ID))
-                .where(Tables.PRODUCT.LOCATION_ID.eq(locationID))
-                .or(Tables.PRODUCT_CATEGORY.LOCATION_ID.eq(locationID))
-                .fetchInto(pojo);
-        orders = orders.stream().map(this::fetchReferences).collect(toList());
-        return orders;
+    Function<Query, List<Order>> handleOpenOrdersForLocation = (query) -> {
+        Optional<QueryParam> location = query.getQueryParams()
+                .stream()
+                .filter(qp -> qp.getName().equals("location"))
+                .findFirst();
+        if(location.isPresent()) {
+            UInteger locationID = location.get().getValueAs(UInteger.class);
+            List<Order> orders = context.select(dbTable.fields())
+                    .from(dbTable)
+                    .join(Tables.PRODUCT_PRICE_FOR_ORDER)
+                        .on(dbTable.ID.eq(Tables.PRODUCT_PRICE_FOR_ORDER.ORDER_ID))
+                    .join(Tables.PRODUCT)
+                        .on(Tables.PRODUCT.ID.eq(Tables.PRODUCT_PRICE_FOR_ORDER.PRODUCT_ID))
+                    .join(Tables.PRODUCT_CATEGORY)
+                        .on(Tables.PRODUCT_CATEGORY.ID.eq(Tables.PRODUCT.PRODUCT_CATEGORY_ID))
+                    .where(Tables.PRODUCT.LOCATION_ID.eq(locationID))
+                    .or(Tables.PRODUCT_CATEGORY.LOCATION_ID.eq(locationID))
+                    .and(DSL.date(dbTable.CREATED_AT).eq(DSL.currentDate()))
+                    .and(dbTable.PROCESSING_DONE.eq((byte)0))
+                    .and(dbTable.INVOICE_ID.isNull())
+                    .fetchInto(pojo);
+            orders = orders.stream().map(this::fetchReferences).collect(toList());
+            return orders;
+        } return null;
     };
 
-    private final Function<UInteger, List<Order>> handleOpenInvoices = ignore -> {
+    private final Function<Query, List<Order>> handleOpenInvoices = ignore -> {
         List<Order> orders = context.select()
                 .from(dbTable)
                 .where(dbTable.INVOICE_ID.isNull())
