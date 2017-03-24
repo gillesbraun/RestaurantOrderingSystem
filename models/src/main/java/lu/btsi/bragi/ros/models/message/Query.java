@@ -1,29 +1,31 @@
 package lu.btsi.bragi.ros.models.message;
 
-import org.jooq.types.UInteger;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by gillesbraun on 20/03/2017.
  */
 public class Query {
     private final QueryType queryType;
-    private final UInteger param;
+    private final List<QueryParam> queryParams;
 
-    public Query(QueryType queryType, UInteger param) {
+    public Query(QueryType queryType, QueryParam... queryParams) {
         this.queryType = queryType;
-        this.param = param;
+        this.queryParams = new ArrayList<>(Arrays.asList(queryParams));
     }
 
     public Query(QueryType queryType) {
         this.queryType = queryType;
-        this.param = null;
+        this.queryParams = null;
     }
 
     public QueryType getQueryType() {
         return queryType;
     }
 
-    public UInteger getParam() {
-        return param;
+    public List<QueryParam> getQueryParams() {
+        return queryParams;
     }
 }
