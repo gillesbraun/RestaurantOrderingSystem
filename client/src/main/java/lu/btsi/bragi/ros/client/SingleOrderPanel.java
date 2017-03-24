@@ -8,25 +8,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.util.Duration;
-import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.pojos.Order;
-import lu.btsi.bragi.ros.models.pojos.ProductLocalized;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
-import org.jooq.types.UInteger;
 
 import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * Created by gillesbraun on 07/03/2017.
@@ -34,11 +25,10 @@ import static java.util.stream.Collectors.toList;
 public class SingleOrderPanel extends VBox {
     private Order order;
 
-    private ListView<ProductLocalized> listViewProducts = new ListView<>();
+    private TableViewProducts tableViewProducts = new TableViewProducts();
     private Label labelWaiter = new Label("-");
 
-    private ObservableList<ProductLocalized> productsLocalizedForList;
-    private List<ProductPriceForOrder> productsPriceForOrder;
+    private ObservableList<ProductPriceForOrder> productsLocalizedForTable;
 
     private final Background bgYellow = new Background(new BackgroundFill(Color.LIGHTYELLOW, null, null));
     private final Background bgNormal = Background.EMPTY;
@@ -66,23 +56,8 @@ public class SingleOrderPanel extends VBox {
             backgroundFlasher.play();
         }
 
-        listViewProducts.setCellFactory(param -> new ListCell<ProductLocalized>() {
-            @Override
-            protected void updateItem(ProductLocalized item, boolean empty) {
-                super.updateItem(item, empty);
-                if(item == null) {
-                    setText(null);
-                    return;
-                }
-                Optional<UInteger> quantity = productsPriceForOrder.stream()
-                        .filter(ppfo -> ppfo.getProductId().equals(item.getProductId()))
-                        .map(ProductPriceForOrder::getQuantity)
-                        .findFirst();
-                quantity.ifPresent(qty -> setText(qty + " " + item.getLabel()));
-            }
-        });
-        listViewProducts.setMinHeight(USE_COMPUTED_SIZE);
-        listViewProducts.setFocusTraversable(false);
+        tableViewProducts.setMinHeight(USE_COMPUTED_SIZE);
+        tableViewProducts.setFocusTraversable(false);
 
         Label labelTable = new Label("Table: "+order.getTableId());
         Label labelTime = new Label("Time created: " + order.getCreatedAt().toLocalDateTime().format(DateTimeFormatter.ofPattern("H:mm")));
@@ -108,7 +83,7 @@ public class SingleOrderPanel extends VBox {
         BorderPane info2 = new BorderPane();
         info2.setLeft(labelProcessing);
         info2.setRight(labelProcessingDone);
-        getChildren().addAll(info1, info2, labelTable, listViewProducts);
+        getChildren().addAll(info1, info2, labelTable, tableViewProducts);
         setFillWidth(true);
         setPrefHeight(USE_COMPUTED_SIZE);
 
@@ -117,15 +92,12 @@ public class SingleOrderPanel extends VBox {
     }
 
     private void loadProducts() {
-        productsPriceForOrder = order.getProductPriceForOrder();
-        productsLocalizedForList = FXCollections.observableList(
-                order.getProductPriceForOrder().stream()
-                        .map(ppfo -> ppfo.getProductInLanguage(Config.getInstance().generalSettings.getLanguage()))
-                .collect(toList())
+        productsLocalizedForTable = FXCollections.observableList(
+                order.getProductPriceForOrder()
         );
-        listViewProducts.prefHeightProperty().bind(Bindings.size(productsLocalizedForList).multiply(28));
+        tableViewProducts.prefHeightProperty().bind(Bindings.size(productsLocalizedForTable).multiply(28).add(30));
 
-        listViewProducts.setItems(productsLocalizedForList);
+        tableViewProducts.setItems(productsLocalizedForTable);
     }
 
 }
