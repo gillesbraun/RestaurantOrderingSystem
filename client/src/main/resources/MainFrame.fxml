@@ -18,8 +18,8 @@
         </Menu>
         <Menu text="View">
             <items>
-                <MenuItem fx:id="menuItemArchiveOrders" text="Orders Archive" onAction="#menuItemArchiveOrders" />
-                <MenuItem fx:id="menuItemArchiveInvoices" text="Invoices Archive" onAction="#menuItemArchiveInvoices" />
+                <MenuItem fx:id="menuItemArchiveOrders" onAction="#menuItemArchiveOrders" text="Orders Archive" />
+                <MenuItem fx:id="menuItemArchiveInvoices" onAction="#menuItemArchiveInvoices" text="Invoices Archive" />
             </items>
         </Menu>
         <Menu fx:id="menuEdit" disable="true" mnemonicParsing="false" text="Edit">
@@ -35,16 +35,16 @@
         </Menu>
         <Menu mnemonicParsing="false" text="Help">
           <items>
-            <MenuItem mnemonicParsing="false" text="About ROS" onAction="#menuItemAboutPressed" />
+            <MenuItem mnemonicParsing="false" onAction="#menuItemAboutPressed" text="About ROS" />
           </items>
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="1" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
+      <SplitPane dividerPositions="1.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
         <items>
             <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
               <items>
-                  <VBox prefHeight="200.0" prefWidth="100.0" spacing="7.0">
+                  <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>
                         <Label fx:id="labelOrdersTitle" text="Open Orders for Today">
                            <font>
