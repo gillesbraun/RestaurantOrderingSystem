@@ -104,6 +104,7 @@ public class OrderController extends Controller<Order> {
         orderRecord.from(obj);
         orderRecord.reset(dbTable.UPDATED_AT);
         context.executeUpdate(orderRecord);
+        messageSender.broadcast(new Message<>(MessageType.Broadcast, Collections.emptyList(), Order.class));
     }
 
     @Override
