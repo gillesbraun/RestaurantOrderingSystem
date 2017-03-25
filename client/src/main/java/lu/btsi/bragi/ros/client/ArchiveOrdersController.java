@@ -40,6 +40,8 @@ public class ArchiveOrdersController {
         datePickerFrom.setValue(LocalDate.now().minusDays(7));
         datePickerUntil.setValue(LocalDate.now());
 
+        tableViewProducts.setCategoryVisibile(true);
+
         tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedOrder) -> {
             if(selectedOrder != null) {
                 labelOrderID.setText(selectedOrder.getId().toString());

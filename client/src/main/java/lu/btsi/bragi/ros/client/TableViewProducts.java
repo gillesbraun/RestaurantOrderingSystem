@@ -17,10 +17,11 @@ public class TableViewProducts extends TableView<ProductPriceForOrder> {
             cellQuantity = new TableColumn<>("Qty"),
             cellName = new TableColumn<>("Label"),
             cellPricePer = new TableColumn<>("Single Price"),
-            cellPriceTotal = new TableColumn<>("Total Price");
+            cellPriceTotal = new TableColumn<>("Total Price"),
+            cellPriceCategory = new TableColumn<>("Category");
 
     public TableViewProducts() {
-        getColumns().setAll(Arrays.asList(cellQuantity, cellName, cellPricePer, cellPriceTotal));
+        getColumns().setAll(Arrays.asList(cellQuantity, cellName, cellPricePer, cellPriceTotal, cellPriceCategory));
         Language language = Config.getInstance().generalSettings.getLanguage();
 
         cellQuantity.setPrefWidth(50);
@@ -46,5 +47,15 @@ public class TableViewProducts extends TableView<ProductPriceForOrder> {
         cellPriceTotal.setCellValueFactory(ppfo ->
                 new ReadOnlyObjectWrapper<>(Config.getInstance().formatCurrency(ppfo.getValue().getTotalPriceOfProduct().doubleValue()))
         );
+
+        cellPriceCategory.setVisible(false);
+        cellPriceCategory.setPrefWidth(60);
+        cellPriceCategory.setCellValueFactory(ppfo ->
+                new ReadOnlyObjectWrapper<>(ppfo.getValue().getProduct().getProductCategory().getProductCategoryTranslation(Config.getInstance().generalSettings.getLanguage()).getLabel())
+        );
+    }
+
+    public void setCategoryVisibile(boolean visibile) {
+        cellPriceCategory.setVisible(visibile);
     }
 }

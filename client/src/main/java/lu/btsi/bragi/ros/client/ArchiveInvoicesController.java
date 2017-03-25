@@ -67,6 +67,7 @@ public class ArchiveInvoicesController {
         labelPaid.setGraphic(fa.create(FontAwesome.Glyph.CIRCLE_THIN));
 
         tableViewProducts.setItems(listPPFO);
+        tableViewProducts.setCategoryVisibile(true);
 
         tableViewInvoice.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, selectedInvoice) -> {
             if(selectedInvoice == null) {
