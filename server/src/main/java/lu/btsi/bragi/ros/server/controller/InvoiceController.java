@@ -1,5 +1,7 @@
 package lu.btsi.bragi.ros.server.controller;
 
+import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.message.Query;
 import lu.btsi.bragi.ros.models.message.QueryType;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
@@ -8,6 +10,7 @@ import org.jooq.impl.DSL;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
@@ -69,6 +72,7 @@ public class InvoiceController extends Controller<Invoice> {
         obj.getOrders().forEach(order -> {
             getController(OrderController.class).updateInvoice(order, afterInsert.getId());
         });
+        messageSender.broadcast(new Message<>(MessageType.Broadcast, Collections.emptyList(), pojo));
     }
 
     @Override
