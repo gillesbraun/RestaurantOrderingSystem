@@ -52,7 +52,7 @@ public class OrderController extends Controller<Order> {
 
     Function<Query, List<Order>> handleOpenOrdersForLocation = (query) -> {
         UInteger locationID = query.getParam("location", UInteger.class);
-        List<Order> orders = context.select(dbTable.fields())
+        List<Order> orders = context.selectDistinct(dbTable.fields())
                 .from(dbTable)
                 .join(Tables.PRODUCT_PRICE_FOR_ORDER)
                     .on(dbTable.ID.eq(Tables.PRODUCT_PRICE_FOR_ORDER.ORDER_ID))
