@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.NumberFormat;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Locale;
 
 /**
  * Created by Gilles Braun on 18.03.2017.
@@ -47,6 +48,7 @@ public class Config {
         try {
             if(new File("settings.json").exists()) {
                 ourInstance = new Gson().fromJson(new BufferedReader(new FileReader("settings.json")), Config.class);
+                Locale.setDefault(ourInstance.generalSettings.getLocale());
             } else {
                 ourInstance = new Config();
                 ourInstance.invoiceSettings = new InvoiceSettings();
