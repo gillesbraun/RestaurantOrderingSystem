@@ -65,6 +65,7 @@ public class OrderController extends Controller<Order> {
                 .and(DSL.date(dbTable.CREATED_AT).eq(DSL.currentDate()))
                 .and(dbTable.PROCESSING_DONE.eq((byte)0))
                 .and(dbTable.INVOICE_ID.isNull())
+                .orderBy(dbTable.CREATED_AT.desc())
                 .fetchInto(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;
@@ -86,6 +87,7 @@ public class OrderController extends Controller<Order> {
         List<Order> orders = context.select()
                 .from(dbTable)
                 .where(DSL.date(dbTable.CREATED_AT).between(from, until))
+                .orderBy(dbTable.CREATED_AT.desc())
                 .fetchInto(pojo);
         orders = orders.stream().map(this::fetchReferences).collect(toList());
         return orders;
