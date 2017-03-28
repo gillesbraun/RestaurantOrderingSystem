@@ -164,6 +164,19 @@ public class Message<T> {
     }
 
     /**
+     * Creates a Message of <code>MessageType.Answer</code> used to send answers to clients. This method also assigns
+     * the answer the same UUID as the message you are creating it from, so the client knows to which request this
+     * answer refers to.
+     *
+     * @param item The item to send
+     * @return <code>Message</code> which contains the response and UUID for the request, and is of type
+     * <code>MessageType.Answer</code>
+     */
+    public Message<T> createAnswer(T item) {
+        return new Message<>(MessageType.Answer, clazz, messageID, Collections.singletonList(item));
+    }
+
+    /**
      * Creates a Message of <code>MessageType.Error</code> used to send exceptions to clients. The receiving party
      * can then handle the error in a meaningful way. This method also assigns the answer the same UUID as the message
      * you are creating it from, so the client knows which request produced the error.
