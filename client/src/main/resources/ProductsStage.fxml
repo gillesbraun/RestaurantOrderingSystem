@@ -87,8 +87,8 @@
                                     <TextField fx:id="textFieldTranslation" HBox.hgrow="ALWAYS" />
                                     <ChoiceBox fx:id="choiceBoxLanguage" />
                                     <Button fx:id="buttonAddTranslation" mnemonicParsing="false" onAction="#buttonAddTranslationPressed" />
+                                    <Button fx:id="buttonAddTranslationAllLanguages" mnemonicParsing="false" onAction="#buttonAddTranslationAllLanguagesPressed" />
                                     <Button fx:id="buttonEditTranslation" mnemonicParsing="false" onAction="#buttonEditTranslationPressed" />
-                                    <Button fx:id="buttonEditLanguages" mnemonicParsing="false" onAction="#buttonEditLanguagesPressed" />
                                  </children>
                               </HBox>
                            </children>

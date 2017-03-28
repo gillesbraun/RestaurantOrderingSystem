@@ -24,6 +24,7 @@ import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
 import lu.btsi.bragi.ros.models.pojos.*;
+import org.controlsfx.control.PopOver;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -31,6 +32,7 @@ import org.jooq.types.UInteger;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,8 +45,8 @@ import static lu.btsi.bragi.ros.models.message.MessageType.*;
 public class ProductsStage extends Stage {
     @FXML private TextField textFieldPrice, textFieldTranslation;
     @FXML private Button buttonProductCategoryEdit, buttonDelete, buttonRefresh, buttonAddAllergen, buttonEditAllergen,
-                         buttonAddTranslation, buttonEditLanguages, buttonAddProduct, buttonEditTranslation,
-                         buttonDeleteAllergen;
+                         buttonAddTranslation, buttonAddProduct, buttonEditTranslation,
+                         buttonDeleteAllergen, buttonAddTranslationAllLanguages, buttonUpdate;
     @FXML private ListView<Product> listProducts;
     @FXML private ListView<ProductLocalized> listTranslations;
     @FXML private ListView<AllergenLocalized> listAllergens;
@@ -75,13 +77,33 @@ public class ProductsStage extends Stage {
         buttonProductCategoryEdit.setGraphic(fa.create(Glyph.PENCIL));
         buttonAddAllergen.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonEditAllergen.setGraphic(fa.create(Glyph.PENCIL));
-        buttonEditLanguages.setGraphic(fa.create(Glyph.PENCIL));
         buttonAddTranslation.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonAddProduct.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonDelete.setGraphic(fa.create(Glyph.TRASH));
         buttonEditTranslation.setGraphic(fa.create(Glyph.CHECK_CIRCLE));
         buttonDeleteAllergen.setGraphic(fa.create(Glyph.TRASH));
+        buttonAddTranslationAllLanguages.setGraphic(fa.create(Glyph.GLOBE));
         buttonEditTranslation.setDisable(true);
+
+        textFieldPrice.textProperty().addListener((observable, oldValue, newValue) -> {
+            try {
+                Double.valueOf(newValue.replace(',','.'));
+                buttonUpdate.setDisable(false);
+            } catch (NumberFormatException ignore) {
+                buttonUpdate.setDisable(true);
+            }
+        });
+
+        PopOver popOver = new PopOver(new Label("Add this translation for all languages"));
+        popOver.setDetachable(false);
+        buttonAddTranslationAllLanguages.disableProperty().bind(buttonAddTranslation.disabledProperty());
+        buttonAddTranslationAllLanguages.hoverProperty().addListener((observable, oldValue, isHover) -> {
+            if(isHover) {
+                popOver.show(buttonAddTranslationAllLanguages, -15);
+            } else {
+                popOver.hide();
+            }
+        });
 
         textFieldPrice.focusedProperty().addListener((observable, oldValue, newValue) -> {
             Platform.runLater(() -> textFieldPrice.selectAll());
@@ -96,11 +118,12 @@ public class ProductsStage extends Stage {
                             setText(null);
                             return;
                         }
-                        String str = String.format("N\u00b0: %s, Price: %.2f", item.getId(), item.getPrice().doubleValue());
+                        ProductLocalized productInLanguage = null;
                         try {
-                            ProductLocalized productInLanguage = item.getProductInLanguage(Config.getInstance().generalSettings.getLanguage());
-                            str = str + ", " + productInLanguage.getLabel();
+                            productInLanguage = item.getProductInLanguage(Config.getInstance().generalSettings.getLanguage());
                         } catch (Exception e) {}
+                        String price = Config.getInstance().formatCurrency(item.getPrice().doubleValue());
+                        String str = String.format("%s - %s", productInLanguage != null ? productInLanguage.getLabel() : item, price);
                         setText(str);
                     }
                 }
@@ -114,6 +137,8 @@ public class ProductsStage extends Stage {
             }
         });
         listAllergens.getSelectionModel().selectedItemProperty().addListener(allergeneSelected);
+
+
 
         choiceBoxLanguage.setItems(languagesForChoiceBox);
         loadData();
@@ -129,14 +154,9 @@ public class ProductsStage extends Stage {
                     Message<Product> decoded = new Message<>(message);
                     ObservableList<Product> products = FXCollections.observableList(decoded.getPayload());
                     listProducts.setItems(products);
-                    if(previousSelected != null) {
-                        Optional<Product> prev = products.stream()
-                                .filter(p -> p.getId().equals(previousSelected.getId()))
-                                .findFirst();
-                        if(prev.isPresent()) {
-                            listProducts.getSelectionModel().select(prev.get());
-                        }
-                    }
+                    listProducts.refresh();
+                    if(previousSelected != null)
+                        listProducts.getSelectionModel().select(previousSelected);
                 } catch (MessageException e) {
                     e.printStackTrace();
                 }
@@ -355,11 +375,13 @@ public class ProductsStage extends Stage {
                 textFieldPrice.getText().trim().length() > 0 &&
                 choiceBoxProductCategory.getValue() != null) {
 
-            product.setPrice(BigDecimal.valueOf(Double.valueOf(textFieldPrice.getText())));
+            String priceStr = textFieldPrice.getText().replace(',','.').replaceAll("-", "");
+            product.setPrice(BigDecimal.valueOf(Double.valueOf(priceStr)));
             product.setProductCategoryId(choiceBoxProductCategory.getValue().getProductCategoryId());
 
             Message<Product> productMessage = new Message<>(Update, product, Product.class);
             ConnectionManager.getInstance().send(productMessage);
+            loadData();
         }
     }
 
@@ -414,13 +436,21 @@ public class ProductsStage extends Stage {
         buttonAddTranslation.setDisable(languagesForChoiceBox.isEmpty());
     }
 
-    public void buttonEditLanguagesPressed(ActionEvent event) {
-        try {
-            LanguagesStage languagesStage = new LanguagesStage();
-            languagesStage.initOwner(getOwner());
-            languagesStage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void buttonAddTranslationAllLanguagesPressed(ActionEvent event) {
+        Product product = listProducts.getSelectionModel().getSelectedItem();
+        if(product != null && textFieldTranslation.getText().trim().length() > 0) {
+            ArrayList<ProductLocalized> translations = new ArrayList<>();
+            for (Language language : languagesForChoiceBox) {
+                ProductLocalized productLocalized = new ProductLocalized();
+                productLocalized.setLabel(textFieldTranslation.getText());
+                productLocalized.setProductId(product.getId());
+                productLocalized.setLanguageCode(language.getCode());
+                translations.add(productLocalized);
+            }
+            ConnectionManager.getInstance().send(new Message<>(Create, translations, ProductLocalized.class));
+            textFieldTranslation.clear();
+            loadData();
+            updateTranslationChoiceBox();
         }
     }
 
