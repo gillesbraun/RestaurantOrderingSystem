@@ -2,18 +2,21 @@ package lu.btsi.bragi.ros.client;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.TextFlow;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.client.settings.InvoiceSettings;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 class PrintableInvoice extends Invoice {
     @FXML private Label labelTitle, labelAddress1, labelAddress2, labelInvoice, labelDateTime, labelTable,
-            labelWaiter, labelTaxNumber, labelTelephone, labelEmail, labelTotalPrice;
+            labelTaxNumber, labelTelephone, labelEmail, labelTotalPrice;
+    @FXML private TextFlow labelWaiter;
     @FXML private VBox containerProductName, containerProductA, containerProductPrice, containerProductPriceTotal;
 
     PrintableInvoice(Invoice value) {
@@ -37,8 +40,8 @@ class PrintableInvoice extends Invoice {
         labelAddress1.setText(invoiceSettings.getAddress());
         labelAddress2.setText(invoiceSettings.getAddress2());
 
-        labelInvoice.setText("ID");
-        String datetime = Config.getInstance().getDateTimeFormatter().format(LocalDateTime.now());
+        labelInvoice.setText(getId().toString());
+        String datetime = Config.getInstance().getDateTimeFormatter().format(getCreatedAt().toLocalDateTime());
         labelDateTime.setText(datetime);
         labelTable.setText(getTable() + "");
         Config config = Config.getInstance();
@@ -50,7 +53,12 @@ class PrintableInvoice extends Invoice {
         });
         labelTotalPrice.setText(config.formatCurrency(getTotalPrice().doubleValue()));
 
-        labelWaiter.setText(getWaiters());
+        labelWaiter.getChildren().addAll(
+                getWaiters().stream()
+                        .map(Label::new)
+                        .peek(label -> label.setPadding(new Insets(0,5,0,0)))
+                        .collect(Collectors.toList())
+        );
         labelTaxNumber.setText(invoiceSettings.getTaxNumber());
         labelTelephone.setText(invoiceSettings.getTelephone());
         labelEmail.setText(invoiceSettings.getEmail());

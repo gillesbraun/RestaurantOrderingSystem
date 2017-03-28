@@ -226,7 +226,6 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
             } else {
                 try {
                     new Message(message);
-                    // should not reach here
                 } catch (MessageException e) {
                     Platform.runLater(() -> {
                         ExceptionDialog exceptionDialog = new ExceptionDialog(e);

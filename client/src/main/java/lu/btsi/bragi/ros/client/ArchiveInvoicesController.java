@@ -24,6 +24,7 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.stream.Collectors;
 
 /**
  * Created by gillesbraun on 24/03/2017.
@@ -84,7 +85,7 @@ public class ArchiveInvoicesController {
                     labelPaid.setGraphic(fa.create(FontAwesome.Glyph.CIRCLE_THIN));
                 labelInvoiceID.setText(selectedInvoice.getId().toString());
                 labelTableID.setText(selectedInvoice.getTable().toString());
-                labelWaiter.setText(selectedInvoice.getWaiters());
+                labelWaiter.setText(selectedInvoice.getWaiters().stream().collect(Collectors.joining(", ")));
                 listPPFO.setAll(
                         Order.combineOrders(
                                 selectedInvoice.getOrders()

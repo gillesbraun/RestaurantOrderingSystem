@@ -113,10 +113,8 @@ public class Invoice implements Serializable {
         return orders;
     }
 
-    public String getWaiters() {
-        if(getOrders() == null)
-            return "";
-        return stream(getOrders()).map(Order::getWaiter).map(Waiter::getName).distinct().collect(Collectors.joining(", "));
+    public List<String> getWaiters() {
+        return stream(getOrders()).map(Order::getWaiter).map(Waiter::getName).map(name -> name.split(" ")[0]).distinct().collect(Collectors.toList());
     }
 
     public UInteger getTable() {

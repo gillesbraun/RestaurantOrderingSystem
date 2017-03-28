@@ -60,19 +60,26 @@ public class InvoiceController extends Controller<Invoice> {
     }
 
     @Override
-    protected void handleCreate(Invoice obj) throws Exception {
+    protected void handleCreate(Invoice obj, Message<Invoice> originalMessage) throws Exception {
         InvoiceRecord invoiceRecord = new InvoiceRecord();
         invoiceRecord.from(obj);
 
         InvoiceRecord afterInsert = context.insertInto(dbTable)
                 .set(dbTable.PAID, obj.getPaid())
-                .returning(dbTable.ID)
+                .returning(dbTable.fields())
                 .fetchOne();
 
         obj.getOrders().forEach(order -> {
             getController(OrderController.class).updateInvoice(order, afterInsert.getId());
         });
+        Invoice after = fetchReferences(afterInsert.into(pojo));
+        messageSender.sendReply(originalMessage.createAnswer(after));
         messageSender.broadcast(new Message<>(MessageType.Broadcast, Collections.emptyList(), pojo));
+    }
+
+    @Override
+    protected void handleCreate(Invoice obj) throws Exception {
+        // do nothing here
     }
 
     @Override

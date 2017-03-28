@@ -1,5 +1,6 @@
 package lu.btsi.bragi.ros.client;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,11 +15,13 @@ import javafx.scene.layout.VBox;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
+import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
 import lu.btsi.bragi.ros.models.pojos.Table;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -56,23 +59,6 @@ public class SingleInvoicePane extends VBox {
         getChildren().setAll(root);
 
         listViewProducts.setItems(listProducts);
-        /*listViewProducts.setCellFactory(param -> new ListCell<ProductPriceForOrder>(){
-            @Override
-            protected void updateItem(ProductPriceForOrder ppfo, boolean empty) {
-                super.updateItem(ppfo, empty);
-                if(ppfo == null) {
-                    setText(null);
-                    return;
-                }
-                ProductLocalized maybeLocalized = ppfo.getProductInLanguage(Config.getInstance().generalSettings.getLanguage());
-                double pricePer = ppfo.getPricePerProduct().doubleValue();
-                double priceTotal = ppfo.getTotalPriceOfProduct().doubleValue();
-                long quantity = ppfo.getQuantity().longValue();
-                String pricePerStr = Config.getInstance().formatCurrency(pricePer);
-                String priceTotalStr = Config.getInstance().formatCurrency(priceTotal);
-                setText(String.format("%s %s \u00e0 %s = %s", quantity, maybeLocalized.getLabel(), pricePerStr, priceTotalStr));
-            }
-        });*/
 
         labelTable.setText(table.toString());
         fillList();
@@ -99,26 +85,34 @@ public class SingleInvoicePane extends VBox {
                 Order.combineOrders(orders)
         );
 
-        listViewProducts.prefHeightProperty().bind(Bindings.size(listProducts).multiply(28).add(30));
+        listViewProducts.prefHeightProperty().bind(Bindings.size(listProducts).add(1).multiply(24));
     }
 
     public void buttonPayPressed(ActionEvent event) {
-        Invoice invoice = new Invoice();
-        invoice.setPaid((byte)1);
-        invoice.setOrders(orders);
-        try {
-            Printer printer = Printer.getDefaultPrinter();
-            PrinterJob printerJob = PrinterJob.createPrinterJob(printer);
-            printerJob.showPrintDialog(null);
-            VBox node = new PrintableInvoice(invoice).getNode();
-            node.setStyle("-fx-font-family: \"Arial\";");
-            printerJob.printPage(node);
-            printerJob.endJob();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Invoice invoiceToSend = new Invoice();
+        invoiceToSend.setPaid((byte)1);
+        invoiceToSend.setOrders(orders);
 
-        ConnectionManager.getInstance().send(new Message<>(MessageType.Create, invoice, Invoice.class));
-        parent.refreshInvoices();
+        ConnectionManager.getInstance().sendWithAction(new Message<>(MessageType.Create, invoiceToSend, Invoice.class), m -> {
+            try {
+                List<Invoice> payload = new Message<Invoice>(m).getPayload();
+                if(payload.size() > 0) {
+                    Invoice invoice = payload.get(0);
+                    Printer printer = Printer.getDefaultPrinter();
+                    PrinterJob printerJob = PrinterJob.createPrinterJob(printer);
+                    printerJob.showPrintDialog(null);
+                    VBox node = new PrintableInvoice(invoice).getNode();
+                    node.setStyle("-fx-font-family: \"Arial\";");
+                    printerJob.printPage(node);
+                    printerJob.endJob();
+
+                    parent.refreshInvoices();
+                }
+            } catch (IOException | MessageException e) {
+                Platform.runLater(() -> {
+                    new ExceptionDialog(e).show();
+                });
+            }
+        });
     }
 }
