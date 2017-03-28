@@ -31,6 +31,7 @@ import lu.btsi.bragi.ros.models.pojos.ProductCategory;
 import lu.btsi.bragi.ros.models.pojos.ProductCategoryLocalized;
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.http.client.fluent.Request;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.controlsfx.glyphfont.FontAwesome.Glyph;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -371,7 +372,9 @@ public class ProductCategoriesStage extends Stage {
                     loadData();
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                ExceptionDialog exceptionDialog = new ExceptionDialog(e);
+                exceptionDialog.initOwner(getOwner());
+                exceptionDialog.show();
             }
         }
     }

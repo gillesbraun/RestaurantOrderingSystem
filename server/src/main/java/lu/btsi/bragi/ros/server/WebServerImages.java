@@ -53,13 +53,6 @@ public class WebServerImages {
             File file = null;
             if(queryMap.get("category") != null) {
                 file = new File(queryMap.get("category") + ".png");
-                if(!file.exists()) {
-                    try {
-                        file = new File(getClass().getResource("/noimage.png").toURI());
-                    } catch (URISyntaxException e) {
-                        e.printStackTrace();
-                    }
-                }
             } else {
                 OutputStream os = t.getResponseBody();
                 String response = "<h1>please specify a category.</h1>";
@@ -74,6 +67,13 @@ public class WebServerImages {
             if(t.getRequestMethod().equals("POST")) {
                 handleImagePost(t, file);
             } else {
+                if(!file.exists()) {
+                    try {
+                        file = new File(getClass().getResource("/noimage.png").toURI());
+                    } catch (URISyntaxException e) {
+                        e.printStackTrace();
+                    }
+                }
                 t.sendResponseHeaders(200, file.length());
                 Files.copy(file.toPath(), os);
             }
