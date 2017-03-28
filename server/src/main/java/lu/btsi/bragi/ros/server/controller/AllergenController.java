@@ -6,6 +6,8 @@ import lu.btsi.bragi.ros.server.database.tables.records.AllergenRecord;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * Created by gillesbraun on 01/03/2017.
  */
@@ -23,6 +25,7 @@ public class AllergenController extends Controller<Allergen> {
     @Override
     protected List<Allergen> handleGet() throws Exception {
         List<Allergen> list = context.fetch(dbTable).into(pojo);
+        list = list.stream().map(this::fetchReferences).collect(toList());
         return list;
     }
 
@@ -48,13 +51,18 @@ public class AllergenController extends Controller<Allergen> {
         context.executeDelete(allergenRecord);
     }
 
+    private Allergen fetchReferences(Allergen allergen) {
+        allergen.setAllergenLocalized(getController(AllergenLocalizedController.class).getAllergenLocalized(allergen));
+        return allergen;
+    }
+
     Allergen getAllergen(ProductAllergen productAllergen) {
         Allergen allergen = context.select()
                 .from(dbTable)
                 .where(dbTable.ID.eq(productAllergen.getAllergenId()))
                 .fetchOne()
                 .into(pojo);
-        allergen.setAllergenLocalized(getController(AllergenLocalizedController.class).getAllergenLocalized(allergen));
+        allergen = fetchReferences(allergen);
         return allergen;
     }
 }

@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
+import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
 import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageGet;
@@ -29,8 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static lu.btsi.bragi.ros.models.message.MessageType.Create;
-import static lu.btsi.bragi.ros.models.message.MessageType.Delete;
+import static lu.btsi.bragi.ros.models.message.MessageType.*;
 
 /**
  * Created by gillesbraun on 03/03/2017.
@@ -47,8 +47,8 @@ public class AllergensStage extends Stage {
     private Allergen selectedAllergen = null;
     private AllergenLocalized selectedAllergenLocalized = null;
 
-    private ObservableList<Allergen> allergensForList;
-    private ObservableList<AllergenLocalized> allergensLocalizedForList;
+    private ObservableList<Allergen> allergensForList = FXCollections.observableArrayList();
+    private ObservableList<AllergenLocalized> allergensLocalizedForList = FXCollections.observableArrayList();
     private ObservableList<Language> languagesForChoiceBox;
 
     public AllergensStage() throws IOException {
@@ -65,12 +65,29 @@ public class AllergensStage extends Stage {
         buttonDeleteAllergen.setGraphic(fa.create(FontAwesome.Glyph.TRASH));
 
         buttonAddTranslation.setGraphic(fa.create(FontAwesome.Glyph.PLUS_CIRCLE));
-        buttonEditTranslation.setGraphic(fa.create(FontAwesome.Glyph.ARROW_UP));
+        buttonEditTranslation.setGraphic(fa.create(FontAwesome.Glyph.CHECK_CIRCLE));
 
         buttonEditTranslation.setDisable(true);
 
         textFieldTranslation.setOnKeyReleased(textFieldTranslationKeyReleased);
+        listViewAllergens.setItems(allergensForList);
         listViewAllergens.getSelectionModel().selectedItemProperty().addListener(allergenSelected);
+        listViewAllergens.setCellFactory(param -> new ListCell<Allergen>(){
+            @Override
+            protected void updateItem(Allergen allergen, boolean empty) {
+                super.updateItem(allergen, empty);
+                if(allergen == null) {
+                    setText(null);
+                } else {
+                    String display = allergen.toString();
+                    try {
+                        display += ": " + allergen.getAllergenLocalized(Config.getInstance().generalSettings.getLanguage());
+                    } catch(Exception ignore) {}
+                    setText(display);
+                }
+            }
+        });
+        listViewTranslations.setItems(allergensLocalizedForList);
         listViewTranslations.getSelectionModel().selectedItemProperty().addListener(translationSelected);
         listViewTranslations.setCellFactory(param -> new ListCell<AllergenLocalized>() {
             @Override
@@ -86,7 +103,8 @@ public class AllergensStage extends Stage {
         this.selectedAllergen = selectedAllergen;
         if(selectedAllergen != null) {
             labelID.setText(selectedAllergen.getId()+"");
-            loadTranslations();
+            allergensLocalizedForList.setAll(selectedAllergen.getAllergenLocalized());
+            updateLanguageChoiceBox();
         } else {
             labelID.setText("-");
             allergensLocalizedForList.clear();
@@ -98,6 +116,7 @@ public class AllergensStage extends Stage {
         if(allergenLocalized == null) {
             textFieldTranslation.clear();
             buttonEditTranslation.setDisable(true);
+            updateLanguageChoiceBox();
         } else {
             textFieldTranslation.setText(allergenLocalized.getLabel());
         }
@@ -114,28 +133,11 @@ public class AllergensStage extends Stage {
         // Get allergens
         ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Allergen.class), message -> {
             try {
+                Allergen prevItem = listViewAllergens.getSelectionModel().getSelectedItem();
                 List<Allergen> payload = new Message<Allergen>(message).getPayload();
-                allergensForList = FXCollections.observableList(payload);
-                listViewAllergens.setItems(allergensForList);
-            } catch (MessageException e) {
-                e.printStackTrace();
-            }
-        });
-    }
-
-    private void loadTranslations() {
-        if(selectedAllergen == null)
-            return;
-        ConnectionManager.getInstance().sendWithAction(new MessageGet<>(AllergenLocalized.class), message -> {
-            try {
-                List<AllergenLocalized> payload = new Message<AllergenLocalized>(message).getPayload();
-                allergensLocalizedForList = FXCollections.observableList(
-                        payload.stream()
-                        .filter(al -> al.getAllergenId().equals(selectedAllergen.getId()))
-                        .collect(Collectors.toList())
-                );
-                listViewTranslations.setItems(allergensLocalizedForList);
-                updateLanguageChoiceBox();
+                allergensForList.setAll(payload);
+                if(prevItem != null)
+                    listViewAllergens.getSelectionModel().select(prevItem);
             } catch (MessageException e) {
                 e.printStackTrace();
             }
@@ -197,12 +199,14 @@ public class AllergensStage extends Stage {
         allergenLocalized.setLabel(textFieldTranslation.getText());
         ConnectionManager.getInstance().send(new Message<>(Create, allergenLocalized, AllergenLocalized.class));
         textFieldTranslation.clear();
-        loadTranslations();
     }
 
     public void buttonEditTranslationPressed(ActionEvent evt) {
         if(selectedAllergenLocalized == null || textFieldTranslation.getText().trim().length() == 0)
             return;
         selectedAllergenLocalized.setLabel(textFieldTranslation.getText());
+        ConnectionManager.getInstance().send(new Message<>(Update, selectedAllergenLocalized, AllergenLocalized.class));
+        textFieldTranslation.clear();
+        loadData();
     }
 }

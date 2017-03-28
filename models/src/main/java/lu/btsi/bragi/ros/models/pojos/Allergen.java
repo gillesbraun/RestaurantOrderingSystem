@@ -4,6 +4,7 @@
 package lu.btsi.bragi.ros.models.pojos;
 
 
+import java8.util.stream.StreamSupport;
 import org.jooq.types.UInteger;
 
 import javax.annotation.Generated;
@@ -85,5 +86,29 @@ public class Allergen implements Serializable {
 
     public List<AllergenLocalized> getAllergenLocalized() {
         return allergenLocalized;
+    }
+
+    public AllergenLocalized getAllergenLocalized(Language language) {
+        return StreamSupport.stream(allergenLocalized)
+                .filter(aL -> aL.getLanguageCode().equals(language.getCode()))
+                .findFirst()
+                .get();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Allergen allergen = (Allergen) o;
+
+        if (id != null ? !id.equals(allergen.id) : allergen.id != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return id != null ? id.hashCode() : 0;
     }
 }
