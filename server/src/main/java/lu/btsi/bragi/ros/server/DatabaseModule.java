@@ -23,7 +23,7 @@ public class DatabaseModule extends AbstractModule {
     public DSLContext getConnection() {
         String userName = "root";
         String password = "";
-        String url = "jdbc:mysql://localhost:3306/ros?autoReconnect=true";
+        String url = "jdbc:mysql://localhost:3306/ros?autoReconnect=true&useSSL=false";
 
         try {
             Connection connection = DriverManager.getConnection(url, userName, password);
