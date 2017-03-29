@@ -5,6 +5,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import javafx.animation.Animation;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -14,10 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.effect.Shadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
@@ -27,6 +25,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import javafx.util.Duration;
 import lu.btsi.bragi.ros.client.connection.*;
 import lu.btsi.bragi.ros.client.editViews.*;
 import lu.btsi.bragi.ros.client.settings.Config;
@@ -37,6 +36,8 @@ import org.controlsfx.glyphfont.GlyphFontRegistry;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.UnknownHostException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Created by gillesbraun on 14/02/2017.
@@ -46,7 +47,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     private TextArea statusTextArea;
 
     @FXML
-    private Menu menuEdit;
+    private Menu menuEdit, menuView;
 
     @FXML
     private VBox vboxOrdersContainer, vboxInvoicesContainer;
@@ -56,6 +57,8 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
 
     @FXML
     private MenuItem menuItemRefresh, menuItemQRCode, menuItemSettings, menuItemQuit;
+
+    @FXML private SplitPane splitPaneContent, splitPaneMessages;
 
     private ContainerPaneOrders ordersContainerPane;
     private ContainerPaneInvoices invoicesContainerPane;
@@ -74,6 +77,11 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         }
     };
 
+    private boolean animationDisplayTextAreaPlayed = false;
+    private Animation animationDisplayTextArea;
+
+    private boolean animationHideTextAreaPlayed = false;
+    private Animation animationHideTextArea;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -84,7 +92,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
 
         primaryStage.setOnCloseRequest(onClose);
         primaryStage.setTitle("ROS Client");
-        Scene scene = new Scene(root, 800, 500);
+        Scene scene = new Scene(root, 1000, 650);
         scene.setOnKeyPressed(keyListener);
         primaryStage.setScene(scene);
         primaryStage.show();
@@ -105,9 +113,14 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         vboxOrdersContainer.getChildren().setAll(ordersContainerPane);
         vboxInvoicesContainer.getChildren().setAll(invoicesContainerPane);
 
+        animationHideTextArea = new SplitPaneAnimator(splitPaneMessages, 0.7, 1.0);
+        animationDisplayTextArea = new SplitPaneAnimator(splitPaneMessages, 1.0, 0.7);
+        animationHideTextArea.setDelay(Duration.millis(2000));
+
         setContentDisabled(true);
         ConnectionManager.init(this);
         ConnectionManager.getInstance().addBroadcastCallback(this);
+        ConnectionManager.getInstance().addConnectionCallback(this);
     }
 
     public void showQR(ActionEvent evt) throws UnknownHostException, WriterException {
@@ -121,8 +134,6 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         Stage stage = new Stage();
         ImageView image = new ImageView();
         image.setImage(SwingFXUtils.toFXImage(bufferedImage, null));
-
-        ConnectionManager.getInstance().addConnectionCallback(this);
 
         Pane pane = new Pane();
         pane.getChildren().add(image);
@@ -145,16 +156,16 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
 
     private void setContentDisabled(boolean en) {
         menuEdit.setDisable(en);
+        menuView.setDisable(en);
         menuItemQRCode.setDisable(en);
-        vboxOrdersContainer.setDisable(en);
-        vboxInvoicesContainer.setDisable(en);
+        splitPaneContent.setDisable(en);
     }
 
     public void menuItemRefreshPressed(ActionEvent event) {
         loadContent();
     }
 
-    private void loadContent() {
+    void loadContent() {
         ordersContainerPane.refreshOrders();
         invoicesContainerPane.refreshInvoices();
     }
@@ -162,7 +173,9 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     @Override
     public void displayMessage(String text) {
         Platform.runLater(() -> {
-            statusTextArea.appendText(text + "\n");
+            DateTimeFormatter dateTimeFormatter = Config.getInstance().getDateTimeFormatter();
+            LocalDateTime now = LocalDateTime.now();
+            statusTextArea.appendText(String.format("[%s] %s\n", now.format(dateTimeFormatter), text));
         });
     }
 
@@ -244,6 +257,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         try {
             SettingsStage settingsStage = new SettingsStage();
             settingsStage.initOwner(parent);
+            settingsStage.setMainFrame(this);
             settingsStage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -289,11 +303,29 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     @Override
     public void connectionClosed(String reason) {
         setContentDisabled(true);
+        showStatusTextArea();
     }
 
     @Override
     public void connectionOpened(String message) {
         setContentDisabled(false);
+        hideStatusTextArea();
+    }
+
+    public void hideStatusTextArea() {
+        if(!animationHideTextAreaPlayed) {
+            animationHideTextArea.play();
+            animationHideTextAreaPlayed = true;
+            animationDisplayTextAreaPlayed = false;
+        }
+    }
+
+    public void showStatusTextArea() {
+        if(!animationDisplayTextAreaPlayed) {
+            animationDisplayTextArea.play();
+            animationDisplayTextAreaPlayed = true;
+            animationHideTextAreaPlayed = false;
+        }
     }
 
     @Override

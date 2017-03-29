@@ -16,7 +16,7 @@
             <MenuItem fx:id="menuItemQuit" mnemonicParsing="false" onAction="#menuItemQuitPressed" text="Quit" />
           </items>
         </Menu>
-        <Menu text="View">
+        <Menu fx:id="menuView" text="View">
             <items>
                 <MenuItem fx:id="menuItemArchiveOrders" onAction="#menuItemArchiveOrders" text="Orders Archive" />
                 <MenuItem fx:id="menuItemArchiveInvoices" onAction="#menuItemArchiveInvoices" text="Invoices Archive" />
@@ -40,9 +40,9 @@
         </Menu>
       </menus>
     </MenuBar>
-      <SplitPane dividerPositions="1.0" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
+      <SplitPane fx:id="splitPaneMessages" dividerPositions="0.7" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0" VBox.vgrow="ALWAYS">
         <items>
-            <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
+            <SplitPane fx:id="splitPaneContent" dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0">
               <items>
                   <VBox prefHeight="200.0" prefWidth="100.0">
                      <children>

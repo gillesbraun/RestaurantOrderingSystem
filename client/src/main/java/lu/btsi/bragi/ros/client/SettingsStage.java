@@ -40,6 +40,7 @@ public class SettingsStage extends Stage implements ConnectionCallback {
     @FXML private CheckBox checkBoxAutoDisover;
     private final ObservableList<Locale> listLocales;
     private ObservableList<Language> listLanguages = FXCollections.observableArrayList();
+    private MainFrame mainFrame;
 
     SettingsStage() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SettingsStage.fxml"));
@@ -109,6 +110,7 @@ public class SettingsStage extends Stage implements ConnectionCallback {
     public void buttonSavePressed(ActionEvent evt) {
         saveConfig();
         close();
+        mainFrame.loadContent();
     }
 
     public void buttonCancelPressed(ActionEvent evt) {
@@ -121,6 +123,7 @@ public class SettingsStage extends Stage implements ConnectionCallback {
 
     public void buttonApplyPressed(ActionEvent evt) {
         saveConfig();
+        mainFrame.loadContent();
     }
 
     @Override
@@ -144,5 +147,9 @@ public class SettingsStage extends Stage implements ConnectionCallback {
                 exceptionDialog.show();
             }
         });
+    }
+
+    public void setMainFrame(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
     }
 }

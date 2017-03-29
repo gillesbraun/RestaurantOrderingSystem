@@ -51,6 +51,7 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
     }
 
     public void newClient() {
+        connectionCallbacks.forEach(c -> c.connectionClosed(""));
         ConnectionSettings connectionSettings = Config.getInstance().connectionSettings;
         if(!connectionSettings.isFirstConnection() && !connectionSettings.isAutoDiscovery()) {
             newClientIP(connectionSettings.getHostAddress());
@@ -153,6 +154,10 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
         uiCallback.connectionOpened(message, client);
         connectionCallbacks.forEach(c -> c.connectionOpened(message));
         ConnectionSettings connectionSettings = Config.getInstance().connectionSettings;
+        if(connectionSettings.isFirstConnection()) {
+            connectionSettings.setAutoDiscovery(false);
+            uiCallback.displayMessage("Disabled AutoDiscovery, which makes subsequent runs faster if the ip won't change.");
+        }
         connectionSettings.setFirstConnection(false);
         connectionSettings.setHostAddress(getRemoteIPAdress());
         try {
