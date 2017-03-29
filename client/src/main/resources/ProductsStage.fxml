@@ -3,13 +3,13 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="686.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="526.0" prefWidth="686.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <SplitPane dividerPositions="0.33277591973244147" prefHeight="160.0" prefWidth="200.0" BorderPane.alignment="CENTER">
          <items>
             <VBox prefHeight="461.0" prefWidth="264.0">
                <children>
-                  <ListView fx:id="listProducts" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                  <ListView fx:id="listProducts" VBox.vgrow="ALWAYS">
                      <VBox.margin>
                         <Insets left="14.0" right="14.0" top="14.0" />
                      </VBox.margin>
@@ -39,9 +39,17 @@
                   </HBox>
                   <HBox alignment="BASELINE_LEFT" spacing="7.0">
                      <children>
-                        <Label alignment="CENTER" text="Product Category" />
-                        <ChoiceBox fx:id="choiceBoxProductCategory" HBox.hgrow="ALWAYS" />
+                        <Label alignment="CENTER" text="Product Category: " />
+                        <ChoiceBox fx:id="choiceBoxProductCategory" minWidth="120.0" HBox.hgrow="ALWAYS" />
                         <Button fx:id="buttonProductCategoryEdit" mnemonicParsing="false" onAction="#buttonProductCategoryEditPressed" />
+                     </children>
+                  </HBox>
+                  <HBox alignment="BASELINE_LEFT" spacing="7.0">
+                     <children>
+                        <Label alignment="CENTER" text="Location Override: " />
+                        <ChoiceBox fx:id="choiceBoxLocation" minWidth="120.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="buttonLocationEdit" mnemonicParsing="false" onAction="#buttonLocationEditPressed" />
+                        <Label text="(Optional)" />
                      </children>
                   </HBox>
                   <HBox alignment="BASELINE_LEFT" spacing="7.0">
@@ -58,7 +66,7 @@
                      </VBox.margin>
                      <children>
                         <Label text="Allergens:" />
-                        <ListView fx:id="listAllergens" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                        <ListView fx:id="listAllergens" VBox.vgrow="ALWAYS">
                            <VBox.margin>
                               <Insets bottom="7.0" top="7.0" />
                            </VBox.margin>
@@ -66,7 +74,7 @@
                         <HBox alignment="BASELINE_LEFT" spacing="7.0">
                            <children>
                               <Label alignment="CENTER" text="Add Allergen:" />
-                              <ChoiceBox fx:id="choiceBoxAllergen" />
+                              <ChoiceBox fx:id="choiceBoxAllergen" minWidth="120.0" />
                               <Button fx:id="buttonAddAllergen" mnemonicParsing="false" onAction="#buttonAddAllergenPressed" />
                               <Button fx:id="buttonDeleteAllergen" disable="true" mnemonicParsing="false" onAction="#buttonDeleteAllergenPressed" />
                               <Button fx:id="buttonEditAllergen" mnemonicParsing="false" onAction="#buttonEditAllergenPressed" />
@@ -78,14 +86,14 @@
                   <VBox spacing="7.0">
                      <children>
                         <Label text="Product Translations:" />
-                        <ListView fx:id="listTranslations" prefHeight="200.0" prefWidth="200.0" />
+                        <ListView fx:id="listTranslations" />
                         <VBox spacing="7.0">
                            <children>
                               <Label alignment="CENTER" text="Add / Edit Translation:" />
                               <HBox alignment="BASELINE_LEFT" spacing="7.0">
                                  <children>
                                     <TextField fx:id="textFieldTranslation" HBox.hgrow="ALWAYS" />
-                                    <ChoiceBox fx:id="choiceBoxLanguage" />
+                                    <ChoiceBox fx:id="choiceBoxLanguage" minWidth="120.0" />
                                     <Button fx:id="buttonAddTranslation" mnemonicParsing="false" onAction="#buttonAddTranslationPressed" />
                                     <Button fx:id="buttonAddTranslationAllLanguages" mnemonicParsing="false" onAction="#buttonAddTranslationAllLanguagesPressed" />
                                     <Button fx:id="buttonEditTranslation" mnemonicParsing="false" onAction="#buttonEditTranslationPressed" />

@@ -45,7 +45,7 @@ import static lu.btsi.bragi.ros.models.message.MessageType.*;
 public class ProductsStage extends Stage {
     @FXML private TextField textFieldPrice, textFieldTranslation;
     @FXML private Button buttonProductCategoryEdit, buttonDelete, buttonRefresh, buttonAddAllergen, buttonEditAllergen,
-                         buttonAddTranslation, buttonAddProduct, buttonEditTranslation,
+                         buttonAddTranslation, buttonAddProduct, buttonEditTranslation, buttonLocationEdit,
                          buttonDeleteAllergen, buttonAddTranslationAllLanguages, buttonUpdate;
     @FXML private ListView<Product> listProducts;
     @FXML private ListView<ProductLocalized> listTranslations;
@@ -53,6 +53,7 @@ public class ProductsStage extends Stage {
     @FXML private ChoiceBox<ProductCategoryLocalized> choiceBoxProductCategory;
     @FXML private ChoiceBox<AllergenLocalized> choiceBoxAllergen;
     @FXML private ChoiceBox<Language> choiceBoxLanguage;
+    @FXML private ChoiceBox<Location> choiceBoxLocation;
     @FXML private Label labelID;
     @FXML private VBox detailPane;
 
@@ -61,6 +62,7 @@ public class ProductsStage extends Stage {
     private ObservableList<AllergenLocalized> allergensLocalizedForChoiceBox = FXCollections.observableArrayList();
     private ObservableList<ProductLocalized> productLocalizedForListView = FXCollections.observableArrayList();
     private ObservableList<AllergenLocalized> allergeneLocalizedForList = FXCollections.observableArrayList();
+    private ObservableList<Location> locationsForChoiceBox = FXCollections.observableArrayList();
     private List<AllergenLocalized> allAllergenesLocalized;
     private List<Language> allLanguages;
     private List<ProductCategoryLocalized> allProductCategoriesLocalized;
@@ -77,6 +79,7 @@ public class ProductsStage extends Stage {
         buttonProductCategoryEdit.setGraphic(fa.create(Glyph.PENCIL));
         buttonAddAllergen.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonEditAllergen.setGraphic(fa.create(Glyph.PENCIL));
+        buttonLocationEdit.setGraphic(fa.create(Glyph.PENCIL));
         buttonAddTranslation.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonAddProduct.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonDelete.setGraphic(fa.create(Glyph.TRASH));
@@ -138,7 +141,7 @@ public class ProductsStage extends Stage {
         });
         listAllergens.getSelectionModel().selectedItemProperty().addListener(allergeneSelected);
 
-
+        choiceBoxLocation.setItems(locationsForChoiceBox);
 
         choiceBoxLanguage.setItems(languagesForChoiceBox);
         loadData();
@@ -204,6 +207,15 @@ public class ProductsStage extends Stage {
                     e.printStackTrace();
                 }
             });
+
+            // Get all locations
+            ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Location.class), message -> {
+                try {
+                    locationsForChoiceBox.setAll(new Message<Location>(message).getPayload());
+                } catch (MessageException e) {
+                    e.printStackTrace();
+                }
+            });
         });
     }
 
@@ -229,6 +241,14 @@ public class ProductsStage extends Stage {
                 listAllergens.setItems(allergeneLocalizedForList);
 
                 updateAllergensChoiceBox();
+
+                // Select Location if it is already saved
+                Location location = product.getLocation();
+                if(location != null) {
+                    choiceBoxLocation.getSelectionModel().select(location);
+                } else {
+                    choiceBoxLocation.getSelectionModel().clearSelection();
+                }
 
                 // Get the translations
                 productLocalizedForListView = FXCollections.observableList(product.getProductLocalized());
@@ -378,6 +398,10 @@ public class ProductsStage extends Stage {
             String priceStr = textFieldPrice.getText().replace(',','.').replaceAll("-", "");
             product.setPrice(BigDecimal.valueOf(Double.valueOf(priceStr)));
             product.setProductCategoryId(choiceBoxProductCategory.getValue().getProductCategoryId());
+            Location location = choiceBoxLocation.getValue();
+            if(location != null) {
+                product.setLocationId(location.getId());
+            }
 
             Message<Product> productMessage = new Message<>(Update, product, Product.class);
             ConnectionManager.getInstance().send(productMessage);
@@ -469,6 +493,16 @@ public class ProductsStage extends Stage {
             AllergensStage allergensStage = new AllergensStage();
             allergensStage.initOwner(getOwner());
             allergensStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void buttonLocationEditPressed(ActionEvent event) {
+        try {
+            LocationsStage locationsStage = new LocationsStage();
+            locationsStage.initOwner(getOwner());
+            locationsStage.show();
         } catch (IOException e) {
             e.printStackTrace();
         }
