@@ -60,8 +60,14 @@ public class OrderController extends Controller<Order> {
                     .on(Tables.PRODUCT.ID.eq(Tables.PRODUCT_PRICE_FOR_ORDER.PRODUCT_ID))
                 .join(Tables.PRODUCT_CATEGORY)
                     .on(Tables.PRODUCT_CATEGORY.ID.eq(Tables.PRODUCT.PRODUCT_CATEGORY_ID))
-                .where(Tables.PRODUCT.LOCATION_ID.eq(locationID))
-                .or(Tables.PRODUCT_CATEGORY.LOCATION_ID.eq(locationID))
+                .where(
+                        Tables.PRODUCT.LOCATION_ID.eq(locationID)
+                        .and(Tables.PRODUCT_CATEGORY.LOCATION_ID.ne(locationID))
+                        .or(
+                                Tables.PRODUCT.LOCATION_ID.isNull().and(
+                                        Tables.PRODUCT_CATEGORY.LOCATION_ID.eq(locationID))
+                        )
+                )
                 .and(DSL.date(dbTable.CREATED_AT).eq(DSL.currentDate()))
                 .and(dbTable.PROCESSING_DONE.eq((byte)0))
                 .and(dbTable.INVOICE_ID.isNull())
