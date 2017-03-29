@@ -33,6 +33,8 @@ public class Main {
         Server main = injector.getInstance(Server.class);
         main.start();
 
+        new WebServerImages(8888);
+
         try {
             JmDNS jmDNS = JmDNS.create(InetAddress.getLocalHost());
             ServiceInfo serviceInfo = ServiceInfo.create("_ws._tcp.local.", "RosWebsocket", "RosWebsocket", 8887, "");
@@ -42,7 +44,5 @@ public class Main {
             e.printStackTrace();
         }
         System.out.println("listening on port " + main.getPort());
-
-        new WebServerImages(8888);
     }
 }
