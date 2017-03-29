@@ -10,6 +10,7 @@ import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import javafx.util.Duration;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.models.message.*;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 class ContainerPaneInvoices extends ScrollPane {
     private VBox content = new VBox();
     private ProgressIndicator progressLoading = new ProgressIndicator(ProgressIndicator.INDETERMINATE_PROGRESS);
+    private Window owner;
 
     private Timeline refreshTimer = new Timeline(
             new KeyFrame(Duration.ZERO, e -> refreshInvoices()),
@@ -57,7 +59,7 @@ class ContainerPaneInvoices extends ScrollPane {
                     content.getChildren().clear();
                     unpaidOrders.forEach((table, orders) -> {
                         try {
-                            content.getChildren().add(new SingleInvoicePane(table, orders, this));
+                            content.getChildren().add(new SingleInvoicePane(owner, orders, this));
                             content.getChildren().add(new Separator(Orientation.HORIZONTAL));
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -78,5 +80,7 @@ class ContainerPaneInvoices extends ScrollPane {
         });
     }
 
-
+    public void setOwner(Window owner) {
+        this.owner = owner;
+    }
 }

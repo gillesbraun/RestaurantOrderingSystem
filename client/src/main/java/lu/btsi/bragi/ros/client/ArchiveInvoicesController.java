@@ -3,13 +3,12 @@ package lu.btsi.bragi.ros.client;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.print.Printer;
-import javafx.print.PrinterJob;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import javafx.util.converter.LocalDateStringConverter;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
@@ -17,6 +16,7 @@ import lu.btsi.bragi.ros.models.message.*;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
+import org.controlsfx.dialog.ExceptionDialog;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
 import org.controlsfx.glyphfont.GlyphFontRegistry;
@@ -38,6 +38,8 @@ public class ArchiveInvoicesController {
     public Label labelWaiter, labelPaid, labelInvoiceID, labelTableID;
     public VBox vboxDetail;
     private ObservableList<ProductPriceForOrder> listPPFO = FXCollections.observableArrayList();
+
+    private Window owner;
 
     public void initialize() {
         DateTimeFormatter dateFormat = Config.getInstance().getDateFormatter();
@@ -132,17 +134,19 @@ public class ArchiveInvoicesController {
     }
 
     public void buttonPrintInvoiceAction() {
-        try {
-            Printer printer = Printer.getDefaultPrinter();
-            PrinterJob printerJob = PrinterJob.createPrinterJob(printer);
-            printerJob.showPrintDialog(null);
-            Invoice invoice = tableViewInvoice.getSelectionModel().getSelectedItem();
-            VBox node = new PrintableInvoice(invoice).getNode();
-            node.setStyle("-fx-font-family: \"Arial\";");
-            printerJob.printPage(node);
-            printerJob.endJob();
-        } catch (IOException e) {
-            e.printStackTrace();
+        Invoice invoice = tableViewInvoice.getSelectionModel().getSelectedItem();
+        if(invoice != null) {
+            try {
+                PrintHelper.printInvoice(invoice, owner);
+            } catch (IOException e) {
+                ExceptionDialog exceptionDialog = new ExceptionDialog(e);
+                exceptionDialog.initOwner(owner);
+                exceptionDialog.show();
+            }
         }
+    }
+
+    public void setOwner(Window owner) {
+        this.owner = owner;
     }
 }

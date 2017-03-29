@@ -95,10 +95,10 @@
         </BorderPane>
         <VBox spacing="7.0">
             <children>
-                <HBox alignment="CENTER" spacing="7.0">
+                <HBox alignment="TOP_CENTER" spacing="7.0">
                     <children>
                         <Label minWidth="-Infinity" text="Served by:" textAlignment="CENTER" wrapText="true" />
-                  <TextFlow fx:id="labelWaiter" prefHeight="200.0" prefWidth="200.0" />
+                  <TextFlow fx:id="labelWaiter" />
                     </children>
                     <VBox.margin>
                         <Insets bottom="7.0" />

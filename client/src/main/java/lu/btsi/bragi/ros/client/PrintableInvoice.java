@@ -11,6 +11,7 @@ import lu.btsi.bragi.ros.client.settings.InvoiceSettings;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.stream.Collectors;
 
 class PrintableInvoice extends Invoice {
@@ -46,18 +47,24 @@ class PrintableInvoice extends Invoice {
         labelTable.setText(getTable() + "");
         Config config = Config.getInstance();
         getProductListInvoice(Config.getInstance().generalSettings.getLanguage()).forEach(invoiceEntry -> {
-            containerProductName.getChildren().add(new Label(invoiceEntry.quantity + "x" + invoiceEntry.productName));
+            containerProductName.getChildren().add(new Label(invoiceEntry.quantity + "x " + invoiceEntry.productName));
             containerProductA.getChildren().add(new Label(Character.toString((char) 0x00e0)));
             containerProductPrice.getChildren().add(new Label(config.formatCurrency(invoiceEntry.productPrice)));
             containerProductPriceTotal.getChildren().add(new Label(config.formatCurrency(invoiceEntry.productPriceTotal)));
         });
         labelTotalPrice.setText(config.formatCurrency(getTotalPrice().doubleValue()));
 
+        List<Label> waitersWithComma = getWaiters().stream()
+                .map(s -> s + ",")
+                .map(Label::new)
+                .peek(label -> label.setPadding(new Insets(0, 5, 0, 0)))
+                .collect(Collectors.toList());
+        Label lastWaiter = waitersWithComma.get(waitersWithComma.size() - 1);
+        lastWaiter.setText(lastWaiter.getText().replaceAll(",", ""));
+        waitersWithComma.set(waitersWithComma.size() - 1, lastWaiter);
+
         labelWaiter.getChildren().addAll(
-                getWaiters().stream()
-                        .map(Label::new)
-                        .peek(label -> label.setPadding(new Insets(0,5,0,0)))
-                        .collect(Collectors.toList())
+                waitersWithComma
         );
         labelTaxNumber.setText(invoiceSettings.getTaxNumber());
         labelTelephone.setText(invoiceSettings.getTelephone());

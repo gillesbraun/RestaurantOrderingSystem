@@ -110,6 +110,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
 
         ordersContainerPane = new ContainerPaneOrders();
         invoicesContainerPane = new ContainerPaneInvoices();
+        invoicesContainerPane.setOwner(parent);
         vboxOrdersContainer.getChildren().setAll(ordersContainerPane);
         vboxInvoicesContainer.getChildren().setAll(invoicesContainerPane);
 
@@ -289,7 +290,10 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
 
     public void menuItemArchiveInvoices(ActionEvent evt) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/ArchiveInvoicesStage.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/ArchiveInvoicesStage.fxml"));
+            Parent root = loader.load();
+            ((ArchiveInvoicesController)loader.getController()).setOwner(parent);
+
             Stage stage = new Stage();
             stage.setScene(new Scene(root));
             stage.initOwner(parent);

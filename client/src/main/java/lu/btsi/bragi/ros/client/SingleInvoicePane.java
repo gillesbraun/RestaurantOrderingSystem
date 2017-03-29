@@ -7,20 +7,17 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.print.Printer;
-import javafx.print.PrinterJob;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
+import javafx.stage.Window;
 import lu.btsi.bragi.ros.client.connection.ConnectionManager;
 import lu.btsi.bragi.ros.client.settings.Config;
 import lu.btsi.bragi.ros.models.message.Message;
-import lu.btsi.bragi.ros.models.message.MessageException;
 import lu.btsi.bragi.ros.models.message.MessageType;
 import lu.btsi.bragi.ros.models.pojos.Invoice;
 import lu.btsi.bragi.ros.models.pojos.Order;
 import lu.btsi.bragi.ros.models.pojos.ProductPriceForOrder;
-import lu.btsi.bragi.ros.models.pojos.Table;
 import org.controlsfx.dialog.ExceptionDialog;
 import org.controlsfx.glyphfont.FontAwesome;
 import org.controlsfx.glyphfont.GlyphFont;
@@ -47,9 +44,11 @@ public class SingleInvoicePane extends VBox {
     private List<ProductPriceForOrder> produtsPriceForOrder;
     private List<Order> orders;
     private ContainerPaneInvoices parent;
+    private Window owner;
 
-    SingleInvoicePane(Table table, List<Order> orders, ContainerPaneInvoices invoicesContainerPane) throws IOException {
+    SingleInvoicePane(Window owner, List<Order> orders, ContainerPaneInvoices invoicesContainerPane) throws IOException {
         this.orders = orders;
+        this.owner = owner;
         parent = invoicesContainerPane;
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/SingleInvoicePanel.fxml"));
         loader.setController(this);
@@ -60,7 +59,7 @@ public class SingleInvoicePane extends VBox {
 
         listViewProducts.setItems(listProducts);
 
-        labelTable.setText(table.toString());
+        orders.stream().map(Order::getTableId).findFirst().ifPresent(t -> labelTable.setText(t.toString()));
         fillList();
         setTotalPrice();
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
@@ -85,7 +84,7 @@ public class SingleInvoicePane extends VBox {
                 Order.combineOrders(orders)
         );
 
-        listViewProducts.prefHeightProperty().bind(Bindings.size(listProducts).add(1).multiply(24));
+        listViewProducts.prefHeightProperty().bind(Bindings.size(listProducts).add(1).multiply(27));
     }
 
     public void buttonPayPressed(ActionEvent event) {
@@ -98,21 +97,20 @@ public class SingleInvoicePane extends VBox {
                 List<Invoice> payload = new Message<Invoice>(m).getPayload();
                 if(payload.size() > 0) {
                     Invoice invoice = payload.get(0);
-                    Printer printer = Printer.getDefaultPrinter();
-                    PrinterJob printerJob = PrinterJob.createPrinterJob(printer);
-                    printerJob.showPrintDialog(null);
-                    VBox node = new PrintableInvoice(invoice).getNode();
-                    node.setStyle("-fx-font-family: \"Arial\";");
-                    printerJob.printPage(node);
-                    printerJob.endJob();
-
-                    parent.refreshInvoices();
+                    PrintHelper.printInvoice(invoice, owner);
                 }
-            } catch (IOException | MessageException e) {
+                parent.refreshInvoices();
+            } catch (Exception e) {
                 Platform.runLater(() -> {
-                    new ExceptionDialog(e).show();
+                    ExceptionDialog d = new ExceptionDialog(e);
+                    d.initOwner(owner);
+                    d.show();
                 });
             }
         });
+    }
+
+    public void setOwner(Window owner) {
+        this.owner = owner;
     }
 }
