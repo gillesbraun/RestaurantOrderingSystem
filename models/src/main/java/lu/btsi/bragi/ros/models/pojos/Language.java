@@ -86,4 +86,21 @@ public class Language implements Serializable {
     public String toString() {
         return name;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Language language = (Language) o;
+
+        if (code != null ? !code.equals(language.code) : language.code != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return code != null ? code.hashCode() : 0;
+    }
 }
