@@ -1,6 +1,5 @@
 package lu.btsi.bragi.ros.server;
 
-import com.google.common.io.Files;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -8,9 +7,9 @@ import javax.jmdns.JmDNS;
 import javax.jmdns.ServiceInfo;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.InetAddress;
-import java.net.URISyntaxException;
-import java.net.URL;
+import java.nio.file.Files;
 
 /**
  * Created by gillesbraun on 14/02/2017.
@@ -21,11 +20,11 @@ public class Main {
         File configFile = new File("ros.conf");
         if(!configFile.exists())
             try {
-                URL reference = Main.class.getResource("/reference.conf");
-                Files.copy(new File(reference.toURI()), configFile);
+                InputStream reference = Main.class.getResourceAsStream("/reference.conf");
+                Files.copy(reference, configFile.toPath());
                 System.err.println("Please fill out the configuration file that has been created: " + configFile.getAbsolutePath());
                 System.exit(0);
-            } catch (IOException | URISyntaxException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         Injector injector = Guice.createInjector(new DatabaseModule());
