@@ -5,8 +5,8 @@ import lu.btsi.bragi.ros.models.message.Message;
 /**
  * Created by gillesbraun on 06/03/2017.
  */
-public interface IMessageSender {
+public interface MessageSender {
     void broadcast(Message m);
 
-    void sendReply(Message newMessage);
+    void reply(Message newMessage);
 }

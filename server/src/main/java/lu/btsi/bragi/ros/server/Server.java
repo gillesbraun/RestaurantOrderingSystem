@@ -8,7 +8,6 @@ import lu.btsi.bragi.ros.server.controller.MainController;
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
-import org.jooq.DSLContext;
 
 import java.net.InetSocketAddress;
 import java.util.*;
@@ -16,10 +15,7 @@ import java.util.*;
 /**
  * Created by gillesbraun on 13/02/2017.
  */
-public class Server extends WebSocketServer implements IMessageSender {
-    @Inject
-    private DSLContext create;
-
+public class Server extends WebSocketServer implements MessageSender {
     @Inject
     private MainController mainController;
 
@@ -74,7 +70,7 @@ public class Server extends WebSocketServer implements IMessageSender {
     }
 
     @Override
-    public void sendReply(Message newMessage) {
+    public void reply(Message newMessage) {
         WebSocket conn = socketMap.get(newMessage.getMessageID());
         if(conn != null) {
             conn.send(newMessage.toString());

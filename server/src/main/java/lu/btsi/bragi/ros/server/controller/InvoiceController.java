@@ -73,7 +73,7 @@ public class InvoiceController extends Controller<Invoice> {
             getController(OrderController.class).updateInvoice(order, afterInsert.getId());
         });
         Invoice after = fetchReferences(afterInsert.into(pojo));
-        messageSender.sendReply(originalMessage.createAnswer(after));
+        messageSender.reply(originalMessage.createAnswer(after));
         messageSender.broadcast(new Message<>(MessageType.Broadcast, Collections.emptyList(), pojo));
     }
 
