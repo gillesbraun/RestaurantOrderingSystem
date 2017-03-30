@@ -47,32 +47,32 @@
          <children>
             <VBox alignment="CENTER" spacing="7.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="Java-WebSocket" textFill="#4f60f7">
+                  <Label fx:id="linkWebSocket" text="Java-WebSocket" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
-                  <Label text="JmDNS" textFill="#4f60f7">
+                  <Label fx:id="linkJmdns" text="JmDNS" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
-                  <Label text="ControlsFX" textFill="#4f60f7">
+                  <Label fx:id="linkControlsFX" text="ControlsFX" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
-                  <Label text="Apache HTTP Client" textFill="#4f60f7">
+                  <Label fx:id="linkApacheHTTPClient" text="Apache HTTP Client" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
-                  <Label text="Google ZXing" textFill="#4f60f7">
+                  <Label fx:id="linkZxing" text="Google ZXing" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
-                  <Label text="Thumbnailator" textFill="#4f60f7">
+                  <Label fx:id="linkThumbnailator" text="Thumbnailator" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
@@ -81,27 +81,27 @@
             </VBox>
             <VBox alignment="CENTER" spacing="7.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Label text="Gson" textFill="#4f60f7">
+                  <Label fx:id="linkGson" text="Gson" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
-                  <Label text="JOOQ" textFill="#4f60f7">
+                  <Label fx:id="linkJooq" text="JOOQ" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
-                  <Label text="StreamSupport" textFill="#4f60f7">
+                  <Label fx:id="linkStreamSupport" text="StreamSupport" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
-                  <Label text="MySQL JDBC" textFill="#4f60f7">
+                  <Label fx:id="linkMysqlJdbc" text="MySQL JDBC" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>
                   </Label>
-                  <Label text="Guice" textFill="#4f60f7">
+                  <Label fx:id="linkGuice" text="Guice" textFill="#4f60f7">
                      <cursor>
                         <Cursor fx:constant="HAND" />
                      </cursor>

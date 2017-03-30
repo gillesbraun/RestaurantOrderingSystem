@@ -42,7 +42,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Created by gillesbraun on 14/02/2017.
  */
-public class MainFrame extends Application implements UICallback, ConnectionCallback, BroadcastCallback {
+public class MainFrame extends Application implements UICallback, ConnectionCallback, BroadcastCallback, HyperlinkOpener {
     @FXML
     private TextArea statusTextArea;
 
@@ -269,6 +269,7 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
         try {
             AboutStage aboutStage = new AboutStage();
             aboutStage.initOwner(parent);
+            aboutStage.setHyperlinkOpener(this);
             aboutStage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -335,5 +336,10 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     @Override
     public void handleBroadCast() {
         loadContent();
+    }
+
+    @Override
+    public void openLink(String url) {
+        getHostServices().showDocument(url);
     }
 }
