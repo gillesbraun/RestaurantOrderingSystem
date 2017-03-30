@@ -1,13 +1,13 @@
-#Restaurant Ordering System
-###© Gilles Braun 2017
+# Restaurant Ordering System
+### © Gilles Braun 2017
 
-##Getting Started
-###Prerequisites
+## Getting Started
+### Prerequisites
 * MySQL Server 5.7
 * Java 8 (Tested with 1.8.0_112)
 * Android Tablet with 4.0.3 Ice Cream Sandwich
 
-###Import Database
+### Import Database
 Connect to your MySQL Server and create a database. Let's assume the name of the new database is `ros`
 
 It doesn't matter which name you choose as you can configure ROS application accordingly.
@@ -16,7 +16,7 @@ Navigate to the compiled server directory, and find the file called `create.sql`
 
 `mysql -u root -p DB_NAME < create.sql`
 
-###Create DB User
+### Create DB User
 It is recommended to create a MySQL user which only has access to the newly created database and that has a random password.
 
 Connect to your MySQL server. And execute the following commands:
@@ -26,7 +26,7 @@ CREATE USER rosuser IDENTIFIED BY 'somerandompassword';
 GRANT ALL ON DB_NAME.* TO rosuser;
 ```
 
-##Start ROS Server
+## Start ROS Server
 Navigate to the server directory.
 
 * Windows: Start `server.bat`
