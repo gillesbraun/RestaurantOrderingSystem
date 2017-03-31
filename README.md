@@ -1,6 +1,9 @@
 # Restaurant Ordering System
 ### © Gilles Braun 2017
 
+[![build status](https://gitlab.com/gillesbraun/RestaurantOrderingSystem/badges/master/build.svg)](https://gitlab.com/gillesbraun/RestaurantOrderingSystem/commits/master)
+[Download latest build](https://gitlab.com/gillesbraun/RestaurantOrderingSystem/builds/artifacts/master/download?job=build)
+
 ## Getting Started
 ### Prerequisites
 * MySQL Server 5.7
