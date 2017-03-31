@@ -33,3 +33,9 @@ Navigate to the server directory.
 * Mac/Linux: Start `server` (maybe `chmod +x` first)
 
 Now configure the database settings in the config file that has been generated. The path of said config file should be printed in the console window.
+
+## Screenshot
+![App Screenshot](screenshot.png)
+
+## Database Model
+![Database Model](DBModel.png)
