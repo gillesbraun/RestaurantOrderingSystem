@@ -46,7 +46,7 @@ public class ProductsStage extends Stage {
     @FXML private TextField textFieldPrice, textFieldTranslation;
     @FXML private Button buttonProductCategoryEdit, buttonDelete, buttonRefresh, buttonAddAllergen, buttonEditAllergen,
                          buttonAddTranslation, buttonAddProduct, buttonEditTranslation, buttonLocationEdit,
-                         buttonDeleteAllergen, buttonAddTranslationAllLanguages, buttonUpdate;
+                         buttonDeleteAllergen, buttonAddTranslationAllLanguages, buttonUpdate, buttonRemoveLocation;
     @FXML private ListView<Product> listProducts;
     @FXML private ListView<ProductLocalized> listTranslations;
     @FXML private ListView<AllergenLocalized> listAllergens;
@@ -79,6 +79,7 @@ public class ProductsStage extends Stage {
         buttonProductCategoryEdit.setGraphic(fa.create(Glyph.PENCIL));
         buttonAddAllergen.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonEditAllergen.setGraphic(fa.create(Glyph.PENCIL));
+        buttonRemoveLocation.setGraphic(fa.create(Glyph.MINUS));
         buttonLocationEdit.setGraphic(fa.create(Glyph.PENCIL));
         buttonAddTranslation.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonAddProduct.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
@@ -485,6 +486,15 @@ public class ProductsStage extends Stage {
             textFieldTranslation.clear();
             loadData();
             updateTranslationChoiceBox();
+        }
+    }
+
+    public void buttonRemoveLocationPressed(ActionEvent e) {
+        Product product = listProducts.getSelectionModel().getSelectedItem();
+        if(product != null) {
+            product.setLocationId(null);
+            product.setLocation(null);
+            updateLocationChoiceBox();
         }
     }
 

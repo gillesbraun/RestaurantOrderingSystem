@@ -48,6 +48,7 @@
                      <children>
                         <Label alignment="CENTER" text="Location Override: " />
                         <ChoiceBox fx:id="choiceBoxLocation" minWidth="120.0" HBox.hgrow="ALWAYS" />
+                        <Button fx:id="buttonRemoveLocation" mnemonicParsing="false" onAction="#buttonRemoveLocationPressed" />
                         <Button fx:id="buttonLocationEdit" mnemonicParsing="false" onAction="#buttonLocationEditPressed" />
                         <Label text="(Optional)" />
                      </children>
