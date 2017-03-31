@@ -21,7 +21,7 @@ It is recommended to create a MySQL user which only has access to the newly crea
 
 Connect to your MySQL server. And execute the following commands:
 
-```SQL
+```sql
 CREATE USER rosuser IDENTIFIED BY 'somerandompassword';
 GRANT ALL ON DB_NAME.* TO rosuser;
 ```
