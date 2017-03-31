@@ -1,5 +1,6 @@
 package lu.btsi.bragi.ros.client.editViews;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -50,13 +51,18 @@ public class LanguagesStage extends Stage {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/LanguagesStage.fxml"));
         loader.setController(this);
         Parent root = loader.load();
-        setTitle("Products");
+        setTitle("Languages");
         setScene(new Scene(root));
 
         GlyphFont fa = GlyphFontRegistry.font("FontAwesome");
         buttonAddLanguage.setGraphic(fa.create(Glyph.PLUS_CIRCLE));
         buttonDeleteLanguage.setGraphic(fa.create(Glyph.TRASH));
         buttonRefreshLanguages.setGraphic(fa.create(Glyph.REFRESH));
+
+        textFieldLanguageCode.textProperty().addListener((observable, oldValue, newText) -> {
+            if(newText.length() >= 2)
+                textFieldLanguageCode.setText(newText.substring(0, 2));
+        });
 
         loadData();
         listViewLanguages.getSelectionModel().selectedItemProperty().addListener(languageSelectedListener);
@@ -101,12 +107,20 @@ public class LanguagesStage extends Stage {
     public void buttonAddLanguagePressed(ActionEvent evt) {
         Dialog<Pair<String,String>> addLangDialog = new Dialog<>();
         addLangDialog.initOwner(this);
+        addLangDialog.setTitle("Add Language");
         ButtonType addButtonType = new ButtonType("Add", ButtonBar.ButtonData.OK_DONE);
         addLangDialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, addButtonType);
 
         Label labelCode = new Label("Language Code:");
         TextField textFieldCode = new TextField();
         HBox hBoxCode = new HBox(14, labelCode, textFieldCode);
+
+        textFieldCode.textProperty().addListener((observable, oldValue, newText) -> {
+            if(newText.length() >= 2)
+                textFieldCode.setText(newText.substring(0, 2));
+        });
+
+        Platform.runLater(textFieldCode::requestFocus);
 
         Label labelName = new Label("Language Name: ");
         TextField textFieldName = new TextField("");
