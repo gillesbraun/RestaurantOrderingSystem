@@ -120,8 +120,8 @@ public class ArchiveInvoicesController {
         LocalDate from = datePickerFrom.getValue();
         if(datePickerUntil.getValue().minusDays(7).isAfter(from)) {
             datePickerUntil.setValue(from.plusDays(7));
-            loadData();
         }
+        loadData();
     }
 
     public void datePickerUntilAction() {
@@ -129,8 +129,8 @@ public class ArchiveInvoicesController {
         LocalDate from = datePickerFrom.getValue();
         if(from.isAfter(until) || from.plusDays(7).isBefore(until)) {
             datePickerFrom.setValue(until.minusDays(7));
-            loadData();
         }
+        loadData();
     }
 
     public void buttonPrintInvoiceAction() {
