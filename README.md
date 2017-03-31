@@ -8,7 +8,7 @@
 ### Prerequisites
 * MySQL Server 5.7
 * Java 8 (Tested with 1.8.0_112)
-* Android Tablet with 4.0.3 Ice Cream Sandwich
+* Android Tablet with at least 4.0.3 Ice Cream Sandwich
 
 ### Import Database
 Connect to your MySQL Server and create a database. Let's assume the name of the new database is `ros`
