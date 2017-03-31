@@ -95,6 +95,7 @@ public class SettingsStage extends Stage implements ConnectionCallback {
         config.invoiceSettings.setTelephone(textFieldInvoiceTelephone.getText());
         config.invoiceSettings.setEmail(textFieldInvoiceEmail.getText());
         config.connectionSettings.setAutoDiscovery(checkBoxAutoDisover.isSelected());
+        config.connectionSettings.setHostAddress(textFieldHostAddress.getText());
         if(choiceBoxLanguage.getValue() != null)
             config.generalSettings.setLanguage(choiceBoxLanguage.getValue());
         if(choiceBoxLocale.getValue() != null) {

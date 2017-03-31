@@ -127,7 +127,8 @@ public class MainFrame extends Application implements UICallback, ConnectionCall
     public void showQR(ActionEvent evt) throws UnknownHostException, WriterException {
         if (!ConnectionManager.isConnected())
             return;
-        String connectingTo = ConnectionManager.getInstance().getRemoteIPAdress() + ":8887";
+
+        String connectingTo = ConnectionManager.getInstance().getRemoteIPAdressForQR() + ":8887";
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
         BitMatrix encode = qrCodeWriter.encode(connectingTo, BarcodeFormat.QR_CODE, 500, 500);
         BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(encode);

@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.util.*;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -53,11 +54,11 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
     public void newClient() {
         connectionCallbacks.forEach(c -> c.connectionClosed(""));
         ConnectionSettings connectionSettings = Config.getInstance().connectionSettings;
-        if(!connectionSettings.isFirstConnection() && !connectionSettings.isAutoDiscovery()) {
+        if (!connectionSettings.isFirstConnection() && !connectionSettings.isAutoDiscovery()) {
             newClientIP(connectionSettings.getHostAddress());
             return;
         }
-        if(connectionSettings.isAutoDiscovery()) {
+        if (connectionSettings.isAutoDiscovery()) {
             newClientAutoDiscover();
         } else {
             newClientIP(connectionSettings.getHostAddress());
@@ -75,7 +76,7 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
     }
 
     private void newClientIP(String ip) {
-        client = new Client(URI.create("ws://"+ip+":8887"));
+        client = new Client(URI.create("ws://" + ip + ":8887"));
         client.setConnectionCallback(this);
         client.setMessageCallback(this);
         client.connect();
@@ -83,7 +84,7 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
 
     public void send(Message message) {
         try {
-            if(client != null && message != null && isConnected)
+            if (client != null && message != null && isConnected)
                 client.send(message.toString());
         } catch (WebsocketNotConnectedException e) {
             queueMessageForLater(message);
@@ -91,9 +92,9 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
     }
 
     public void sendWithAction(Message message, MessageCallback messageCallback) {
-        if(client != null && message != null && isConnected) {
+        if (client != null && message != null && isConnected) {
             send(message);
-            if(messageCallback != null) {
+            if (messageCallback != null) {
                 UUID messageID = message.getMessageID();
                 callbackMap.put(messageID, messageCallback);
             }
@@ -154,7 +155,7 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
         uiCallback.connectionOpened(message, client);
         connectionCallbacks.forEach(c -> c.connectionOpened(message));
         ConnectionSettings connectionSettings = Config.getInstance().connectionSettings;
-        if(connectionSettings.isFirstConnection()) {
+        if (connectionSettings.isFirstConnection()) {
             connectionSettings.setAutoDiscovery(false);
             uiCallback.displayMessage("Disabled AutoDiscovery, which makes subsequent runs faster if the ip won't change.");
         }
@@ -163,13 +164,13 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
         try {
             Config.save();
         } catch (IOException e) {
-            System.err.println("Error saving settings: "+e.getMessage());
+            System.err.println("Error saving settings: " + e.getMessage());
         }
     }
 
     @Override
     public void serviceAdded(ServiceEvent event) {
-        if(event.getInfo().getSubtype().equals("roswebsocket")){
+        if (event.getInfo().getSubtype().equals("roswebsocket")) {
             try {
                 client = new Client(new URI("ws://" + event.getDNS().getName() + ":8887"));
                 client.setConnectionCallback(this);
@@ -178,7 +179,7 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
             } catch (URISyntaxException e) {
             }
         } else {
-            uiCallback.displayMessage("Found other webservice ("+event.getInfo().getSubtype()+"), ignoring");
+            uiCallback.displayMessage("Found other webservice (" + event.getInfo().getSubtype() + "), ignoring");
         }
     }
 
@@ -196,6 +197,19 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
         return client.getRemoteIPAdress();
     }
 
+    public String getRemoteIPAdressForQR() {
+        try {
+            String address = client.getRemoteIPAdress();
+            if (address.startsWith("127")) {
+                return InetAddress.getLocalHost().getHostAddress();
+            } else {
+                return address;
+            }
+        } catch (UnknownHostException e) {
+            return "";
+        }
+    }
+
     public static boolean isConnected() {
         return ourInstance != null && ourInstance.isConnected;
     }
@@ -206,7 +220,7 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
 
     public void addConnectionCallback(ConnectionCallback connectionCallback) {
         connectionCallbacks.add(connectionCallback);
-        if(isConnected) {
+        if (isConnected) {
             connectionCallback.connectionOpened("Connection was already open.");
         }
     }
@@ -220,12 +234,12 @@ public class ConnectionManager implements ServiceListener, ConnectionCallback, M
         boolean isError = Message.messageType(message).equals(MessageType.Error);
         UUID messageUUID = Message.messageUUID(message);
         MessageCallback messageCallback = callbackMap.get(messageUUID);
-        if(messageCallback != null) {
+        if (messageCallback != null) {
             Platform.runLater(() -> messageCallback.handleAnswer(message));
             callbackMap.remove(messageUUID);
         } else {
-            if(!isError) {
-                if(Message.messageType(message).equals(MessageType.Broadcast)) {
+            if (!isError) {
+                if (Message.messageType(message).equals(MessageType.Broadcast)) {
                     broadcastCallbacks.forEach(BroadcastCallback::handleBroadCast);
                 }
             } else {
