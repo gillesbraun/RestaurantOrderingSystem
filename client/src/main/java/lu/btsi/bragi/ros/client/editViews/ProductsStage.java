@@ -97,7 +97,10 @@ public class ProductsStage extends Stage {
             }
         });
 
-        PopOver popOver = new PopOver(new Label("Add this translation for all languages"));
+        Label label = new Label("Add this translation for all languages");
+        HBox popOverContent = new HBox(label);
+        popOverContent.setPadding(new Insets(0, 10, 0, 10));
+        PopOver popOver = new PopOver(popOverContent);
         popOver.setDetachable(false);
         buttonAddTranslationAllLanguages.disableProperty().bind(buttonAddTranslation.disabledProperty());
         buttonAddTranslationAllLanguages.hoverProperty().addListener((observable, oldValue, isHover) -> {
@@ -212,11 +215,25 @@ public class ProductsStage extends Stage {
             ConnectionManager.getInstance().sendWithAction(new MessageGet<>(Location.class), message -> {
                 try {
                     locationsForChoiceBox.setAll(new Message<Location>(message).getPayload());
+                    updateLocationChoiceBox();
                 } catch (MessageException e) {
                     e.printStackTrace();
                 }
             });
         });
+    }
+
+    private void updateLocationChoiceBox() {
+        Product product = listProducts.getSelectionModel().getSelectedItem();
+        if(product != null) {
+            // Select Location if it is already saved
+            Location location = product.getLocation();
+            if (location != null) {
+                choiceBoxLocation.getSelectionModel().select(location);
+            } else {
+                choiceBoxLocation.getSelectionModel().clearSelection();
+            }
+        }
     }
 
     private final ChangeListener<? super Product> productSelected = new ChangeListener<Product>() {
@@ -230,7 +247,7 @@ public class ProductsStage extends Stage {
                 // Set the current price
                 textFieldPrice.setText(String.valueOf(product.getPrice()));
 
-                // Get the allergens
+                // Get the allergens in the interface language
                 allergeneLocalizedForList = FXCollections.observableList(
                         product.getProductAllergen().stream()
                         .map(ProductAllergen::getAllergen)
@@ -242,14 +259,7 @@ public class ProductsStage extends Stage {
 
                 updateAllergensChoiceBox();
 
-                // Select Location if it is already saved
-                Location location = product.getLocation();
-                if(location != null) {
-                    choiceBoxLocation.getSelectionModel().select(location);
-                } else {
-                    choiceBoxLocation.getSelectionModel().clearSelection();
-                }
-
+                updateLocationChoiceBox();
                 // Get the translations
                 productLocalizedForListView = FXCollections.observableList(product.getProductLocalized());
                 listTranslations.setItems(productLocalizedForListView);
